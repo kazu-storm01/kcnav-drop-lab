@@ -4,6 +4,10 @@
     #kcnav-drop-lab .app { display: grid; gap: 1rem; max-width: 736px; margin: 0 auto; }
     #kcnav-drop-lab .topbar { display: grid; gap: .35rem; }
     #kcnav-drop-lab .top-actions, #kcnav-drop-lab .controls, #kcnav-drop-lab .inline-actions { display: flex; flex-wrap: wrap; gap: .5rem; align-items: end; }
+    #kcnav-drop-lab .preset-actions { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; }
+    #kcnav-drop-lab .btn-danger { color: #ffd7d2; border: 1px solid #c65b55; background: #6f2724; font-weight: 600; }
+    #kcnav-drop-lab .btn-danger:not(:disabled):hover { color: #fff; border-color: #ff938b; background: #963b36; }
+    #kcnav-drop-lab .btn-danger:focus-visible { outline: 2px solid #ff938b; outline-offset: 2px; }
     #kcnav-drop-lab .field { display: grid; gap: .28rem; min-width: 0; }
     #kcnav-drop-lab .field.grow { flex: 1 1 12rem; }
     #kcnav-drop-lab .field input, #kcnav-drop-lab .field select { min-width: 0; }
@@ -207,7 +211,7 @@
               <label class="field"><span>難易度</span><select class="form-select" id="edit-difficulty"><option>甲</option><option>乙</option><option>丙</option><option>丁</option><option>-</option></select></label>
               <label class="field"><span>マス</span><input class="form-control" id="edit-node" placeholder="Z"></label>
             </div>
-            <div class="inline-actions"><button class="btn btn-primary" id="save-profile-meta" type="button">設定を保存</button><button class="btn" id="duplicate-profile" type="button">このプリセットを複製</button><button class="btn btn-ghost" id="delete-profile" type="button">このプリセットを削除</button></div>
+            <div class="preset-actions"><button class="btn btn-primary" id="save-profile-meta" type="button">設定を保存</button><button class="btn" id="duplicate-profile" type="button">このプリセットを複製</button><button class="btn btn-danger" id="delete-profile" type="button">プリセットを削除</button></div>
             <span class="muted">初期プリセットを含め、設定とドロップ表を変更できます。</span>
             <div class="inline-actions"><button class="btn" id="refresh-images" type="button">艦画像を再取得</button><span class="muted" id="image-status" role="status"></span></div>
             <div class="backup-grid">

@@ -754,6 +754,10 @@ html&gt;body{padding:0}&lt;/style&gt;
     #kcnav-drop-lab .app { display: grid; gap: 1rem; max-width: 736px; margin: 0 auto; }
     #kcnav-drop-lab .topbar { display: grid; gap: .35rem; }
     #kcnav-drop-lab .top-actions, #kcnav-drop-lab .controls, #kcnav-drop-lab .inline-actions { display: flex; flex-wrap: wrap; gap: .5rem; align-items: end; }
+    #kcnav-drop-lab .preset-actions { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; }
+    #kcnav-drop-lab .btn-danger { color: #ffd7d2; border: 1px solid #c65b55; background: #6f2724; font-weight: 600; }
+    #kcnav-drop-lab .btn-danger:not(:disabled):hover { color: #fff; border-color: #ff938b; background: #963b36; }
+    #kcnav-drop-lab .btn-danger:focus-visible { outline: 2px solid #ff938b; outline-offset: 2px; }
     #kcnav-drop-lab .field { display: grid; gap: .28rem; min-width: 0; }
     #kcnav-drop-lab .field.grow { flex: 1 1 12rem; }
     #kcnav-drop-lab .field input, #kcnav-drop-lab .field select { min-width: 0; }
@@ -957,7 +961,7 @@ html&gt;body{padding:0}&lt;/style&gt;
               &lt;label class=&quot;field&quot;&gt;&lt;span&gt;難易度&lt;/span&gt;&lt;select class=&quot;form-select&quot; id=&quot;edit-difficulty&quot;&gt;&lt;option&gt;甲&lt;/option&gt;&lt;option&gt;乙&lt;/option&gt;&lt;option&gt;丙&lt;/option&gt;&lt;option&gt;丁&lt;/option&gt;&lt;option&gt;-&lt;/option&gt;&lt;/select&gt;&lt;/label&gt;
               &lt;label class=&quot;field&quot;&gt;&lt;span&gt;マス&lt;/span&gt;&lt;input class=&quot;form-control&quot; id=&quot;edit-node&quot; placeholder=&quot;Z&quot;&gt;&lt;/label&gt;
             &lt;/div&gt;
-            &lt;div class=&quot;inline-actions&quot;&gt;&lt;button class=&quot;btn btn-primary&quot; id=&quot;save-profile-meta&quot; type=&quot;button&quot;&gt;設定を保存&lt;/button&gt;&lt;button class=&quot;btn&quot; id=&quot;duplicate-profile&quot; type=&quot;button&quot;&gt;このプリセットを複製&lt;/button&gt;&lt;button class=&quot;btn btn-ghost&quot; id=&quot;delete-profile&quot; type=&quot;button&quot;&gt;このプリセットを削除&lt;/button&gt;&lt;/div&gt;
+            &lt;div class=&quot;preset-actions&quot;&gt;&lt;button class=&quot;btn btn-primary&quot; id=&quot;save-profile-meta&quot; type=&quot;button&quot;&gt;設定を保存&lt;/button&gt;&lt;button class=&quot;btn&quot; id=&quot;duplicate-profile&quot; type=&quot;button&quot;&gt;このプリセットを複製&lt;/button&gt;&lt;button class=&quot;btn btn-danger&quot; id=&quot;delete-profile&quot; type=&quot;button&quot;&gt;プリセットを削除&lt;/button&gt;&lt;/div&gt;
             &lt;span class=&quot;muted&quot;&gt;初期プリセットを含め、設定とドロップ表を変更できます。&lt;/span&gt;
             &lt;div class=&quot;inline-actions&quot;&gt;&lt;button class=&quot;btn&quot; id=&quot;refresh-images&quot; type=&quot;button&quot;&gt;艦画像を再取得&lt;/button&gt;&lt;span class=&quot;muted&quot; id=&quot;image-status&quot; role=&quot;status&quot;&gt;&lt;/span&gt;&lt;/div&gt;
             &lt;div class=&quot;backup-grid&quot;&gt;

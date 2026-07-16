@@ -98,8 +98,9 @@ test('the factory preset can be edited and the last preset can be deleted', asyn
     '編集した初期プリセット',
   );
 
-  await app.getByRole('button', { name: 'このプリセットを削除' }).click();
+  await app.locator('#delete-profile').click();
   await app
+    .getByRole('dialog', { name: '確認' })
     .getByRole('button', { name: 'プリセットを削除', exact: true })
     .click();
   await expect(app.locator('#profile-select')).toContainText(
