@@ -1,0 +1,458 @@
+<div id="kcnav-drop-lab">
+  <style>
+    #kcnav-drop-lab { color: var(--foreground); }
+    #kcnav-drop-lab .app { display: grid; gap: 1rem; max-width: 736px; margin: 0 auto; }
+    #kcnav-drop-lab .topbar { display: grid; gap: .35rem; }
+    #kcnav-drop-lab .top-actions, #kcnav-drop-lab .controls, #kcnav-drop-lab .inline-actions { display: flex; flex-wrap: wrap; gap: .5rem; align-items: end; }
+    #kcnav-drop-lab .field { display: grid; gap: .28rem; min-width: 0; }
+    #kcnav-drop-lab .field.grow { flex: 1 1 12rem; }
+    #kcnav-drop-lab .field input, #kcnav-drop-lab .field select { min-width: 0; }
+    #kcnav-drop-lab .profile-meta { color: var(--muted-foreground); }
+    #kcnav-drop-lab .workspace { display: block; }
+    #kcnav-drop-lab .drop-stage { min-height: 370px; display: grid; place-items: center; position: relative; overflow: hidden; isolation: isolate; background: radial-gradient(circle at 50% 46%, color-mix(in srgb, var(--viz-series-2) 20%, transparent), transparent 38%), linear-gradient(145deg, color-mix(in srgb, var(--primary) 15%, var(--card)), var(--card) 58%, color-mix(in srgb, var(--secondary) 58%, var(--card))); }
+    #kcnav-drop-lab .drop-stage::before { content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none; opacity: 0; background: radial-gradient(circle at center, color-mix(in srgb, var(--accent) 38%, transparent), transparent 58%); }
+    #kcnav-drop-lab .drop-stage::after { content: ''; position: absolute; inset: 0; z-index: -1; background: repeating-radial-gradient(circle at 50% 48%, transparent 0 31px, color-mix(in srgb, var(--primary) 18%, transparent) 32px 33px, transparent 34px 64px), linear-gradient(90deg, transparent 49.8%, color-mix(in srgb, var(--primary) 14%, transparent) 50%, transparent 50.2%), linear-gradient(0deg, transparent 49.8%, color-mix(in srgb, var(--primary) 14%, transparent) 50%, transparent 50.2%); }
+    #kcnav-drop-lab .radar-sweep { position: absolute; left: 50%; top: 48%; z-index: 0; width: 280px; aspect-ratio: 1; border-radius: 50%; opacity: .3; transform: translate(-50%,-50%); background: conic-gradient(from 0deg, transparent 0 82%, color-mix(in srgb, var(--viz-series-2) 36%, transparent) 96%, transparent 100%); }
+    #kcnav-drop-lab .drop-stage.scanning .radar-sweep { animation: kdl-scan .38s linear; }
+    #kcnav-drop-lab .stage-status { position: absolute; left: 1rem; top: .8rem; z-index: 4; color: var(--muted-foreground); font-size: .82rem; letter-spacing: .06em; }
+    #kcnav-drop-lab .stage-effects { position: absolute; inset: 0; z-index: 2; overflow: hidden; pointer-events: none; }
+    #kcnav-drop-lab .effect-flash { position: absolute; inset: -25%; opacity: 0; background: radial-gradient(circle at center, color-mix(in srgb, var(--primary) 72%, transparent) 0 4%, color-mix(in srgb, var(--accent) 42%, transparent) 18%, transparent 58%); }
+    #kcnav-drop-lab .effect-ring { position: absolute; left: 50%; top: 50%; width: 105px; aspect-ratio: 1; border: 2px solid color-mix(in srgb, var(--accent) 76%, transparent); border-radius: 50%; opacity: 0; transform: translate(-50%,-50%) scale(.3); }
+    #kcnav-drop-lab .effect-ring:nth-child(3) { border-style: double; }
+    #kcnav-drop-lab .effect-ring:nth-child(4) { border-color: color-mix(in srgb, var(--primary) 78%, transparent); }
+    #kcnav-drop-lab .spark { position: absolute; left: 50%; top: 50%; width: 7px; aspect-ratio: 1; opacity: 0; background: var(--primary); transform: translate(-50%,-50%) rotate(45deg); box-shadow: 0 0 10px color-mix(in srgb, var(--primary) 65%, transparent); }
+    #kcnav-drop-lab .spark:nth-child(5) { --tx:-175px; --ty:-105px; --delay:.03s; }
+    #kcnav-drop-lab .spark:nth-child(6) { --tx:-105px; --ty:-145px; --delay:.12s; }
+    #kcnav-drop-lab .spark:nth-child(7) { --tx:15px; --ty:-155px; --delay:.19s; }
+    #kcnav-drop-lab .spark:nth-child(8) { --tx:145px; --ty:-105px; --delay:.08s; }
+    #kcnav-drop-lab .spark:nth-child(9) { --tx:178px; --ty:8px; --delay:.17s; }
+    #kcnav-drop-lab .spark:nth-child(10) { --tx:128px; --ty:125px; --delay:.02s; }
+    #kcnav-drop-lab .spark:nth-child(11) { --tx:5px; --ty:155px; --delay:.14s; }
+    #kcnav-drop-lab .spark:nth-child(12) { --tx:-128px; --ty:120px; --delay:.2s; }
+    #kcnav-drop-lab .spark:nth-child(13) { --tx:-180px; --ty:25px; --delay:.1s; }
+    #kcnav-drop-lab .drop-card { width: min(250px, 73vw); min-height: 250px; display: grid; place-items: center; text-align: center; position: relative; z-index: 3; overflow: hidden; border: 1px solid var(--border); background: color-mix(in srgb, var(--card) 82%, transparent); box-shadow: 0 10px 24px color-mix(in srgb, var(--foreground) 14%, transparent); transform-origin: 50% 72%; }
+    #kcnav-drop-lab .drop-card.priority { border-color: var(--primary); box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 15%, transparent), 0 14px 30px color-mix(in srgb, var(--primary) 25%, transparent); }
+    #kcnav-drop-lab .drop-card.rare { border-color: var(--accent); }
+    #kcnav-drop-lab .drop-card.drawing { animation: kdl-shake .18s linear 2; }
+    #kcnav-drop-lab .drop-card.rare.reveal { animation: kdl-rare-card .82s cubic-bezier(.18,.8,.24,1); box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 32%, transparent), 0 14px 34px color-mix(in srgb, var(--accent) 32%, transparent); }
+    #kcnav-drop-lab .drop-card.priority.reveal { animation: kdl-priority-card 1.08s cubic-bezier(.18,.86,.22,1); }
+    #kcnav-drop-lab .drop-stage.reveal-rare::before { animation: kdl-stage-wash 1.15s ease-out; }
+    #kcnav-drop-lab .drop-stage.reveal-rare .effect-flash { animation: kdl-rare-flash .9s ease-out; }
+    #kcnav-drop-lab .drop-stage.reveal-rare .effect-ring:nth-child(2) { animation: kdl-ring 1.1s ease-out; }
+    #kcnav-drop-lab .drop-stage.reveal-rare .effect-ring:nth-child(3) { animation: kdl-ring 1.1s .12s ease-out; }
+    #kcnav-drop-lab .drop-stage.reveal-priority::before { animation: kdl-stage-wash 1.65s ease-out; }
+    #kcnav-drop-lab .drop-stage.reveal-priority .effect-flash { animation: kdl-priority-flash 1.2s ease-out; }
+    #kcnav-drop-lab .drop-stage.reveal-priority .effect-ring:nth-child(2) { animation: kdl-ring 1.5s ease-out; }
+    #kcnav-drop-lab .drop-stage.reveal-priority .effect-ring:nth-child(3) { animation: kdl-ring 1.5s .13s ease-out; }
+    #kcnav-drop-lab .drop-stage.reveal-priority .effect-ring:nth-child(4) { animation: kdl-ring 1.5s .26s ease-out; }
+    #kcnav-drop-lab .drop-stage.reveal-priority .spark { animation: kdl-spark 1.2s var(--delay) cubic-bezier(.12,.7,.2,1) both; }
+    #kcnav-drop-lab .drop-content { display: grid; justify-items: center; gap: .45rem; padding: .75rem 1rem 3.9rem; }
+    #kcnav-drop-lab .ship-image { width: 174px; height: 208px; object-fit: contain; filter: drop-shadow(0 6px 10px color-mix(in srgb, var(--foreground) 24%, transparent)); }
+    #kcnav-drop-lab .ship-placeholder { width: 150px; height: 190px; display: grid; place-items: center; color: var(--muted-foreground); border: 1px solid var(--border); background: color-mix(in srgb, var(--secondary) 45%, transparent); }
+    #kcnav-drop-lab .drop-label { color: var(--muted-foreground); letter-spacing: .14em; font-size: .8rem; }
+    #kcnav-drop-lab .drop-name { font-size: 1.65rem; font-weight: 500; line-height: 1.15; }
+    #kcnav-drop-lab .drop-note { color: var(--muted-foreground); font-size: .84rem; }
+    #kcnav-drop-lab .encounter-message { position: absolute; inset: auto 0 0; z-index: 4; display: grid; grid-template-columns: minmax(0,1fr) auto; gap: .12rem .8rem; align-items: end; padding: .55rem 1rem; border-top: 1px solid color-mix(in srgb, var(--primary) 35%, var(--border)); background: color-mix(in srgb, var(--card) 88%, transparent); backdrop-filter: blur(5px); }
+    #kcnav-drop-lab .encounter-message .drop-label { grid-column: 1; }
+    #kcnav-drop-lab .encounter-message .drop-name { grid-column: 1; }
+    #kcnav-drop-lab .encounter-message .drop-note { grid-column: 2; grid-row: 1 / 3; align-self: center; }
+    #kcnav-drop-lab .encounter-message.priority { border-top-color: var(--primary); box-shadow: 0 -8px 24px color-mix(in srgb, var(--primary) 16%, transparent); }
+    #kcnav-drop-lab .encounter-message.rare { border-top-color: var(--viz-series-2); }
+    #kcnav-drop-lab .quick-controls { display: grid; grid-template-columns: auto auto minmax(6rem, 1fr) auto; gap: .5rem; align-items: end; }
+    #kcnav-drop-lab .quick-status { color: var(--muted-foreground); font-size: .9rem; line-height: 1.5; }
+    #kcnav-drop-lab .settings-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .65rem; }
+    #kcnav-drop-lab .metric { display: grid; gap: .18rem; padding-bottom: .55rem; border-bottom: 1px solid var(--border); }
+    #kcnav-drop-lab .metric:last-child { border-bottom: 0; }
+    #kcnav-drop-lab .metric strong { font-size: 1.25rem; font-weight: 500; }
+    #kcnav-drop-lab .muted { color: var(--muted-foreground); }
+    #kcnav-drop-lab .target-box { display: grid; gap: .5rem; }
+    #kcnav-drop-lab .target-list { display: flex; flex-wrap: wrap; gap: .35rem; }
+    #kcnav-drop-lab .target-list .btn { padding-inline: .6rem; }
+    #kcnav-drop-lab .results { display: grid; gap: .55rem; }
+    #kcnav-drop-lab .results-head { display: flex; justify-content: space-between; gap: .7rem; align-items: center; }
+    #kcnav-drop-lab .section-heading { margin: 0; font-size: 1rem; font-weight: 500; }
+    #kcnav-drop-lab .session-summary { color: var(--muted-foreground); }
+    #kcnav-drop-lab .result-grid { display: flex; flex-wrap: wrap; gap: .4rem; }
+    #kcnav-drop-lab .result-cell { display: inline-flex; gap: .45rem; align-items: center; padding: .32rem .55rem; border-left: 3px solid var(--border); background: color-mix(in srgb, var(--secondary) 42%, transparent); }
+    #kcnav-drop-lab .result-cell.hit { border-left-color: var(--primary); background: color-mix(in srgb, var(--primary) 12%, transparent); }
+    #kcnav-drop-lab .result-cell strong { font-weight: 500; }
+    #kcnav-drop-lab .result-thumb { width: 34px; height: 42px; object-fit: contain; }
+    #kcnav-drop-lab .tier-mark { color: var(--muted-foreground); font-size: .78rem; }
+    #kcnav-drop-lab .recent { display: flex; flex-wrap: wrap; gap: .35rem; min-height: 2.2rem; align-items: center; }
+    #kcnav-drop-lab .recent-label { flex-basis: 100%; color: var(--muted-foreground); }
+    #kcnav-drop-lab .chip { padding: .28rem .45rem; border-left: 3px solid var(--border); background: color-mix(in srgb, var(--secondary) 40%, transparent); }
+    #kcnav-drop-lab .chip.priority { border-left-color: var(--primary); background: color-mix(in srgb, var(--primary) 11%, transparent); }
+    #kcnav-drop-lab .chip.rare { border-left-color: var(--accent); }
+    #kcnav-drop-lab details { border-top: 1px solid var(--border); padding-top: .72rem; }
+    #kcnav-drop-lab summary { cursor: pointer; font-weight: 500; }
+    #kcnav-drop-lab .detail-body { display: grid; gap: .75rem; padding-top: .75rem; }
+    #kcnav-drop-lab .form-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .55rem; }
+    #kcnav-drop-lab textarea { min-height: 170px; resize: vertical; }
+    #kcnav-drop-lab .parse-status { min-height: 1.2rem; color: var(--muted-foreground); }
+    #kcnav-drop-lab .warning { color: var(--destructive); }
+    #kcnav-drop-lab .table-wrap { overflow-x: auto; }
+    #kcnav-drop-lab table { width: 100%; border-collapse: collapse; text-align: left; }
+    #kcnav-drop-lab th, #kcnav-drop-lab td { padding: .4rem .35rem; border-bottom: 1px solid var(--border); white-space: nowrap; }
+    #kcnav-drop-lab th { color: var(--muted-foreground); font-weight: 500; }
+    #kcnav-drop-lab .tier-select { min-width: 6.3rem; }
+    #kcnav-drop-lab .log-list { display: grid; gap: .3rem; }
+    #kcnav-drop-lab .log-row { display: grid; grid-template-columns: minmax(9rem, 1.4fr) minmax(6rem, 1fr) auto auto; gap: .5rem; align-items: center; padding: .35rem 0; border-bottom: 1px solid var(--border); }
+    #kcnav-drop-lab .backup-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+    #kcnav-drop-lab .empty { color: var(--muted-foreground); }
+    #kcnav-drop-lab .save-status { color: var(--muted-foreground); }
+    #kcnav-drop-lab #clear-session[hidden] { display: none; }
+    #kcnav-drop-lab .tools-panel { margin-top: .2rem; }
+    #kcnav-drop-lab .confirm-dialog { max-width: min(28rem, calc(100% - 2rem)); }
+    #kcnav-drop-lab .confirm-dialog::backdrop { background: color-mix(in srgb, var(--background) 70%, transparent); }
+    #kcnav-drop-lab .confirm-content { display: grid; gap: .8rem; }
+    @keyframes kdl-shake { 25% { transform: translateX(-5px) rotate(-1deg); } 75% { transform: translateX(5px) rotate(1deg); } }
+    @keyframes kdl-scan { to { transform: translate(-50%,-50%) rotate(360deg); } }
+    @keyframes kdl-rare-card { 0% { opacity: 0; transform: translateY(22px) scale(.92); filter: brightness(1.8); } 42% { opacity: 1; transform: translateY(-5px) scale(1.025); } 100% { transform: translateY(0) scale(1); filter: brightness(1); } }
+    @keyframes kdl-priority-card { 0% { opacity: 0; transform: scale(.72) rotate(-2deg); filter: brightness(2.2); } 32% { opacity: 1; transform: scale(1.08) rotate(1deg); } 55% { transform: scale(.98) rotate(0); } 76% { transform: scale(1.025); } 100% { transform: scale(1); filter: brightness(1); } }
+    @keyframes kdl-stage-wash { 0% { opacity: 0; } 18% { opacity: .95; } 100% { opacity: 0; } }
+    @keyframes kdl-rare-flash { 0% { opacity: 0; transform: scale(.38) rotate(-8deg); } 24% { opacity: .85; } 100% { opacity: 0; transform: scale(1.15) rotate(6deg); } }
+    @keyframes kdl-priority-flash { 0% { opacity: 0; transform: scale(.2) rotate(-12deg); } 16% { opacity: 1; } 38% { opacity: .35; } 52% { opacity: .85; } 100% { opacity: 0; transform: scale(1.18) rotate(10deg); } }
+    @keyframes kdl-ring { 0% { opacity: 0; transform: translate(-50%,-50%) scale(.25); } 24% { opacity: .9; } 100% { opacity: 0; transform: translate(-50%,-50%) scale(4.8); } }
+    @keyframes kdl-spark { 0% { opacity: 0; transform: translate(-50%,-50%) rotate(45deg) scale(.2); } 20% { opacity: 1; } 72% { opacity: .8; } 100% { opacity: 0; transform: translate(calc(-50% + var(--tx)),calc(-50% + var(--ty))) rotate(225deg) scale(1.35); } }
+    @media (max-width: 650px) { #kcnav-drop-lab .drop-stage { min-height: 330px; } #kcnav-drop-lab .form-grid, #kcnav-drop-lab .settings-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 480px) { #kcnav-drop-lab .drop-stage { min-height: 310px; } #kcnav-drop-lab .drop-card { width: min(210px,68vw); min-height: 220px; } #kcnav-drop-lab .ship-image { width: 145px; height: 174px; } #kcnav-drop-lab .drop-content { padding-bottom: 3.7rem; } #kcnav-drop-lab .quick-controls { grid-template-columns: 1fr 1fr; } #kcnav-drop-lab #single-run, #kcnav-drop-lab #ten-run { grid-row: 1; } #kcnav-drop-lab .quick-controls .field { grid-column: 1; grid-row: 2; } #kcnav-drop-lab #batch-run { grid-column: 2; grid-row: 2; } #kcnav-drop-lab .form-grid, #kcnav-drop-lab .settings-grid, #kcnav-drop-lab .backup-grid { grid-template-columns: 1fr; } #kcnav-drop-lab .log-row { grid-template-columns: minmax(0,1fr) auto auto; } #kcnav-drop-lab .log-row .log-time { grid-column: 1 / -1; } #kcnav-drop-lab .encounter-message { grid-template-columns: 1fr; } #kcnav-drop-lab .encounter-message .drop-note { grid-column: 1; grid-row: auto; } }
+    @media (prefers-reduced-motion: reduce) { #kcnav-drop-lab .drop-card.drawing, #kcnav-drop-lab .drop-card.reveal, #kcnav-drop-lab .drop-stage::before, #kcnav-drop-lab .effect-flash, #kcnav-drop-lab .effect-ring, #kcnav-drop-lab .spark { animation: none !important; } }
+  </style>
+
+  <main class="app">
+    <h1 class="sr-only">ドロップシミュレーター</h1>
+    <div class="topbar">
+      <label class="field" for="profile-select"><span class="sr-only">海域</span><select class="form-select" id="profile-select" aria-label="海域"></select></label>
+    </div>
+
+    <div class="workspace"><section class="card drop-stage" id="drop-stage" aria-busy="false"><span class="stage-status" id="stage-status">判定待ち</span><span class="radar-sweep" aria-hidden="true"></span><div class="stage-effects" aria-hidden="true"><span class="effect-flash"></span><span class="effect-ring"></span><span class="effect-ring"></span><span class="effect-ring"></span><span class="spark"></span><span class="spark"></span><span class="spark"></span><span class="spark"></span><span class="spark"></span><span class="spark"></span><span class="spark"></span><span class="spark"></span><span class="spark"></span></div><div class="drop-card" id="drop-card"><div class="drop-content" id="drop-content"><span class="drop-label">DROP</span></div></div><div class="encounter-message" id="encounter-message"><span class="drop-label" id="message-label">索敵待機</span><span class="drop-name" id="message-name">周回を開始</span><span class="drop-note" id="message-note">KCNav実測データ</span></div></section></div>
+
+    <div class="quick-controls">
+      <button class="btn btn-block" id="single-run" type="button">1周</button>
+      <button class="btn btn-primary btn-block" id="ten-run" type="button">10周</button>
+      <label class="field" for="rounds"><span class="sr-only">指定周回数</span><input class="form-control" id="rounds" type="number" min="1" max="9999" value="20" inputmode="numeric" aria-label="指定周回数"></label>
+      <button class="btn btn-block" id="batch-run" type="button">指定周回</button>
+    </div>
+
+    <section class="results" aria-labelledby="results-heading">
+      <div class="results-head"><h2 class="section-heading" id="results-heading">レア成果</h2><button class="btn btn-ghost" id="clear-session" type="button" hidden>消去</button></div>
+      <div class="session-summary" id="session-summary">今回 0周</div>
+      <div class="result-grid" id="result-grid"><span class="empty">まだ周回していません</span></div>
+    </section>
+
+    <details class="tools-panel">
+      <summary>設定・記録</summary>
+      <div class="detail-body">
+        <div class="profile-meta" id="profile-meta"></div>
+        <div class="save-status" id="storage-status">この端末に自動保存</div>
+        <details>
+          <summary>抽選設定と確率</summary>
+          <div class="detail-body">
+            <div class="settings-grid">
+              <label class="field" for="rank-select"><span>勝利評価</span><select class="form-select" id="rank-select"></select></label>
+              <label class="field" for="goal-mode"><span>目標条件</span><select class="form-select" id="goal-mode"><option value="any">いずれか1隻</option><option value="all">すべて1隻以上</option></select></label>
+              <div class="metric"><span class="muted">目標達成確率</span><strong id="goal-probability">—</strong></div>
+              <div class="metric"><span class="muted">期待される目標艦数</span><strong id="expected-targets">—</strong></div>
+            </div>
+            <div class="quick-status" id="quick-status"></div>
+            <div class="target-box"><span>目標艦</span><div class="target-list" id="target-list"></div></div>
+          </div>
+        </details>
+
+        <details>
+          <summary>今回の全履歴</summary>
+          <div class="detail-body"><div class="recent" id="recent-results"><span class="empty">まだ周回していません</span></div></div>
+        </details>
+
+        <details>
+          <summary>実戦記録</summary>
+          <div class="detail-body">
+            <div class="controls">
+              <label class="field grow"><span>ドロップ艦</span><select class="form-select" id="log-ship"></select></label>
+              <label class="field"><span>評価</span><select class="form-select" id="log-rank"><option>S</option><option>A</option><option>B</option></select></label>
+              <button class="btn btn-primary" id="add-log" type="button">現在時刻で記録</button>
+              <button class="btn btn-ghost" id="clear-logs" type="button">実戦ログを全消去</button>
+            </div>
+            <p class="muted" id="log-summary"></p><div class="log-list" id="log-list"></div>
+          </div>
+        </details>
+
+        <details id="import-section">
+          <summary>KCNavから海域を登録</summary>
+          <div class="detail-body">
+            <div class="form-grid">
+              <label class="field"><span>プリセット名</span><input class="form-control" id="import-title" value="新しい掘り先"></label>
+              <label class="field"><span>海域</span><input class="form-control" id="import-map" placeholder="E4-2"></label>
+              <label class="field"><span>難易度</span><select class="form-select" id="import-difficulty"><option>甲</option><option>乙</option><option>丙</option><option>丁</option><option>-</option></select></label>
+              <label class="field"><span>マス</span><input class="form-control" id="import-node" placeholder="Z"></label>
+            </div>
+            <label class="field" for="kcnav-text"><span>KCNavコピーテキスト</span><textarea class="form-control" id="kcnav-text" placeholder="Indiana&#9;3.68%&#9;7/190&#9;S"></textarea></label>
+            <div class="inline-actions"><button class="btn" id="parse-kcnav" type="button">解析して確認</button><button class="btn btn-primary" id="save-import" type="button" disabled>プリセットとして保存</button></div>
+            <p class="parse-status" id="parse-status" role="status"></p>
+            <div class="table-wrap"><table><thead><tr><th>艦</th><th>率</th><th>件数</th><th>評価</th></tr></thead><tbody id="parse-preview"></tbody></table></div>
+          </div>
+        </details>
+
+        <details>
+          <summary>艦の格付け</summary>
+          <div class="detail-body"><div class="table-wrap"><table><thead><tr><th>艦</th><th>評価</th><th>率</th><th>件数</th><th>格付け</th></tr></thead><tbody id="drop-table"></tbody></table></div></div>
+        </details>
+
+        <details>
+          <summary>海域とバックアップ</summary>
+          <div class="detail-body">
+            <div class="inline-actions"><button class="btn" id="duplicate-profile" type="button">この海域を複製</button><button class="btn btn-ghost" id="delete-profile" type="button">この海域を削除</button></div>
+            <div class="backup-grid">
+              <div><button class="btn" id="export-json" type="button">JSONを書き出す</button></div>
+              <div><label class="field"><span>JSONを読み込む</span><input class="form-control" id="import-json-file" type="file" accept="application/json,.json"></label><button class="btn" id="import-json" type="button">読み込んで復元</button></div>
+            </div>
+          </div>
+        </details>
+      </div>
+    </details>
+    <div class="sr-only" id="app-status" role="status" aria-live="polite" aria-atomic="true"></div>
+    <dialog class="card confirm-dialog" id="confirm-dialog" aria-labelledby="confirm-heading" aria-describedby="confirm-message">
+      <div class="confirm-content">
+        <h2 class="section-heading" id="confirm-heading">確認</h2>
+        <p id="confirm-message"></p>
+        <div class="inline-actions"><button class="btn" id="confirm-cancel" type="button">キャンセル</button><button class="btn btn-primary" id="confirm-ok" type="button">実行</button></div>
+      </div>
+    </dialog>
+  </main>
+
+  <script>
+    (() => {
+      const root = document.getElementById('kcnav-drop-lab');
+      const $ = selector => root.querySelector(selector);
+      const $$ = selector => [...root.querySelectorAll(selector)];
+      const STORAGE_KEY = 'kcnav-drop-lab-v1';
+      const BACKUP_KEY = 'kcnav-drop-lab-before-restore';
+      const defaultImageCatalog = {
+        '蒼龍':'https://yksk.kancollewiki.net/w/images/thumb/e/e7/Ship_Card_Souryuu.png/218px-Ship_Card_Souryuu.png',
+        '赤城':'https://yksk.kancollewiki.net/w/images/thumb/0/0e/Ship_Card_Akagi.png/218px-Ship_Card_Akagi.png',
+        '那珂':'https://yksk.kancollewiki.net/w/images/thumb/4/47/Ship_Card_Naka.png/218px-Ship_Card_Naka.png',
+        '伊58':'https://yksk.kancollewiki.net/w/images/thumb/9/96/Ship_Card_I-58.png/218px-Ship_Card_I-58.png',
+        Indiana:'https://yksk.kancollewiki.net/w/images/thumb/b/b1/Ship_Card_Indiana.png/218px-Ship_Card_Indiana.png',
+        '衣笠':'https://yksk.kancollewiki.net/w/images/thumb/2/25/Ship_Card_Kinugasa.png/218px-Ship_Card_Kinugasa.png',
+        '鳳翔':'https://yksk.kancollewiki.net/w/images/thumb/7/71/Ship_Card_Houshou.png/218px-Ship_Card_Houshou.png',
+        '加賀':'https://yksk.kancollewiki.net/w/images/thumb/8/82/Ship_Card_Kaga.png/218px-Ship_Card_Kaga.png',
+        '鬼怒':'https://yksk.kancollewiki.net/w/images/thumb/8/83/Ship_Card_Kinu.png/218px-Ship_Card_Kinu.png',
+        '熊野':'https://yksk.kancollewiki.net/w/images/thumb/4/4e/Ship_Card_Kumano.png/218px-Ship_Card_Kumano.png',
+        '大淀':'https://yksk.kancollewiki.net/w/images/thumb/e/e2/Ship_Card_Ooyodo.png/218px-Ship_Card_Ooyodo.png',
+        '川内':'https://yksk.kancollewiki.net/w/images/thumb/2/24/Ship_Card_Sendai.png/218px-Ship_Card_Sendai.png',
+        '飛龍':'https://yksk.kancollewiki.net/w/images/thumb/9/9c/Ship_Card_Hiryuu.png/218px-Ship_Card_Hiryuu.png',
+        '北上':'https://yksk.kancollewiki.net/w/images/thumb/7/7b/Ship_Card_Kitakami.png/218px-Ship_Card_Kitakami.png',
+        '日向':'https://yksk.kancollewiki.net/w/images/thumb/7/7b/Ship_Card_Hyuuga.png/218px-Ship_Card_Hyuuga.png',
+        '伊13':'https://yksk.kancollewiki.net/w/images/thumb/4/49/Ship_Card_I-13.png/218px-Ship_Card_I-13.png',
+        '択捉':'https://yksk.kancollewiki.net/w/images/thumb/a/a7/Ship_Card_Etorofu.png/218px-Ship_Card_Etorofu.png',
+        '鈴谷':'https://yksk.kancollewiki.net/w/images/thumb/f/f7/Ship_Card_Suzuya.png/218px-Ship_Card_Suzuya.png',
+        '金剛':'https://yksk.kancollewiki.net/w/images/thumb/4/48/Ship_Card_Kongou.png/218px-Ship_Card_Kongou.png',
+        Wasp:'https://yksk.kancollewiki.net/w/images/thumb/4/4a/Ship_Card_Wasp.png/218px-Ship_Card_Wasp.png',
+        '最上':'https://yksk.kancollewiki.net/w/images/thumb/d/df/Ship_Card_Mogami.png/218px-Ship_Card_Mogami.png',
+        '長門':'https://yksk.kancollewiki.net/w/images/thumb/3/3e/Ship_Card_Nagato.png/218px-Ship_Card_Nagato.png',
+        '伊8':'https://yksk.kancollewiki.net/w/images/thumb/3/37/Ship_Card_I-8.png/218px-Ship_Card_I-8.png',
+        '時津風':'https://yksk.kancollewiki.net/w/images/thumb/0/0b/Ship_Card_Tokitsukaze.png/218px-Ship_Card_Tokitsukaze.png',
+        '福江':'https://yksk.kancollewiki.net/w/images/thumb/b/bd/Ship_Card_Fukae.png/218px-Ship_Card_Fukae.png',
+        Iowa:'https://yksk.kancollewiki.net/w/images/thumb/9/96/Ship_Card_Iowa.png/218px-Ship_Card_Iowa.png',
+        Intrepid:'https://yksk.kancollewiki.net/w/images/thumb/2/2a/Ship_Card_Intrepid.png/218px-Ship_Card_Intrepid.png',
+        Saratoga:'https://yksk.kancollewiki.net/w/images/thumb/9/97/Ship_Card_Saratoga.png/218px-Ship_Card_Saratoga.png',
+        Lexington:'https://yksk.kancollewiki.net/w/images/thumb/6/6a/Ship_Card_Lexington.png/218px-Ship_Card_Lexington.png',
+        '伊勢':'https://yksk.kancollewiki.net/w/images/thumb/9/9c/Ship_Card_Ise.png/218px-Ship_Card_Ise.png',
+        '速吸':'https://yksk.kancollewiki.net/w/images/thumb/9/9e/Ship_Card_Hayasui.png/218px-Ship_Card_Hayasui.png',
+        '妙高':'https://yksk.kancollewiki.net/w/images/thumb/e/ea/Ship_Card_Myoukou.png/218px-Ship_Card_Myoukou.png',
+        '青葉':'https://yksk.kancollewiki.net/w/images/thumb/a/ac/Ship_Card_Aoba.png/218px-Ship_Card_Aoba.png',
+        '球磨':'https://yksk.kancollewiki.net/w/images/thumb/8/8c/Ship_Card_Kuma.png/218px-Ship_Card_Kuma.png',
+        '榛名':'https://yksk.kancollewiki.net/w/images/thumb/f/fd/Ship_Card_Haruna.png/218px-Ship_Card_Haruna.png',
+        '由良':'https://yksk.kancollewiki.net/w/images/thumb/2/20/Ship_Card_Yura.png/218px-Ship_Card_Yura.png',
+        'South Dakota':'https://yksk.kancollewiki.net/w/images/thumb/3/34/Ship_Card_South_Dakota.png/218px-Ship_Card_South_Dakota.png',
+        '三隈':'https://yksk.kancollewiki.net/w/images/thumb/c/ca/Ship_Card_Mikuma.png/218px-Ship_Card_Mikuma.png',
+        '伊14':'https://yksk.kancollewiki.net/w/images/thumb/b/b8/Ship_Card_I-14.png/218px-Ship_Card_I-14.png',
+        '神通':'https://yksk.kancollewiki.net/w/images/thumb/3/3e/Ship_Card_Jintsuu.png/218px-Ship_Card_Jintsuu.png',
+        '白雲':'https://yksk.kancollewiki.net/w/images/thumb/e/e9/Ship_Card_Shirakumo.png/218px-Ship_Card_Shirakumo.png'
+      };
+      const seedDrops = [['蒼龍',12],['赤城',11],['那珂',9],['伊58',9],['Indiana',7],['衣笠',7],['鳳翔',7],['加賀',7],['鬼怒',7],['熊野',6],['大淀',6],['川内',6],['飛龍',6],['北上',5],['日向',5],['伊13',5],['択捉',5],['鈴谷',5],['金剛',5],['Wasp',4],['最上',4],['長門',4],['伊8',4],['時津風',4],['福江',4],['Lexington',4],['伊勢',3],['速吸',3],['妙高',3],['青葉',3],['Intrepid',3],['球磨',3],['榛名',3],['由良',2],['South Dakota',2],['三隈',2],['Saratoga',1],['Iowa',1],['伊14',1],['神通',1],['白雲',1]].map(([ship,count]) => ({ship,count,total:190,rate:count/190,rank:'S'}));
+      const seedLogs = [];
+      const defaultTiers = {Indiana:'priority',Wasp:'priority',Iowa:'priority',Intrepid:'rare',Saratoga:'rare',Lexington:'rare','South Dakota':'rare'};
+      const seedProfile = {id:'e3-4-kou-z',title:'E3-4甲 Z',event:'2026夏 前段',map:'E3-4',difficulty:'甲',node:'Z',source:'KCNav S勝利190件',updatedAt:'2026/07/15',drops:seedDrops,targets:['Indiana','Wasp','Iowa'],tiers:defaultTiers,logs:seedLogs};
+      const fallbackState = {version:2,activeId:seedProfile.id,profiles:[seedProfile]};
+      let state = loadState();
+      let parsedImport = null;
+      let sessions = {};
+      let animationQueue = [];
+      let pendingResults = [];
+      let timers = [];
+      let isAnimating = false;
+      let confirmResolver = null;
+      const reduceMotion = Boolean(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches);
+
+      function clone(value) { return JSON.parse(JSON.stringify(value)); }
+      function loadState() { try { const value = JSON.parse(localStorage.getItem(STORAGE_KEY)); return validateState(value) ? normalizeState(value) : clone(fallbackState); } catch { return clone(fallbackState); } }
+      function saveState() { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); $('#storage-status').textContent='この端末に保存済み'; return true; } catch { $('#storage-status').textContent='この端末に保存できません'; announce('データを保存できませんでした'); return false; } }
+      function validateState(value) { return Boolean(value && Array.isArray(value.profiles) && value.profiles.length && value.profiles.every(profile => profile.id && Array.isArray(profile.drops))); }
+      function normalizeState(value) { const next=clone(value); next.version=2; delete next.shipImages; next.profiles.forEach(profile=>{profile.targets=Array.isArray(profile.targets)?profile.targets:[];profile.tiers=profile.tiers||{};profile.logs=Array.isArray(profile.logs)?profile.logs.filter(log=>!/^seed-\d+$/.test(log.id||'')):[];}); return next; }
+      function activeProfile() { return state.profiles.find(profile => profile.id === state.activeId) || state.profiles[0]; }
+      function profileRanks(profile) { return [...new Set(profile.drops.map(row => row.rank))].sort((a,b) => ['S','A','B','C'].indexOf(a)-['S','A','B','C'].indexOf(b)); }
+      function tableFor(profile,rank) { return profile.drops.filter(row => row.rank === rank); }
+      function tierOf(profile,ship) { return profile.tiers?.[ship] || 'normal'; }
+      function tierLabel(tier) { return tier==='priority'?'最優先':tier==='rare'?'レア':'通常'; }
+      function imageFor(ship) { return defaultImageCatalog[ship] || ''; }
+      function formatPercent(value) { return `${(value*100).toFixed(2)}%`; }
+      function uid(prefix='id') { return `${prefix}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2,7)}`; }
+      function announce(message) { $('#app-status').textContent=''; requestAnimationFrame(()=>{$('#app-status').textContent=message;}); }
+      function askConfirmation(message,confirmLabel='実行') {
+        const dialog=$('#confirm-dialog');
+        $('#confirm-message').textContent=message;
+        $('#confirm-ok').textContent=confirmLabel;
+        if(confirmResolver)confirmResolver(false);
+        return new Promise(resolve=>{
+          confirmResolver=resolve;
+          if(typeof dialog.showModal==='function')dialog.showModal();
+          else dialog.setAttribute('open','');
+        });
+      }
+      function finishConfirmation(result) {
+        const dialog=$('#confirm-dialog');
+        if(dialog.open && typeof dialog.close==='function')dialog.close();
+        else dialog.removeAttribute('open');
+        const resolve=confirmResolver; confirmResolver=null; if(resolve)resolve(result);
+      }
+      function readRounds(normalize=false) { const text=$('#rounds').value.trim(); const raw=Number(text); const valid=text!=='' && Number.isInteger(raw) && raw>=1 && raw<=9999; if(valid)return raw; if(!normalize)return null; const value=Number.isFinite(raw)?Math.min(9999,Math.max(1,Math.round(raw))):20; $('#rounds').value=value; return value; }
+      function currentRank() { return $('#rank-select').value; }
+      function sessionKey() { return `${activeProfile().id}:${currentRank()}`; }
+      function currentSession() { const key=sessionKey(); if(!sessions[key])sessions[key]=[]; return sessions[key]; }
+      function activeTargets(profile=activeProfile(),rank=currentRank()) { const rows=tableFor(profile,rank); return profile.targets.filter(ship=>rows.some(row=>row.ship===ship)); }
+      function unionShips(profile) { return [...new Set(profile.drops.map(row => row.ship))].sort((a,b) => a.localeCompare(b,'ja')); }
+      function clearTimers() { timers.forEach(id=>clearTimeout(id)); timers=[]; }
+      function schedule(callback,delay) { const id=setTimeout(callback,delay); timers.push(id); return id; }
+      function setBusy(busy) { isAnimating=busy; $('#drop-stage').setAttribute('aria-busy',String(busy)); $('#single-run').disabled=busy; $('#ten-run').disabled=busy; $('#batch-run').disabled=busy || readRounds(false)===null; $('#profile-select').disabled=busy; $('#rank-select').disabled=busy; }
+      function preloadImportantImages(profile) { unionShips(profile).filter(ship=>tierOf(profile,ship)!=='normal').forEach(ship=>{const src=imageFor(ship);if(src){const preload=new Image();preload.src=src;}}); }
+
+      function renderProfileSelect() {
+        $('#profile-select').innerHTML = state.profiles.map(profile => `<option value="${escapeHtml(profile.id)}">${escapeHtml(profile.title)}</option>`).join('');
+        $('#profile-select').value = activeProfile().id;
+      }
+      function renderProfile() {
+        const profile = activeProfile();
+        renderProfileSelect();
+        $('#profile-meta').textContent=`${profile.source || '手入力'}${profile.updatedAt?`・${profile.updatedAt}更新`:''}`;
+        const ranks = profileRanks(profile);
+        const previous = currentRank();
+        $('#rank-select').innerHTML = ranks.map(rank => `<option>${escapeHtml(rank)}</option>`).join('');
+        $('#rank-select').value = ranks.includes(previous) ? previous : ranks[0];
+        renderTargets(); renderDropTable(); renderLogControls(); renderLogs(); resetStage(); updateMetrics(); renderSession();
+        $('#delete-profile').disabled = state.profiles.length <= 1;
+        preloadImportantImages(profile);
+      }
+      function renderTargets() {
+        const profile = activeProfile();
+        const rows = tableFor(profile,currentRank());
+        $('#target-list').innerHTML = rows.map(row => { const selected = profile.targets.includes(row.ship); return `<button class="btn${selected?' is-selected':''}" type="button" aria-pressed="${selected}" data-target="${escapeHtml(row.ship)}">${escapeHtml(row.ship)}</button>`; }).join('');
+        $$('[data-target]').forEach(button => button.addEventListener('click',() => { const ship=button.dataset.target; const index=profile.targets.indexOf(ship); if(index>=0) profile.targets.splice(index,1); else profile.targets.push(ship); saveState(); renderTargets(); updateMetrics(); renderSession(); }));
+      }
+      function renderDropTable() {
+        const profile=activeProfile(); const rows=profile.drops;
+        $('#drop-table').innerHTML = rows.map(row => `<tr><td>${escapeHtml(row.ship)}</td><td>${escapeHtml(row.rank)}</td><td>${formatPercent(row.rate)}</td><td>${row.count}/${row.total}</td><td><select class="form-select tier-select" aria-label="${escapeHtml(row.ship)}の格付け" data-tier="${escapeHtml(row.ship)}"><option value="priority">最優先</option><option value="rare">レア</option><option value="normal">通常</option></select></td></tr>`).join('');
+        $$('[data-tier]').forEach(select => { select.value=tierOf(profile,select.dataset.tier); select.addEventListener('change',() => { profile.tiers[select.dataset.tier]=select.value; $$('[data-tier]').filter(peer=>peer.dataset.tier===select.dataset.tier).forEach(peer=>peer.value=select.value); saveState(); renderSession(); preloadImportantImages(profile); }); });
+      }
+      function renderLogControls() { const profile=activeProfile(); $('#log-ship').innerHTML=unionShips(profile).map(ship=>`<option>${escapeHtml(ship)}</option>`).join(''); }
+      function renderLogs() {
+        const profile=activeProfile(); const logs=profile.logs || []; const rankCounts={}; logs.forEach(log=>rankCounts[log.rank]=(rankCounts[log.rank]||0)+1);
+        $('#log-summary').textContent = `実戦記録 ${logs.length}件　${Object.entries(rankCounts).map(([rank,count])=>`${rank} ${count}`).join(' / ')}`;
+        $('#log-list').innerHTML = logs.length ? logs.slice(-50).reverse().map(log=>`<div class="log-row"><span class="log-time muted">${escapeHtml(log.time)}</span><span class="chip ${tierOf(profile,log.ship)}">${escapeHtml(log.ship)}</span><span>${escapeHtml(log.rank)}</span><button class="btn btn-ghost" type="button" data-delete-log="${escapeHtml(log.id)}">削除</button></div>`).join('')+(logs.length>50?'<span class="muted">最新50件を表示しています</span>':'') : '<span class="empty">記録はありません</span>';
+        $$('[data-delete-log]').forEach(button=>button.addEventListener('click',()=>{profile.logs=logs.filter(log=>log.id!==button.dataset.deleteLog);saveState();renderLogs();}));
+      }
+      function updateMetrics() {
+        const profile=activeProfile(); const rows=tableFor(profile,currentRank()); const rounds=readRounds(false); const targets=activeTargets(profile,currentRank()); const probabilities=targets.map(ship=>rows.find(row=>row.ship===ship).rate); const sum=probabilities.reduce((a,b)=>a+b,0); const mode=$('#goal-mode').value;
+        $('#batch-run').disabled=isAnimating || rounds===null;
+        if(rounds===null){$('#goal-probability').textContent='周回数を確認';$('#expected-targets').textContent='—';$('#quick-status').textContent='周回数を1〜9999で入力してください';return;}
+        let chance=0;
+        const tooManyForAll=mode==='all' && targets.length>12;
+        if(targets.length && !tooManyForAll) chance = mode==='any' ? 1-(1-sum)**rounds : probabilityAll(probabilities,rounds);
+        $('#goal-probability').textContent=!targets.length ? '目標艦を選択' : tooManyForAll ? 'すべて条件は12艦まで' : formatPercent(chance);
+        $('#expected-targets').textContent=targets.length ? `${(rounds*sum).toFixed(2)}隻` : '—';
+        const condition=mode==='any'?`${targets.length}隻のいずれか`:`${targets.length}隻すべて`;
+        $('#quick-status').textContent=!targets.length?`${currentRank()}勝利・目標艦を設定してください`:tooManyForAll?`${currentRank()}勝利・すべて条件は12艦まで`:`${currentRank()}勝利・${rounds}周で${condition}を入手：${formatPercent(chance)}`;
+      }
+      function probabilityAll(probabilities,rounds) { let result=0; const size=1<<probabilities.length; for(let mask=0;mask<size;mask++){let excluded=0,bits=0;for(let i=0;i<probabilities.length;i++){if(mask&(1<<i)){excluded+=probabilities[i];bits++;}}result+=(bits%2?-1:1)*(1-excluded)**rounds;}return Math.max(0,Math.min(1,result)); }
+      function drawOne() {
+        const rows=tableFor(activeProfile(),currentRank()); let cursor=0; const wheel=rows.map(row=>({...row,limit:cursor+=row.rate})); const roll=Math.random(); return wheel.find(row=>roll<row.limit) || {ship:'ドロップなし・その他',rate:Math.max(0,1-cursor),rank:currentRank(),count:0,total:rows[0]?.total||0};
+      }
+      function run(count) {
+        if(isAnimating || !count)return;
+        pendingResults=[]; for(let i=0;i<count;i++)pendingResults.push(drawOne());
+        const highlighted=pendingResults.filter(row=>tierOf(activeProfile(),row.ship)==='priority').concat(pendingResults.filter(row=>tierOf(activeProfile(),row.ship)==='rare'));
+        animationQueue=(highlighted.length?highlighted:[pendingResults[pendingResults.length-1]]).slice(0,6);
+        setBusy(true); $('#stage-status').textContent=count>1?'一括抽選中…':'索敵中…'; playNextDrop();
+      }
+      function playNextDrop() { if(!animationQueue.length){finishRun();return;} animateDrop(animationQueue.shift()); }
+      function animateDrop(row) { clearTimers(); $('#drop-stage').classList.remove('reveal-rare','reveal-priority'); $('#drop-stage').classList.add('scanning'); $('#drop-card').className='drop-card drawing'; $('#stage-status').textContent='ドロップ確認中…'; $('#message-label').textContent='CONTACT'; $('#message-name').textContent='艦影を確認中'; $('#message-note').textContent='索敵継続'; schedule(()=>showDrop(row),380); }
+      function showDrop(row) {
+        const profile=activeProfile(); const tier=tierOf(profile,row.ship); const image=imageFor(row.ship); const label=tier==='priority'?'最優先艦・邂逅！':tier==='rare'?'RARE DROP':'DROP';
+        $('#drop-stage').classList.remove('scanning'); $('#drop-card').className=`drop-card ${tier}${tier==='normal'?'':' reveal'}`; $('#drop-stage').classList.toggle('reveal-rare',tier==='rare'); $('#drop-stage').classList.toggle('reveal-priority',tier==='priority'); $('#stage-status').textContent=tier==='priority'?'最優先艦、邂逅成功！':tier==='rare'?'レア艦を発見！':'戦闘終了';
+        $('#drop-content').innerHTML=image?`<img class="ship-image" src="${escapeHtml(image)}" alt="">`:'<div class="ship-placeholder" aria-hidden="true">艦</div>';
+        $('#encounter-message').className=`encounter-message ${tier}`; $('#message-label').textContent=label; $('#message-name').textContent=row.ship; $('#message-note').textContent=`${formatPercent(row.rate||0)}・${row.rank||''}勝利`;
+        const dropImage=$('#drop-content img'); if(dropImage) dropImage.addEventListener('error',()=>{dropImage.replaceWith(Object.assign(document.createElement('div'),{className:'ship-placeholder',textContent:'艦'}));},{once:true});
+        announce(`${row.ship}、${tierLabel(tier)}艦を獲得`);
+        schedule(playNextDrop,reduceMotion?120:tier==='priority'?1550:tier==='rare'?1150:650);
+      }
+      function finishRun() { clearTimers(); const session=currentSession(); session.push(...pendingResults); const total=pendingResults.length; const priority=pendingResults.filter(row=>tierOf(activeProfile(),row.ship)==='priority').length; const rare=pendingResults.filter(row=>tierOf(activeProfile(),row.ship)==='rare').length; pendingResults=[]; animationQueue=[]; setBusy(false); renderSession(); announce(`${total}周の抽選完了。最優先${priority}隻、レア${rare}隻`); }
+      function resetStage() { clearTimers(); pendingResults=[]; animationQueue=[]; setBusy(false); $('#drop-stage').classList.remove('reveal-rare','reveal-priority','scanning'); $('#drop-card').className='drop-card'; $('#stage-status').textContent='判定待ち'; $('#drop-content').innerHTML='<span class="drop-label">DROP</span>'; $('#encounter-message').className='encounter-message'; $('#message-label').textContent='索敵待機'; $('#message-name').textContent='周回を開始'; $('#message-note').textContent='KCNav実測データ'; }
+      function renderSession() {
+        const profile=activeProfile(); const session=currentSession(); const priorityCount=session.filter(row=>tierOf(profile,row.ship)==='priority').length; const rareCount=session.filter(row=>tierOf(profile,row.ship)==='rare').length; const normalCount=session.length-priorityCount-rareCount;
+        $('#session-summary').textContent=`今回 ${session.length}周・最優先 ${priorityCount}隻・レア ${rareCount}隻`;
+        const important=[...new Set(session.filter(row=>tierOf(profile,row.ship)!=='normal').map(row=>row.ship))];
+        $('#result-grid').innerHTML=important.length?important.map(ship=>{const count=session.filter(row=>row.ship===ship).length;const tier=tierOf(profile,ship);const image=imageFor(ship);return `<div class="result-cell hit">${image?`<img class="result-thumb" src="${escapeHtml(image)}" alt="">`:''}<span>${escapeHtml(ship)} <small class="tier-mark">${tierLabel(tier)}</small></span><strong>${count}</strong></div>`;}).join(''):session.length?'<span class="empty">レア艦なし</span>':'<span class="empty">まだ周回していません</span>';
+        $('#recent-results').innerHTML=session.length?`<span class="recent-label">直近${Math.min(8,session.length)}件</span>`+session.slice(-8).reverse().map(row=>{const tier=tierOf(profile,row.ship);return `<span class="chip ${tier}">${tier!=='normal'?`<small>${tierLabel(tier)}</small> `:''}${escapeHtml(row.ship)}</span>`;}).join(''):'<span class="empty">まだ周回していません</span>';
+        $('#clear-session').hidden=!session.length;
+      }
+
+      function parseKCNav(text) {
+        const rows=[]; const errors=[]; const ignored=[]; let inputLines=0;
+        text.split(/\r?\n/).forEach((raw,index)=>{
+          const line=raw.trim(); if(!line || /^(戦闘評価|艦名|名前)/.test(line)) return;
+          inputLines++;
+          const match=line.match(/^(.+?)\s+(\d+(?:\.\d+)?)%\s+(\d+)\s*\/\s*(\d+)\s+([SABCDEF])(?:\s|$)/i);
+          if(!match) { ignored.push(index+1); return; }
+          const [,ship,rateText,countText,totalText,rankText]=match; const count=Number(countText),total=Number(totalText),shown=Number(rateText)/100,computed=count/total;
+          if(!ship || !total) { errors.push(`${index+1}行目を読み取れません`); return; }
+          rows.push({ship:ship.trim(),count,total,rate:computed,shownRate:shown,rank:rankText.toUpperCase()});
+          if(Math.abs(shown-computed)>.0006) errors.push(`${ship}: 表示率と件数が一致しません`);
+        });
+        if(!rows.length) errors.push('KCNavのドロップ行を検出できませんでした');
+        const duplicateKeys=new Set(); rows.forEach(row=>{const key=`${row.rank}:${row.ship}`;if(duplicateKeys.has(key))errors.push(`${row.ship}（${row.rank}）が重複しています`);duplicateKeys.add(key);});
+        [...new Set(rows.map(row=>row.rank))].forEach(rank=>{const group=rows.filter(row=>row.rank===rank);const totals=[...new Set(group.map(row=>row.total))];const sum=group.reduce((value,row)=>value+row.rate,0);if(totals.length>1)errors.push(`${rank}評価の母数が複数あります`);if(sum>1.001)errors.push(`${rank}評価の合計率が100%を超えています`);});
+        return {rows,errors,ignored,inputLines};
+      }
+      function renderParsePreview() {
+        $('#parse-preview').innerHTML=parsedImport?.rows.map(row=>`<tr><td>${escapeHtml(row.ship)}</td><td>${formatPercent(row.rate)}</td><td>${row.count}/${row.total}</td><td>${row.rank}</td></tr>`).join('')||'';
+        const ranks=parsedImport?.rows ? [...new Set(parsedImport.rows.map(row=>row.rank))].map(rank=>{const group=parsedImport.rows.filter(row=>row.rank===rank);return `${rank}: ${group[0].total}件・${group.length}艦`;}).join(' / ') : '';
+        const errors=parsedImport?.errors||[]; const ignored=parsedImport?.ignored||[]; const summary=parsedImport?`入力${parsedImport.inputLines}行・解析${parsedImport.rows.length}行・無視${ignored.length}行` : ''; $('#parse-status').className=`parse-status${errors.length||ignored.length?' warning':''}`; $('#parse-status').textContent=errors.length?`${summary}　${errors.join(' / ')}`:ignored.length?`${summary}　無視した行: ${ignored.join(', ')}`:`解析成功　${summary}　${ranks}`; $('#save-import').disabled=!parsedImport?.rows.length || errors.some(error=>/検出|重複|読み取れません|母数が複数|100%を超え/.test(error));
+      }
+      function saveImportedProfile() {
+        if(!parsedImport?.rows.length) return;
+        const ships=[...new Set(parsedImport.rows.map(row=>row.ship))]; const knownTiers=Object.fromEntries(ships.filter(ship=>defaultTiers[ship]).map(ship=>[ship,defaultTiers[ship]])); const knownTargets=ships.filter(ship=>knownTiers[ship]==='priority');
+        const title=$('#import-title').value.trim()||'新しい掘り先'; const profile={id:uid('profile'),title,event:'',map:$('#import-map').value.trim(),difficulty:$('#import-difficulty').value,node:$('#import-node').value.trim(),source:'KCNav貼り付け',updatedAt:new Date().toLocaleDateString('ja-JP'),drops:parsedImport.rows.map(({shownRate,...row})=>row),targets:knownTargets,tiers:knownTiers,logs:[]};
+        state.profiles.push(profile); state.activeId=profile.id; saveState(); parsedImport=null; $('#kcnav-text').value=''; $('#parse-preview').innerHTML=''; $('#parse-status').textContent='登録しました'; $('#save-import').disabled=true; renderProfile(); $('#import-section').open=false; announce(`${title}を登録しました`);
+      }
+      function duplicateProfile() { const source=activeProfile(); const copy=clone(source); copy.id=uid('profile'); copy.title=`${source.title} コピー`; copy.logs=[]; state.profiles.push(copy); state.activeId=copy.id; saveState(); renderProfile(); announce(`${copy.title}を作成しました`); }
+      async function deleteProfile() { if(state.profiles.length<=1)return; const profile=activeProfile(); if(!await askConfirmation(`海域「${profile.title}」を削除します。実戦ログ ${profile.logs?.length||0}件も削除されます。`,'海域を削除'))return; const index=state.profiles.findIndex(item=>item.id===profile.id); state.profiles.splice(index,1); Object.keys(sessions).filter(key=>key.startsWith(`${profile.id}:`)).forEach(key=>delete sessions[key]); state.activeId=state.profiles[Math.max(0,index-1)].id; saveState(); renderProfile(); announce(`${profile.title}を削除しました`); }
+      function addLog() { const profile=activeProfile(); const ship=$('#log-ship').value; const rank=$('#log-rank').value; profile.logs=profile.logs||[]; profile.logs.push({id:uid('log'),ship,rank,time:new Date().toLocaleString('ja-JP')}); saveState(); renderLogs(); announce(`${ship}、${rank}勝利として記録しました`); }
+      async function clearLogs() { const profile=activeProfile(); const count=profile.logs?.length||0; if(!count)return; if(!await askConfirmation(`海域「${profile.title}」の実戦ログ ${count}件をすべて消去します。`,'ログを消去'))return; profile.logs=[]; saveState(); renderLogs(); announce('実戦ログを消去しました'); }
+      async function clearCurrentSession() { const session=currentSession(); if(!session.length){announce('消去するシミュレーション結果はありません');return;} if(!await askConfirmation(`現在のシミュレーション結果 ${session.length}周分を消去します。`,'結果を消去'))return; sessions[sessionKey()]=[]; renderSession(); resetStage(); announce('現在のシミュレーション結果を消去しました'); }
+      function exportJSON() { const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'}); const url=URL.createObjectURL(blob); const link=document.createElement('a'); link.href=url; link.download=`kcnav-drop-lab-${new Date().toISOString().slice(0,10)}.json`; link.click(); setTimeout(()=>URL.revokeObjectURL(url),1000); }
+      async function importJSON() { const file=$('#import-json-file').files[0]; if(!file)return; const value=JSON.parse(await file.text()); if(!validateState(value))throw new Error('対応するバックアップではありません'); if(!await askConfirmation('現在の全海域と実戦ログを、このバックアップで置き換えます。','復元する'))return; try{localStorage.setItem(BACKUP_KEY,JSON.stringify(state));}catch{} state=normalizeState(value); state.activeId=state.profiles.some(profile=>profile.id===state.activeId)?state.activeId:state.profiles[0].id; sessions={}; saveState(); renderProfile(); announce('バックアップから復元しました'); }
+      function escapeHtml(value) { return String(value??'').replace(/[&<>'"]/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char])); }
+
+      $('#profile-select').addEventListener('change',event=>{state.activeId=event.target.value;saveState();renderProfile();});
+      $('#duplicate-profile').addEventListener('click',duplicateProfile); $('#delete-profile').addEventListener('click',deleteProfile);
+      $('#rank-select').addEventListener('change',()=>{renderTargets();renderLogControls();renderDropTable();updateMetrics();renderSession();resetStage();});
+      $('#rounds').addEventListener('input',updateMetrics); $('#rounds').addEventListener('blur',()=>{readRounds(true);updateMetrics();}); $('#goal-mode').addEventListener('change',updateMetrics);
+      $('#single-run').addEventListener('click',()=>run(1)); $('#ten-run').addEventListener('click',()=>run(10)); $('#batch-run').addEventListener('click',()=>{const rounds=readRounds(true);updateMetrics();run(rounds);}); $('#clear-session').addEventListener('click',clearCurrentSession);
+      $('#parse-kcnav').addEventListener('click',()=>{parsedImport=parseKCNav($('#kcnav-text').value);renderParsePreview();}); $('#save-import').addEventListener('click',saveImportedProfile);
+      $('#add-log').addEventListener('click',addLog); $('#clear-logs').addEventListener('click',clearLogs);
+      $('#export-json').addEventListener('click',exportJSON); $('#import-json').addEventListener('click',()=>importJSON().catch(error=>{$('#storage-status').textContent=error.message;announce(error.message);}));
+      $('#confirm-cancel').addEventListener('click',()=>finishConfirmation(false)); $('#confirm-ok').addEventListener('click',()=>finishConfirmation(true)); $('#confirm-dialog').addEventListener('cancel',event=>{event.preventDefault();finishConfirmation(false);});
+      renderProfile();
+    })();
+  </script>
+</div>

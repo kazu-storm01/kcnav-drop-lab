@@ -1,0 +1,13 @@
+{
+  "name": "kcnav-drop-lab",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "node scripts/check-public.mjs",
+    "test": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.61.1"
+  }
+}

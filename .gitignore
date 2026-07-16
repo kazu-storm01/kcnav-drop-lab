@@ -1,0 +1,19 @@
+# Codexの作業・添付ファイル
+.codex-remote-attachments/
+work/
+
+# 旧版と一時成果物
+outputs/e3-4-z-drop-simulator.html
+.codex/visualizations/2026/07/15/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.tmp
+*.bak
+
+# Node / Playwright
+node_modules/
+playwright-report/
+test-results/
+.playwright-cli/
