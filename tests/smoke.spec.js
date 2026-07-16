@@ -82,6 +82,20 @@ test('a KCNav preset can be edited and resolves an unbundled ship image', async 
     'src',
     /\/0597_7129\.png$/,
   );
+  await expect(app.locator('#drop-stage')).toHaveClass(/reveal-rare/);
+  await expect(app.locator('#drop-card')).toHaveClass(/rare reveal/);
+
+  await app.getByLabel('Atlantaの格付け').selectOption('priority');
+  await app.getByRole('button', { name: '1周', exact: true }).click();
+  await expect(app.locator('#drop-stage')).toHaveClass(/priority-suspense/);
+  await expect(app.locator('#drop-stage')).toHaveClass(/reveal-priority/);
+  await expect(app.locator('#drop-card')).toHaveClass(/priority reveal/);
+
+  await app.getByRole('button', { name: '10周', exact: true }).click();
+  await expect(app.locator('#drop-stage')).toHaveClass(/compact-priority/, {
+    timeout: 4000,
+  });
+  await expect(app.locator('#drop-card')).toHaveClass(/priority reveal compact/);
 });
 
 test('the factory preset can be edited and the last preset can be deleted', async ({
