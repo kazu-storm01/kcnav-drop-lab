@@ -36,11 +36,11 @@ test('a KCNav preset can be edited and resolves an unbundled ship image', async 
     (route) =>
       route.fulfill({
         contentType: 'application/json',
-        body: JSON.stringify([{ id: 421, name: '秋月' }]),
+        body: JSON.stringify([{ id: 597, name: 'Atlanta' }]),
       }),
   );
   await page.route(
-    'https://raw.githubusercontent.com/KC3Kai/KC3Kai/master/src/assets/img/ships/421.png',
+    'https://w01y.kancolle-server.com/kcs2/resources/ship/card/0597_7129.png',
     (route) =>
       route.fulfill({
         contentType: 'image/png',
@@ -57,7 +57,7 @@ test('a KCNav preset can be edited and resolves an unbundled ship image', async 
   await app.getByText('設定・記録', { exact: true }).click();
   await app.getByText('KCNavから海域を登録', { exact: true }).click();
   await app.locator('#import-title').fill('自動画像テスト');
-  await app.locator('#kcnav-text').fill('秋月\t100.00%\t1/1\tS');
+  await app.locator('#kcnav-text').fill('Atlanta\t100.00%\t1/1\tS');
   await app.getByRole('button', { name: '解析して確認' }).click();
   await app
     .getByRole('button', { name: '新規プリセットとして保存' })
@@ -69,17 +69,41 @@ test('a KCNav preset can be edited and resolves an unbundled ship image', async 
   );
 
   await app.getByText('海域とバックアップ', { exact: true }).click();
-  await app.locator('#edit-title').fill('秋月掘り');
+  await app.locator('#edit-title').fill('Atlanta掘り');
   await app.locator('#edit-map').fill('E9-1');
   await app.locator('#edit-node').fill('X');
   await app.getByRole('button', { name: '設定を保存' }).click();
-  await expect(app.locator('#profile-select')).toContainText('秋月掘り');
+  await expect(app.locator('#profile-select')).toContainText('Atlanta掘り');
 
   await app.getByText('艦の格付け', { exact: true }).click();
-  await app.getByLabel('秋月の格付け').selectOption('rare');
+  await app.getByLabel('Atlantaの格付け').selectOption('rare');
   await app.getByRole('button', { name: '1周', exact: true }).click();
   await expect(app.locator('#drop-content img')).toHaveAttribute(
     'src',
-    /\/421\.png$/,
+    /\/0597_7129\.png$/,
   );
+});
+
+test('the factory preset can be edited and the last preset can be deleted', async ({
+  page,
+}) => {
+  await page.goto('/outputs/kcnav-drop-lab.html');
+  const app = page.frameLocator('iframe[title="Kcnav Drop Lab"]');
+
+  await app.getByText('設定・記録', { exact: true }).click();
+  await app.getByText('海域とバックアップ', { exact: true }).click();
+  await app.locator('#edit-title').fill('編集した初期プリセット');
+  await app.getByRole('button', { name: '設定を保存' }).click();
+  await expect(app.locator('#profile-select')).toContainText(
+    '編集した初期プリセット',
+  );
+
+  await app.getByRole('button', { name: 'このプリセットを削除' }).click();
+  await app
+    .getByRole('button', { name: 'プリセットを削除', exact: true })
+    .click();
+  await expect(app.locator('#profile-select')).toContainText(
+    '未設定プリセット',
+  );
+  await expect(app.getByRole('button', { name: '1周', exact: true })).toBeDisabled();
 });

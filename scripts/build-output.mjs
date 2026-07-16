@@ -36,7 +36,11 @@ function allowImageDataHosts(html) {
   return html
     .replaceAll(
       'img-src blob: data: https://yksk.kancollewiki.net',
+      'img-src blob: data: https://w01y.kancolle-server.com https://raw.githubusercontent.com https://yksk.kancollewiki.net',
+    )
+    .replaceAll(
       'img-src blob: data: https://raw.githubusercontent.com https://yksk.kancollewiki.net',
+      'img-src blob: data: https://w01y.kancolle-server.com https://raw.githubusercontent.com https://yksk.kancollewiki.net',
     )
     .replaceAll(
       'connect-src blob: data:;',
