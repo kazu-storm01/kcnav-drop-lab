@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "build": "node scripts/build-output.mjs",
     "check": "node scripts/check-public.mjs",
     "test": "playwright test"
   },
