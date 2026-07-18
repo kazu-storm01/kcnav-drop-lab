@@ -126,6 +126,7 @@ test('public app starts without seeded battle logs and can simulate one run', as
   await expect(app.locator('#rounds-error')).toBeHidden();
   await app.getByText('その他…', { exact: true }).click();
 
+  await app.getByText('詳しい確率', { exact: true }).click();
   await app.locator('#rounds-chips [data-rounds="50"]').click();
   await expect(app.locator('#goal-probability-label')).toHaveText(
     '50周で目標達成',
@@ -138,11 +139,10 @@ test('public app starts without seeded battle logs and can simulate one run', as
     '20周で目標達成',
   );
 
-  await app.getByText('詳しい確率', { exact: true }).click();
   await expect(app.locator('#rounds-half')).toHaveText('11周');
   await expect(app.locator('#rounds-ninety')).toHaveText('36周');
 
-  await app.getByRole('button', { name: '編集', exact: true }).click();
+  await app.getByRole('button', { name: '目標を編集', exact: true }).click();
   const indianaTarget = app.locator('.target-item').filter({ hasText: 'Indiana' });
   const indianaObtained = indianaTarget.getByRole('checkbox', {
     name: 'Indianaを入手済みにする',
@@ -169,7 +169,7 @@ test('public app starts without seeded battle logs and can simulate one run', as
     .click();
 
   await app.getByRole('tab', { name: '実戦記録' }).click();
-  await expect(app.locator('#goal-probability')).toBeVisible();
+  await expect(app.locator('#hero-statement')).toBeVisible();
   await expect(app.getByText('実戦記録 0件', { exact: true })).toBeVisible();
   await expect(app.getByText('記録はありません', { exact: true })).toBeVisible();
   await expect(app.locator('#log-analysis-wrap')).toBeHidden();

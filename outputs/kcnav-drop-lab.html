@@ -788,9 +788,7 @@ html&gt;body{padding:0}&lt;/style&gt;
     #kcnav-drop-lab .mode-switch { display: grid; grid-template-columns: 1fr 1fr; gap: .35rem; padding: .25rem; background: color-mix(in srgb, var(--secondary) 58%, transparent); }
     #kcnav-drop-lab .mode-switch .btn { border-color: transparent; }
     #kcnav-drop-lab .mode-switch .btn[aria-selected=&quot;true&quot;] { color: var(--primary-foreground); border-color: var(--primary); background: var(--primary); }
-    #kcnav-drop-lab .context-bar { display: grid; grid-template-columns: minmax(7rem,.7fr) minmax(0,1.3fr); gap: .55rem; align-items: end; padding: .65rem .75rem; }
-    #kcnav-drop-lab .context-targets { display: flex; gap: .55rem; align-items: center; justify-content: space-between; min-width: 0; }
-    #kcnav-drop-lab .context-targets strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    #kcnav-drop-lab .hero-row { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: .5rem; align-items: center; }
     #kcnav-drop-lab .target-panel:not([open]) { display: none; }
     #kcnav-drop-lab .mode-panel { display: grid; gap: .8rem; }
     #kcnav-drop-lab .mode-panel[hidden], #kcnav-drop-lab .results[hidden], #kcnav-drop-lab .import-confirmation[hidden] { display: none; }
@@ -950,14 +948,13 @@ html&gt;body{padding:0}&lt;/style&gt;
     @keyframes kdl-ring { 0% { opacity: 0; transform: translate(-50%,-50%) scale(.25); } 24% { opacity: .9; } 100% { opacity: 0; transform: translate(-50%,-50%) scale(4.8); } }
     @keyframes kdl-spark { 0% { opacity: 0; transform: translate(-50%,-50%) rotate(45deg) scale(.2); } 20% { opacity: 1; } 72% { opacity: .8; } 100% { opacity: 0; transform: translate(calc(-50% + var(--tx)),calc(-50% + var(--ty))) rotate(225deg) scale(1.35); } }
     @media (max-width: 650px) { #kcnav-drop-lab .drop-stage { min-height: 240px; } #kcnav-drop-lab .form-grid, #kcnav-drop-lab .settings-grid { grid-template-columns: 1fr 1fr; } #kcnav-drop-lab .target-list { grid-template-columns: 1fr; } }
-    @media (max-width: 480px) { #kcnav-drop-lab .app { gap: .75rem; } #kcnav-drop-lab .onboarding { grid-template-columns: 1fr; } #kcnav-drop-lab .onboarding .inline-actions { grid-column: 1; grid-row: auto; } #kcnav-drop-lab .context-bar { grid-template-columns: 6.5rem minmax(0,1fr); } #kcnav-drop-lab .drop-stage { min-height: 225px; } #kcnav-drop-lab .drop-card { width: min(190px,62vw); min-height: 190px; } #kcnav-drop-lab .drop-card.priority { width: min(210px,68vw); min-height: 210px; } #kcnav-drop-lab .ship-image { width: 125px; height: 150px; } #kcnav-drop-lab .drop-card.priority .ship-image { width: 140px; height: 164px; } #kcnav-drop-lab .drop-content { padding-bottom: 3.5rem; } #kcnav-drop-lab .quick-controls { grid-template-columns: .85fr 1.2fr 1fr; } #kcnav-drop-lab .quick-controls .btn { min-height: 44px; padding-inline: .45rem; } #kcnav-drop-lab .primary-metrics { grid-template-columns: 1fr 1fr; } #kcnav-drop-lab .primary-metrics .metric strong { font-size: 1.05rem; } #kcnav-drop-lab .form-grid, #kcnav-drop-lab .settings-grid, #kcnav-drop-lab .backup-grid { grid-template-columns: 1fr; } #kcnav-drop-lab .target-item { grid-template-columns: minmax(0,1fr) auto auto; gap: .35rem; } #kcnav-drop-lab .target-state span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); } #kcnav-drop-lab .log-row { grid-template-columns: minmax(0,1fr) auto auto; } #kcnav-drop-lab .log-row .log-time { grid-column: 1 / -1; } #kcnav-drop-lab .encounter-message { grid-template-columns: 1fr; } #kcnav-drop-lab .encounter-message .drop-note { grid-column: 1; grid-row: auto; } #kcnav-drop-lab .preferences-panel { position: fixed; left: 1rem; right: 1rem; top: auto; width: auto; } }
+    @media (max-width: 480px) { #kcnav-drop-lab .app { gap: .75rem; } #kcnav-drop-lab .onboarding { grid-template-columns: 1fr; } #kcnav-drop-lab .onboarding .inline-actions { grid-column: 1; grid-row: auto; } #kcnav-drop-lab .hero-row { grid-template-columns: 1fr; }#kcnav-drop-lab .drop-stage { min-height: 225px; } #kcnav-drop-lab .drop-card { width: min(190px,62vw); min-height: 190px; } #kcnav-drop-lab .drop-card.priority { width: min(210px,68vw); min-height: 210px; } #kcnav-drop-lab .ship-image { width: 125px; height: 150px; } #kcnav-drop-lab .drop-card.priority .ship-image { width: 140px; height: 164px; } #kcnav-drop-lab .drop-content { padding-bottom: 3.5rem; } #kcnav-drop-lab .quick-controls { grid-template-columns: .85fr 1.2fr 1fr; } #kcnav-drop-lab .quick-controls .btn { min-height: 44px; padding-inline: .45rem; } #kcnav-drop-lab .primary-metrics { grid-template-columns: 1fr 1fr; } #kcnav-drop-lab .primary-metrics .metric strong { font-size: 1.05rem; } #kcnav-drop-lab .form-grid, #kcnav-drop-lab .settings-grid, #kcnav-drop-lab .backup-grid { grid-template-columns: 1fr; } #kcnav-drop-lab .target-item { grid-template-columns: minmax(0,1fr) auto auto; gap: .35rem; } #kcnav-drop-lab .target-state span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); } #kcnav-drop-lab .log-row { grid-template-columns: minmax(0,1fr) auto auto; } #kcnav-drop-lab .log-row .log-time { grid-column: 1 / -1; } #kcnav-drop-lab .encounter-message { grid-template-columns: 1fr; } #kcnav-drop-lab .encounter-message .drop-note { grid-column: 1; grid-row: auto; } #kcnav-drop-lab .preferences-panel { position: fixed; left: 1rem; right: 1rem; top: auto; width: auto; } }
     @media (prefers-reduced-motion: reduce) { #kcnav-drop-lab .drop-card.drawing, #kcnav-drop-lab .drop-card.reveal, #kcnav-drop-lab .drop-stage, #kcnav-drop-lab .drop-stage::before, #kcnav-drop-lab .effect-flash, #kcnav-drop-lab .effect-ring, #kcnav-drop-lab .spark { animation: none !important; } #kcnav-drop-lab .priority-curtain { transition: none; } }
   &lt;/style&gt;
 
   &lt;main class=&quot;app&quot;&gt;
     &lt;header class=&quot;app-header&quot;&gt;
       &lt;h1 class=&quot;app-title&quot;&gt;KCNav Drop Lab&lt;/h1&gt;
-      &lt;p class=&quot;app-description&quot;&gt;掘りの確率と記録を、ひとつに。&lt;/p&gt;
     &lt;/header&gt;
     &lt;section class=&quot;card onboarding&quot; id=&quot;onboarding&quot; aria-labelledby=&quot;onboarding-title&quot; hidden&gt;
       &lt;h2 class=&quot;onboarding-title&quot; id=&quot;onboarding-title&quot;&gt;初めてですか？&lt;/h2&gt;
@@ -972,24 +969,16 @@ html&gt;body{padding:0}&lt;/style&gt;
       &lt;/div&gt;
     &lt;/div&gt;
 
+    &lt;div class=&quot;hero-row&quot;&gt;
+      &lt;p class=&quot;hero-statement&quot; id=&quot;hero-statement&quot; aria-live=&quot;polite&quot;&gt;—&lt;/p&gt;
+      &lt;button class=&quot;btn&quot; id=&quot;edit-targets&quot; type=&quot;button&quot; aria-expanded=&quot;false&quot; aria-controls=&quot;target-panel&quot;&gt;目標を編集&lt;/button&gt;
+    &lt;/div&gt;
+    &lt;details class=&quot;card target-panel&quot; id=&quot;target-panel&quot;&gt;&lt;summary class=&quot;sr-only&quot;&gt;目標艦を編集&lt;/summary&gt;&lt;div class=&quot;detail-body&quot;&gt;&lt;label class=&quot;field&quot; for=&quot;rank-select&quot;&gt;&lt;span&gt;勝利評価&lt;/span&gt;&lt;select class=&quot;form-select&quot; id=&quot;rank-select&quot;&gt;&lt;/select&gt;&lt;/label&gt;&lt;div class=&quot;target-box&quot;&gt;&lt;span&gt;目標艦&lt;/span&gt;&lt;div class=&quot;target-picker&quot; id=&quot;target-list&quot;&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/details&gt;
+
     &lt;div class=&quot;mode-switch&quot; role=&quot;tablist&quot; aria-label=&quot;利用モード&quot;&gt;
       &lt;button class=&quot;btn&quot; id=&quot;simulation-tab&quot; type=&quot;button&quot; role=&quot;tab&quot; aria-selected=&quot;true&quot; aria-controls=&quot;simulation-panel&quot;&gt;シミュレーション&lt;/button&gt;
       &lt;button class=&quot;btn&quot; id=&quot;record-tab&quot; type=&quot;button&quot; role=&quot;tab&quot; aria-selected=&quot;false&quot; aria-controls=&quot;record-panel&quot;&gt;実戦記録&lt;/button&gt;
     &lt;/div&gt;
-
-    &lt;section class=&quot;card context-bar&quot; aria-label=&quot;現在の条件&quot;&gt;
-      &lt;label class=&quot;field&quot; for=&quot;rank-select&quot;&gt;&lt;span&gt;勝利評価&lt;/span&gt;&lt;select class=&quot;form-select&quot; id=&quot;rank-select&quot;&gt;&lt;/select&gt;&lt;/label&gt;
-      &lt;div class=&quot;context-targets&quot;&gt;&lt;div class=&quot;field&quot;&gt;&lt;span&gt;目標&lt;/span&gt;&lt;strong id=&quot;target-summary&quot;&gt;未設定&lt;/strong&gt;&lt;/div&gt;&lt;button class=&quot;btn&quot; id=&quot;edit-targets&quot; type=&quot;button&quot; aria-expanded=&quot;false&quot; aria-controls=&quot;target-panel&quot;&gt;編集&lt;/button&gt;&lt;/div&gt;
-    &lt;/section&gt;
-    &lt;details class=&quot;card target-panel&quot; id=&quot;target-panel&quot;&gt;&lt;summary class=&quot;sr-only&quot;&gt;目標艦を編集&lt;/summary&gt;&lt;div class=&quot;detail-body&quot;&gt;&lt;div class=&quot;target-box&quot;&gt;&lt;span&gt;目標艦&lt;/span&gt;&lt;div class=&quot;target-picker&quot; id=&quot;target-list&quot;&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/details&gt;
-
-    &lt;p class=&quot;hero-statement&quot; id=&quot;hero-statement&quot; aria-live=&quot;polite&quot;&gt;—&lt;/p&gt;
-    &lt;div class=&quot;primary-metrics&quot; aria-label=&quot;主な確率&quot;&gt;
-      &lt;div class=&quot;metric&quot;&gt;&lt;span class=&quot;muted&quot; id=&quot;goal-probability-label&quot;&gt;20周で目標達成&lt;/span&gt;&lt;strong id=&quot;goal-probability&quot;&gt;—&lt;/strong&gt;&lt;/div&gt;
-      &lt;div class=&quot;metric&quot;&gt;&lt;span class=&quot;muted&quot;&gt;90%達成の目安&lt;/span&gt;&lt;strong id=&quot;rounds-ninety&quot;&gt;—&lt;/strong&gt;&lt;/div&gt;
-    &lt;/div&gt;
-    &lt;div class=&quot;rounds-chips&quot; id=&quot;rounds-chips&quot; aria-label=&quot;確率計算に使う周回数&quot;&gt;&lt;span class=&quot;muted&quot;&gt;周回数&lt;/span&gt;&lt;button class=&quot;btn&quot; type=&quot;button&quot; data-rounds=&quot;10&quot;&gt;10&lt;/button&gt;&lt;button class=&quot;btn&quot; type=&quot;button&quot; data-rounds=&quot;20&quot;&gt;20&lt;/button&gt;&lt;button class=&quot;btn&quot; type=&quot;button&quot; data-rounds=&quot;50&quot;&gt;50&lt;/button&gt;&lt;button class=&quot;btn&quot; type=&quot;button&quot; data-rounds=&quot;100&quot;&gt;100&lt;/button&gt;&lt;/div&gt;
-    &lt;div class=&quot;quick-status&quot; id=&quot;quick-status&quot;&gt;&lt;/div&gt;
 
     &lt;section class=&quot;mode-panel&quot; id=&quot;simulation-panel&quot; role=&quot;tabpanel&quot; aria-labelledby=&quot;simulation-tab&quot;&gt;
       &lt;div class=&quot;workspace&quot;&gt;&lt;section class=&quot;card drop-stage is-idle&quot; id=&quot;drop-stage&quot; aria-busy=&quot;false&quot;&gt;&lt;span class=&quot;stage-status&quot; id=&quot;stage-status&quot;&gt;判定待ち&lt;/span&gt;&lt;span class=&quot;radar-sweep&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;&lt;div class=&quot;stage-effects&quot; aria-hidden=&quot;true&quot;&gt;&lt;span class=&quot;effect-flash&quot;&gt;&lt;/span&gt;&lt;span class=&quot;effect-ring&quot;&gt;&lt;/span&gt;&lt;span class=&quot;effect-ring&quot;&gt;&lt;/span&gt;&lt;span class=&quot;effect-ring&quot;&gt;&lt;/span&gt;&lt;span class=&quot;spark&quot;&gt;&lt;/span&gt;&lt;span class=&quot;spark&quot;&gt;&lt;/span&gt;&lt;span class=&quot;spark&quot;&gt;&lt;/span&gt;&lt;span class=&quot;spark&quot;&gt;&lt;/span&gt;&lt;span class=&quot;spark&quot;&gt;&lt;/span&gt;&lt;span class=&quot;spark&quot;&gt;&lt;/span&gt;&lt;span class=&quot;spark&quot;&gt;&lt;/span&gt;&lt;span class=&quot;spark&quot;&gt;&lt;/span&gt;&lt;span class=&quot;spark&quot;&gt;&lt;/span&gt;&lt;/div&gt;&lt;span class=&quot;priority-curtain&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;&lt;div class=&quot;drop-card&quot; id=&quot;drop-card&quot;&gt;&lt;div class=&quot;drop-content&quot; id=&quot;drop-content&quot;&gt;&lt;span class=&quot;drop-label&quot;&gt;DROP&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;encounter-message&quot; id=&quot;encounter-message&quot;&gt;&lt;span class=&quot;drop-label&quot; id=&quot;message-label&quot;&gt;索敵待機&lt;/span&gt;&lt;span class=&quot;drop-name&quot; id=&quot;message-name&quot;&gt;タップで1周・結果をここに表示&lt;/span&gt;&lt;span class=&quot;drop-note&quot; id=&quot;message-note&quot;&gt;KCNav実測データ&lt;/span&gt;&lt;/div&gt;&lt;/section&gt;&lt;/div&gt;
@@ -1009,6 +998,12 @@ html&gt;body{padding:0}&lt;/style&gt;
       &lt;details class=&quot;probability-details&quot;&gt;
         &lt;summary&gt;詳しい確率&lt;/summary&gt;
         &lt;div class=&quot;detail-body&quot;&gt;
+          &lt;div class=&quot;primary-metrics&quot; aria-label=&quot;主な確率&quot;&gt;
+            &lt;div class=&quot;metric&quot;&gt;&lt;span class=&quot;muted&quot; id=&quot;goal-probability-label&quot;&gt;20周で目標達成&lt;/span&gt;&lt;strong id=&quot;goal-probability&quot;&gt;—&lt;/strong&gt;&lt;/div&gt;
+            &lt;div class=&quot;metric&quot;&gt;&lt;span class=&quot;muted&quot;&gt;90%達成の目安&lt;/span&gt;&lt;strong id=&quot;rounds-ninety&quot;&gt;—&lt;/strong&gt;&lt;/div&gt;
+          &lt;/div&gt;
+          &lt;div class=&quot;rounds-chips&quot; id=&quot;rounds-chips&quot; aria-label=&quot;確率計算に使う周回数&quot;&gt;&lt;span class=&quot;muted&quot;&gt;周回数&lt;/span&gt;&lt;button class=&quot;btn&quot; type=&quot;button&quot; data-rounds=&quot;10&quot;&gt;10&lt;/button&gt;&lt;button class=&quot;btn&quot; type=&quot;button&quot; data-rounds=&quot;20&quot;&gt;20&lt;/button&gt;&lt;button class=&quot;btn&quot; type=&quot;button&quot; data-rounds=&quot;50&quot;&gt;50&lt;/button&gt;&lt;button class=&quot;btn&quot; type=&quot;button&quot; data-rounds=&quot;100&quot;&gt;100&lt;/button&gt;&lt;/div&gt;
+          &lt;div class=&quot;quick-status&quot; id=&quot;quick-status&quot;&gt;&lt;/div&gt;
           &lt;div class=&quot;settings-grid&quot;&gt;
             &lt;label class=&quot;field&quot; for=&quot;goal-mode&quot;&gt;&lt;span&gt;目標条件&lt;/span&gt;&lt;select class=&quot;form-select&quot; id=&quot;goal-mode&quot;&gt;&lt;option value=&quot;any&quot;&gt;いずれか1隻&lt;/option&gt;&lt;option value=&quot;all&quot;&gt;すべて1隻以上&lt;/option&gt;&lt;/select&gt;&lt;/label&gt;
             &lt;div class=&quot;metric&quot;&gt;&lt;span class=&quot;muted&quot;&gt;期待ドロップ数&lt;/span&gt;&lt;strong id=&quot;expected-targets&quot;&gt;—&lt;/strong&gt;&lt;/div&gt;
@@ -1025,7 +1020,7 @@ html&gt;body{padding:0}&lt;/style&gt;
     &lt;/section&gt;
 
     &lt;section class=&quot;mode-panel card&quot; id=&quot;record-panel&quot; role=&quot;tabpanel&quot; aria-labelledby=&quot;record-tab&quot; hidden&gt;
-      &lt;div class=&quot;record-head&quot;&gt;&lt;span class=&quot;muted&quot;&gt;上の勝利評価で、タップした艦を現在時刻に記録します&lt;/span&gt;&lt;/div&gt;
+      &lt;div class=&quot;record-head&quot;&gt;&lt;span class=&quot;muted&quot; id=&quot;record-rank-note&quot;&gt;タップした艦を現在時刻に記録します&lt;/span&gt;&lt;/div&gt;
       &lt;div class=&quot;record-buttons&quot; id=&quot;quick-record-list&quot;&gt;&lt;/div&gt;
       &lt;div class=&quot;inline-actions&quot;&gt;&lt;label class=&quot;field grow&quot; for=&quot;quick-other&quot;&gt;&lt;span&gt;その他の艦&lt;/span&gt;&lt;select class=&quot;form-select&quot; id=&quot;quick-other&quot;&gt;&lt;/select&gt;&lt;/label&gt;&lt;button class=&quot;btn&quot; id=&quot;quick-other-record&quot; type=&quot;button&quot;&gt;記録&lt;/button&gt;&lt;/div&gt;
       &lt;div class=&quot;record-feedback&quot; id=&quot;record-feedback&quot; hidden&gt;&lt;span class=&quot;muted&quot; id=&quot;last-log-text&quot;&gt;&lt;/span&gt;&lt;button class=&quot;btn btn-ghost&quot; id=&quot;undo-log&quot; type=&quot;button&quot;&gt;直前の記録を取り消す&lt;/button&gt;&lt;/div&gt;
@@ -1396,13 +1391,11 @@ html&gt;body{padding:0}&lt;/style&gt;
           if(input.checked &amp;&amp; !profile.obtained.includes(ship)) profile.obtained.push(ship);
           if(!input.checked) profile.obtained=profile.obtained.filter(item=&gt;item!==ship);
           input.closest(&#x27;.target-item&#x27;)?.classList.toggle(&#x27;is-obtained&#x27;,input.checked);
-          saveState(); updateTargetSummary(); updateMetrics(); renderSession(); renderLogs();
+          saveState(); updateMetrics(); renderSession(); renderLogs();
         }));
         $$(&#x27;[data-target-remove]&#x27;).forEach(button=&gt;button.addEventListener(&#x27;click&#x27;,()=&gt;{const ship=button.dataset.targetRemove;profile.targets=profile.targets.filter(item=&gt;item!==ship);profile.obtained=profile.obtained.filter(item=&gt;item!==ship);saveState();renderTargets();updateMetrics();renderSession();renderLogs();$(&#x27;#target-add-select&#x27;)?.focus();announce(`${ship}を目標から外しました`);}));
         $(&#x27;#target-add-button&#x27;)?.addEventListener(&#x27;click&#x27;,()=&gt;{const select=$(&#x27;#target-add-select&#x27;);const ship=select?.value;if(!ship)return;profile.targets.push(ship);const promoted=tierOf(profile,ship)===&#x27;normal&#x27;;if(promoted)profile.tiers[ship]=&#x27;priority&#x27;;saveState();renderTargets();renderDropTable();updateMetrics();renderSession();renderLogs();$(`[data-target-obtained=&quot;${CSS.escape(ship)}&quot;]`)?.focus();announce(promoted?`${ship}を目標に追加し、格付けを最優先にしました`:`${ship}を目標に追加しました`);});
-        updateTargetSummary();
       }
-      function updateTargetSummary() { const profile=activeProfile(); const selected=activeTargets(profile,currentRank()); const remaining=selected.filter(ship=&gt;!profile.obtained.includes(ship)); $(&#x27;#target-summary&#x27;).textContent=selected.length?`残り${remaining.length}隻 / 目標${selected.length}隻`:&#x27;未設定&#x27;; }
       function renderDropTable() {
         const profile=activeProfile(); const rows=profile.drops;
         const remainderRows=profileRanks(profile).map(rank=&gt;{const remainder=1-tableFor(profile,rank).reduce((value,row)=&gt;value+row.rate,0);return remainder&gt;.0005?`&lt;tr&gt;&lt;td&gt;ドロップなし・その他&lt;/td&gt;&lt;td&gt;${escapeHtml(rank)}&lt;/td&gt;&lt;td&gt;${formatPercent(remainder)}&lt;/td&gt;&lt;td class=&quot;muted&quot;&gt;—&lt;/td&gt;&lt;td class=&quot;muted&quot;&gt;—&lt;/td&gt;&lt;/tr&gt;`:&#x27;&#x27;;}).join(&#x27;&#x27;);
@@ -1538,6 +1531,7 @@ html&gt;body{padding:0}&lt;/style&gt;
         $(&#x27;#goal-probability&#x27;).textContent=allObtained?&#x27;全目標入手済み&#x27;:!targets.length ? &#x27;目標艦を選択&#x27; : tooManyForAll ? &#x27;すべて条件は12艦まで&#x27; : formatPercent(chance);
         $(&#x27;#expected-targets&#x27;).textContent=targets.length ? `${(rounds*sum).toFixed(2)}隻` : &#x27;—&#x27;;
         $(&#x27;#quick-status&#x27;).textContent=allObtained?&#x27;目標艦をすべて入手済みです&#x27;:!targets.length?&#x27;目標艦を設定すると確率を計算します&#x27;:tooManyForAll?&#x27;「すべて」条件は12艦まで対応です&#x27;:inputRounds===null?&#x27;周回数は1〜9999で入力してください&#x27;:&#x27;&#x27;;
+        $(&#x27;#record-rank-note&#x27;).textContent=`勝利評価${currentRank()||&#x27;—&#x27;}で、タップした艦を現在時刻に記録します`;
         renderHero();
       }
       function readCostInput(selector) { const value=Number($(selector).value); return Number.isFinite(value) &amp;&amp; value&gt;0 ? value : 0; }
