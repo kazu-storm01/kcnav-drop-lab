@@ -349,7 +349,7 @@
       function shapedNoise(index,seed=0) { const value=Math.sin((index+1+seed)*12.9898+seed*78.233)*43758.5453; return (value-Math.floor(value))*2-1; }
       function createAudioBus(context) {
         const master=context.createGain(); const compressor=context.createDynamicsCompressor(); const convolver=context.createConvolver(); const wet=context.createGain();
-        master.gain.value=.62; compressor.threshold.value=-22; compressor.knee.value=18; compressor.ratio.value=4; compressor.attack.value=.004; compressor.release.value=.24; wet.gain.value=.2;
+        master.gain.value=1.35; compressor.threshold.value=-18; compressor.knee.value=14; compressor.ratio.value=5; compressor.attack.value=.004; compressor.release.value=.24; wet.gain.value=.26;
         const impulseLength=Math.floor(context.sampleRate*.82); const impulse=context.createBuffer(2,impulseLength,context.sampleRate);
         for(let channel=0;channel<2;channel++){const data=impulse.getChannelData(channel);for(let index=0;index<impulseLength;index++){const decay=(1-index/impulseLength)**2.4;data[index]=shapedNoise(index,channel*997)*decay;}}
         convolver.buffer=impulse; master.connect(compressor); convolver.connect(wet).connect(compressor); compressor.connect(context.destination);
