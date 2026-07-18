@@ -28,10 +28,22 @@ test('public app starts without seeded battle logs and can simulate one run', as
   await expect(page).toHaveTitle('Kcnav Drop Lab');
 
   const app = page.frameLocator('iframe[title="Kcnav Drop Lab"]');
-  await expect(
-    app.getByRole('heading', { name: 'ドロップシミュレーター' }),
-  ).toBeVisible();
-
+  await expect(app.getByRole('heading', { name: 'KCNav Drop Lab' })).toBeVisible();
+  await expect(page.locator('html')).toHaveAttribute('lang', 'ja');
+  await expect(app.locator('html')).toHaveAttribute('lang', 'ja');
+  await expect(app.locator('#onboarding')).toBeVisible();
+  await app.getByRole('button', { name: 'サンプルで試す' }).click();
+  await expect(app.locator('#onboarding')).toBeHidden();
+  await expect
+    .poll(() =>
+      app.locator('body').evaluate(() =>
+        localStorage.getItem('kcnav-drop-lab-onboarding-v1'),
+      ),
+    )
+    .toBe('seen');
+  await page.reload();
+  await expect(app.locator('#onboarding')).toBeHidden();
+  await app.getByText('表示・音', { exact: true }).click();
   const soundToggle = app.locator('#sound-toggle');
   await expect(soundToggle).toHaveAttribute('aria-pressed', 'false');
   await soundToggle.click();
@@ -94,35 +106,47 @@ test('public app starts without seeded battle logs and can simulate one run', as
       ),
     )
     .toBe('on');
+  await app.getByText('表示・音', { exact: true }).click();
 
-  await app.getByText('設定・記録', { exact: true }).click();
-  await app.getByText('抽選設定と確率', { exact: true }).click();
+  await expect(app.locator('#results')).toBeHidden();
+  await app.getByText('その他…', { exact: true }).click();
+  await app.locator('#rounds').fill('0');
+  await expect(app.locator('#rounds')).toHaveAttribute('aria-invalid', 'true');
+  await expect(app.locator('#rounds-error')).toBeVisible();
+  await expect(app.locator('#batch-run')).toBeDisabled();
+  await app.locator('#rounds').fill('20');
+  await expect(app.locator('#rounds')).toHaveAttribute('aria-invalid', 'false');
+  await expect(app.locator('#rounds-error')).toBeHidden();
+  await app.getByText('その他…', { exact: true }).click();
+  await app.getByText('詳しい確率', { exact: true }).click();
   await expect(app.locator('#rounds-half')).toHaveText('11周');
   await expect(app.locator('#rounds-ninety')).toHaveText('36周');
 
-  const indianaTarget = app
-    .locator('#target-list')
-    .getByRole('button', { name: /Indiana/ });
-  await indianaTarget.click();
-  await expect(indianaTarget).toContainText('✓');
+  await app.getByRole('button', { name: '編集', exact: true }).click();
+  const indianaTarget = app.locator('.target-item').filter({ hasText: 'Indiana' });
+  const indianaObtained = indianaTarget.getByRole('checkbox', {
+    name: 'Indianaを入手済みにする',
+  });
+  await indianaObtained.check();
+  await expect(indianaObtained).toBeFocused();
+  await expect(indianaObtained).toBeChecked();
   await expect(app.locator('#rounds-half')).toHaveText('26周');
-  await indianaTarget.click();
-  await indianaTarget.click();
+  await indianaObtained.uncheck();
   await expect(app.locator('#rounds-half')).toHaveText('11周');
+  await expect(app.locator('#expected-targets')).toHaveText(/隻$/);
+  await expect(app.locator('#goal-probability')).toHaveText(/%$/);
 
+  await app.getByText('資材コスト（任意）', { exact: true }).click();
   await app.locator('#cost-fuel').fill('100');
   await expect(app.locator('#cost-status')).toContainText('燃料 3,600');
 
-  await app.getByText('実戦記録', { exact: true }).click();
+  await app.getByRole('tab', { name: '実戦記録' }).click();
   await expect(app.getByText('実戦記録 0件', { exact: true })).toBeVisible();
   await expect(app.getByText('記録はありません', { exact: true })).toBeVisible();
   await expect(app.locator('#log-analysis-wrap')).toBeHidden();
-  await expect(
-    app.locator('#log-ship option', { hasText: 'ドロップなし' }),
-  ).toHaveCount(1);
 
-  await app.locator('#log-ship').selectOption('Indiana');
-  await app.getByRole('button', { name: '現在時刻で記録' }).click();
+  await app.locator('[data-quick-record="Indiana"]').click();
+  await expect(app.locator('[data-quick-record="Indiana"]')).toBeFocused();
   await expect(app.locator('#log-analysis-wrap')).toBeVisible();
   await expect(app.locator('#log-analysis')).toContainText('1/1');
   await expect(app.locator('#log-analysis')).toContainText('100.00%');
@@ -130,9 +154,6 @@ test('public app starts without seeded battle logs and can simulate one run', as
   await expect(app.locator('#log-analysis')).toContainText('上位3.7%');
   await expect(app.locator('#log-analysis')).toContainText('下位97.9%');
 
-  await app
-    .getByText('実戦記録モード（ワンタップ記録）', { exact: true })
-    .click();
   await expect(app.locator('[data-quick-record="Indiana"]')).toBeVisible();
   await app.locator('[data-quick-record="ドロップなし"]').click();
   await expect(app.locator('#last-log-text')).toContainText('ドロップなし');
@@ -141,6 +162,7 @@ test('public app starts without seeded battle logs and can simulate one run', as
   await app.locator('#undo-log').click();
   await expect(app.locator('#log-summary')).toContainText('実戦記録 1件');
 
+  await app.getByRole('tab', { name: 'シミュレーション' }).click();
   await app.getByRole('button', { name: '1周', exact: true }).click();
   await expect(app.getByText(/今回 1周・/)).toBeVisible();
 
@@ -151,7 +173,7 @@ test('public app starts without seeded battle logs and can simulate one run', as
       new KeyboardEvent('keydown', { key: ' ', bubbles: true }),
     );
   });
-  await expect(app.getByText(/今回 2周・/)).toBeVisible();
+  await expect(app.getByText(/今回 1周・/)).toBeVisible();
 
   expect(browserErrors).toEqual([]);
 });
@@ -176,26 +198,29 @@ test('a KCNav preset can be edited and resolves an unbundled ship image', async 
   await page.goto('/outputs/kcnav-drop-lab.html');
   const app = page.frameLocator('iframe[title="Kcnav Drop Lab"]');
 
-  await app.getByText('設定・記録', { exact: true }).click();
-  await app.getByText('KCNavから海域を登録', { exact: true }).click();
+  await app
+    .getByRole('button', { name: '自分のKCNavデータを登録' })
+    .click();
+  await expect(app.locator('#tools-panel')).toHaveAttribute('open', '');
+  await expect(app.locator('#import-section')).toHaveAttribute('open', '');
   await app.locator('#kcnav-text').fill('E-9-1 甲 Xマス\nダミー艦\t50.00%\t1/2\tS');
-  await app.getByRole('button', { name: '解析して確認' }).click();
+  await app.getByRole('button', { name: '解析', exact: true }).click();
   await expect(app.locator('#import-map')).toHaveValue('E9-1');
   await expect(app.locator('#import-difficulty')).toHaveValue('甲');
   await expect(app.locator('#import-node')).toHaveValue('X');
   await app
-    .getByRole('button', { name: '新規プリセットとして保存' })
+    .getByRole('button', { name: '新しい海域として保存' })
     .click();
   await app.getByText('艦の格付け', { exact: true }).click();
   await expect(app.locator('#drop-table')).toContainText('ドロップなし・その他');
   await app.getByText('艦の格付け', { exact: true }).click();
 
-  await app.getByText('KCNavから海域を登録', { exact: true }).click();
-  await app.locator('#import-title').fill('自動画像テスト');
+  await app.getByText('KCNavデータを登録・更新', { exact: true }).click();
   await app.locator('#kcnav-text').fill('Atlanta\t100.00%\t1/1\tS');
-  await app.getByRole('button', { name: '解析して確認' }).click();
+  await app.getByRole('button', { name: '解析', exact: true }).click();
+  await app.locator('#import-title').fill('自動画像テスト');
   await app
-    .getByRole('button', { name: '新規プリセットとして保存' })
+    .getByRole('button', { name: '新しい海域として保存' })
     .click();
 
   await expect(app.locator('#profile-select')).toHaveValue(/profile-/);
@@ -260,7 +285,7 @@ test('the factory preset can be edited and the last preset can be deleted', asyn
   await page.goto('/outputs/kcnav-drop-lab.html');
   const app = page.frameLocator('iframe[title="Kcnav Drop Lab"]');
 
-  await app.getByText('設定・記録', { exact: true }).click();
+  await app.getByText('設定', { exact: true }).click();
   await app.getByText('海域とバックアップ', { exact: true }).click();
   await app.locator('#edit-title').fill('編集した初期プリセット');
   await app.getByRole('button', { name: '設定を保存' }).click();

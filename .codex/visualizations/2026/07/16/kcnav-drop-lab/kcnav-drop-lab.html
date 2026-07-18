@@ -1,10 +1,23 @@
 <div id="kcnav-drop-lab">
   <style>
     #kcnav-drop-lab { color: var(--foreground); --muted-foreground: light-dark(rgb(26 28 31 / 66%), rgb(255 255 255 / 60%)); --kdl-rare: light-dark(rgb(43 118 166), rgb(185 223 242)); }
+    #kcnav-drop-lab [hidden] { display: none !important; }
     #kcnav-drop-lab .app { display: grid; gap: 1rem; max-width: 736px; margin: 0 auto; }
+    #kcnav-drop-lab .app-header { display: grid; gap: .2rem; }
+    #kcnav-drop-lab .app-title { margin: 0; font-size: 1.45rem; font-weight: 600; letter-spacing: -.02em; }
+    #kcnav-drop-lab .app-description { margin: 0; color: var(--muted-foreground); line-height: 1.45; }
+    #kcnav-drop-lab .onboarding { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: .25rem .8rem; align-items: center; padding: .65rem .8rem; border-left: 3px solid var(--primary); }
+    #kcnav-drop-lab .onboarding[hidden] { display: none; }
+    #kcnav-drop-lab .onboarding-title { margin: 0; font-size: 1rem; font-weight: 600; }
+    #kcnav-drop-lab .onboarding p { margin: 0; color: var(--muted-foreground); line-height: 1.45; }
+    #kcnav-drop-lab .onboarding .inline-actions { grid-column: 2; grid-row: 1 / 3; align-self: center; }
     #kcnav-drop-lab .topbar { display: grid; gap: .35rem; }
     #kcnav-drop-lab .topbar-row { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; }
-    #kcnav-drop-lab .topbar-row .field { flex: 1 1 11rem; }
+    #kcnav-drop-lab .topbar-row > .field { flex: 1 1 11rem; }
+    #kcnav-drop-lab .preferences { position: relative; border-top: 0; padding-top: 0; }
+    #kcnav-drop-lab .preferences > summary { list-style: none; font-weight: 400; }
+    #kcnav-drop-lab .preferences > summary::-webkit-details-marker { display: none; }
+    #kcnav-drop-lab .preferences-panel { position: absolute; right: 0; top: calc(100% + .4rem); z-index: 8; display: flex; flex-wrap: wrap; gap: .5rem; align-items: end; width: max-content; max-width: min(30rem,calc(100vw - 2rem)); padding: .65rem; border: 1px solid var(--border); background: var(--popover); box-shadow: 0 10px 28px color-mix(in srgb, var(--foreground) 18%, transparent); }
     #kcnav-drop-lab .volume-field { flex: 0 0 auto; }
     #kcnav-drop-lab #sound-volume { width: 5.2rem; }
     #kcnav-drop-lab .sound-toggle { min-width: 5.4rem; white-space: nowrap; }
@@ -22,8 +35,17 @@
     #kcnav-drop-lab .field.grow { flex: 1 1 12rem; }
     #kcnav-drop-lab .field input, #kcnav-drop-lab .field select { min-width: 0; }
     #kcnav-drop-lab .profile-meta { color: var(--muted-foreground); }
+    #kcnav-drop-lab .mode-switch { display: grid; grid-template-columns: 1fr 1fr; gap: .35rem; padding: .25rem; background: color-mix(in srgb, var(--secondary) 58%, transparent); }
+    #kcnav-drop-lab .mode-switch .btn { border-color: transparent; }
+    #kcnav-drop-lab .mode-switch .btn[aria-selected="true"] { color: var(--primary-foreground); border-color: var(--primary); background: var(--primary); }
+    #kcnav-drop-lab .context-bar { display: grid; grid-template-columns: minmax(7rem,.7fr) minmax(0,1.3fr); gap: .55rem; align-items: end; padding: .65rem .75rem; }
+    #kcnav-drop-lab .context-targets { display: flex; gap: .55rem; align-items: center; justify-content: space-between; min-width: 0; }
+    #kcnav-drop-lab .context-targets strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    #kcnav-drop-lab .target-panel:not([open]) { display: none; }
+    #kcnav-drop-lab .mode-panel { display: grid; gap: .8rem; }
+    #kcnav-drop-lab .mode-panel[hidden], #kcnav-drop-lab .results[hidden], #kcnav-drop-lab .import-confirmation[hidden] { display: none; }
     #kcnav-drop-lab .workspace { display: block; }
-    #kcnav-drop-lab .drop-stage { min-height: 370px; display: grid; place-items: center; position: relative; overflow: hidden; isolation: isolate; background: radial-gradient(circle at 50% 46%, color-mix(in srgb, var(--viz-series-2) 20%, transparent), transparent 38%), linear-gradient(145deg, color-mix(in srgb, var(--primary) 15%, var(--card)), var(--card) 58%, color-mix(in srgb, var(--secondary) 58%, var(--card))); }
+    #kcnav-drop-lab .drop-stage { min-height: 270px; display: grid; place-items: center; position: relative; overflow: hidden; isolation: isolate; background: radial-gradient(circle at 50% 46%, color-mix(in srgb, var(--viz-series-2) 20%, transparent), transparent 38%), linear-gradient(145deg, color-mix(in srgb, var(--primary) 15%, var(--card)), var(--card) 58%, color-mix(in srgb, var(--secondary) 58%, var(--card))); }
     #kcnav-drop-lab .drop-stage::before { content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none; opacity: 0; background: radial-gradient(circle at center, color-mix(in srgb, var(--accent) 38%, transparent), transparent 58%); }
     #kcnav-drop-lab .drop-stage::after { content: ''; position: absolute; inset: 0; z-index: -1; background: repeating-radial-gradient(circle at 50% 48%, transparent 0 31px, color-mix(in srgb, var(--primary) 18%, transparent) 32px 33px, transparent 34px 64px), linear-gradient(90deg, transparent 49.8%, color-mix(in srgb, var(--primary) 14%, transparent) 50%, transparent 50.2%), linear-gradient(0deg, transparent 49.8%, color-mix(in srgb, var(--primary) 14%, transparent) 50%, transparent 50.2%); }
     #kcnav-drop-lab .radar-sweep { position: absolute; left: 50%; top: 48%; z-index: 0; width: 280px; aspect-ratio: 1; border-radius: 50%; opacity: .3; transform: translate(-50%,-50%); background: conic-gradient(from 0deg, transparent 0 82%, color-mix(in srgb, var(--viz-series-2) 36%, transparent) 96%, transparent 100%); }
@@ -86,7 +108,18 @@
     #kcnav-drop-lab .encounter-message .drop-note { grid-column: 2; grid-row: 1 / 3; align-self: center; }
     #kcnav-drop-lab .encounter-message.priority { border-top-color: #f4d37b; box-shadow: 0 -8px 28px rgba(244,211,123,.2); }
     #kcnav-drop-lab .encounter-message.rare { border-top-color: var(--kdl-rare); box-shadow: 0 -6px 22px rgba(91,157,194,.18); }
-    #kcnav-drop-lab .quick-controls { display: grid; grid-template-columns: auto auto minmax(6rem, 1fr) auto; gap: .5rem; align-items: end; }
+    #kcnav-drop-lab .drop-stage.is-idle .drop-card, #kcnav-drop-lab .drop-stage.is-idle .stage-status { display: none; }
+    #kcnav-drop-lab .drop-stage.is-idle .encounter-message { inset: auto; width: fit-content; text-align: center; display: block; padding: .5rem .8rem; border: 0; background: transparent; backdrop-filter: none; }
+    #kcnav-drop-lab .drop-stage.is-idle .encounter-message .drop-label, #kcnav-drop-lab .drop-stage.is-idle .encounter-message .drop-note { display: none; }
+    #kcnav-drop-lab .drop-stage.is-idle .encounter-message .drop-name { font-size: 1rem; color: var(--muted-foreground); }
+    #kcnav-drop-lab .quick-controls { display: grid; grid-template-columns: 1fr 1.25fr 1fr; gap: .5rem; align-items: start; }
+    #kcnav-drop-lab .custom-run { position: relative; border-top: 0; padding-top: 0; }
+    #kcnav-drop-lab .custom-run > summary { list-style: none; font-weight: 400; }
+    #kcnav-drop-lab .custom-run > summary::-webkit-details-marker { display: none; }
+    #kcnav-drop-lab .custom-run-panel { position: absolute; right: 0; top: calc(100% + .4rem); z-index: 7; display: grid; grid-template-columns: minmax(7rem,1fr) auto; gap: .45rem; width: min(19rem,calc(100vw - 2rem)); padding: .65rem; border: 1px solid var(--border); background: var(--popover); box-shadow: 0 10px 28px color-mix(in srgb, var(--foreground) 18%, transparent); }
+    #kcnav-drop-lab .input-error { grid-column: 1 / -1; margin: 0; color: light-dark(rgb(178 48 6), var(--destructive)); font-size: .85rem; }
+    #kcnav-drop-lab .primary-metrics { display: grid; grid-template-columns: 1fr 1fr; gap: .55rem; }
+    #kcnav-drop-lab .primary-metrics .metric { padding: .65rem .75rem; border: 1px solid var(--border); background: color-mix(in srgb, var(--secondary) 32%, transparent); }
     #kcnav-drop-lab .quick-status { color: var(--muted-foreground); font-size: .9rem; line-height: 1.5; }
     #kcnav-drop-lab .settings-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .65rem; }
     #kcnav-drop-lab .metric { display: grid; gap: .18rem; padding-bottom: .55rem; border-bottom: 1px solid var(--border); }
@@ -94,9 +127,17 @@
     #kcnav-drop-lab .metric strong { font-size: 1.25rem; font-weight: 500; }
     #kcnav-drop-lab .muted { color: var(--muted-foreground); }
     #kcnav-drop-lab .target-box { display: grid; gap: .5rem; }
-    #kcnav-drop-lab .target-list { display: flex; flex-wrap: wrap; gap: .35rem; }
-    #kcnav-drop-lab .target-list .btn { padding-inline: .6rem; }
-    #kcnav-drop-lab .target-list .btn.is-obtained { text-decoration: line-through; opacity: .72; }
+    #kcnav-drop-lab .target-picker { display: grid; gap: .55rem; }
+    #kcnav-drop-lab .target-list { display: grid; grid-template-columns: 1fr; gap: .35rem; }
+    #kcnav-drop-lab .target-list-label { display: grid; grid-template-columns: minmax(7rem,1fr) auto 44px; gap: .65rem; align-items: center; color: var(--muted-foreground); font-size: .82rem; }
+    #kcnav-drop-lab .target-item { display: grid; grid-template-columns: minmax(7rem,1fr) auto auto; gap: .65rem; align-items: center; min-height: 44px; padding: .35rem .55rem; border: 1px solid var(--border); background: color-mix(in srgb, var(--secondary) 36%, transparent); }
+    #kcnav-drop-lab .target-item.is-target { border-left: 3px solid var(--primary); }
+    #kcnav-drop-lab .target-item.is-obtained .target-name { text-decoration: line-through; opacity: .7; }
+    #kcnav-drop-lab .target-name { min-width: 0; overflow-wrap: anywhere; }
+    #kcnav-drop-lab .target-state { display: inline-flex; gap: .35rem; align-items: center; white-space: nowrap; cursor: pointer; }
+    #kcnav-drop-lab .target-state:has(input:disabled) { opacity: .5; cursor: not-allowed; }
+    #kcnav-drop-lab .target-add { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: .45rem; }
+    #kcnav-drop-lab .target-remove { min-width: 44px; min-height: 44px; padding: .35rem .6rem; }
     #kcnav-drop-lab .results { display: grid; gap: .55rem; }
     #kcnav-drop-lab .results-head { display: flex; justify-content: space-between; gap: .7rem; align-items: center; }
     #kcnav-drop-lab .section-heading { margin: 0; font-size: 1rem; font-weight: 500; }
@@ -131,6 +172,12 @@
     #kcnav-drop-lab .save-status { color: var(--muted-foreground); }
     #kcnav-drop-lab #clear-session[hidden] { display: none; }
     #kcnav-drop-lab .tools-panel { margin-top: .2rem; }
+    #kcnav-drop-lab .settings-meta { display: flex; flex-wrap: wrap; gap: .35rem .8rem; align-items: center; }
+    #kcnav-drop-lab .import-actions { display: flex; flex-wrap: wrap; gap: .5rem; }
+    #kcnav-drop-lab .import-actions .btn[aria-pressed="true"] { border-color: var(--primary); background: color-mix(in srgb, var(--primary) 14%, var(--secondary)); }
+    #kcnav-drop-lab .settings-group { display: grid; gap: .55rem; padding: .2rem 0 0; }
+    #kcnav-drop-lab .settings-group + .settings-group { margin-top: .45rem; padding-top: 1rem; border-top: 1px solid var(--border); }
+    #kcnav-drop-lab .settings-group-title { margin: 0; color: var(--muted-foreground); font-size: .78rem; font-weight: 600; letter-spacing: .08em; }
     #kcnav-drop-lab .confirm-dialog { max-width: min(28rem, calc(100% - 2rem)); }
     #kcnav-drop-lab .confirm-dialog::backdrop { background: color-mix(in srgb, var(--background) 70%, transparent); }
     #kcnav-drop-lab .confirm-content { display: grid; gap: .8rem; }
@@ -146,103 +193,111 @@
     @keyframes kdl-priority-flash { 0% { opacity: 0; transform: scale(.2) rotate(-12deg); } 16% { opacity: 1; } 38% { opacity: .35; } 52% { opacity: .85; } 100% { opacity: 0; transform: scale(1.18) rotate(10deg); } }
     @keyframes kdl-ring { 0% { opacity: 0; transform: translate(-50%,-50%) scale(.25); } 24% { opacity: .9; } 100% { opacity: 0; transform: translate(-50%,-50%) scale(4.8); } }
     @keyframes kdl-spark { 0% { opacity: 0; transform: translate(-50%,-50%) rotate(45deg) scale(.2); } 20% { opacity: 1; } 72% { opacity: .8; } 100% { opacity: 0; transform: translate(calc(-50% + var(--tx)),calc(-50% + var(--ty))) rotate(225deg) scale(1.35); } }
-    @media (max-width: 650px) { #kcnav-drop-lab .drop-stage { min-height: 330px; } #kcnav-drop-lab .form-grid, #kcnav-drop-lab .settings-grid { grid-template-columns: 1fr 1fr; } }
-    @media (max-width: 480px) { #kcnav-drop-lab .drop-stage { min-height: 310px; } #kcnav-drop-lab .drop-card { width: min(210px,68vw); min-height: 220px; } #kcnav-drop-lab .drop-card.priority { width: min(230px,74vw); min-height: 236px; } #kcnav-drop-lab .ship-image { width: 145px; height: 174px; } #kcnav-drop-lab .drop-card.priority .ship-image { width: 158px; height: 188px; } #kcnav-drop-lab .drop-content { padding-bottom: 3.7rem; } #kcnav-drop-lab .quick-controls { grid-template-columns: 1fr 1fr; position: sticky; top: .6rem; z-index: 6; padding: .55rem; border: 1px solid var(--border); background: var(--card); box-shadow: 0 6px 18px color-mix(in srgb, var(--foreground) 18%, transparent); } #kcnav-drop-lab #single-run, #kcnav-drop-lab #ten-run { grid-row: 1; } #kcnav-drop-lab .quick-controls .field { grid-column: 1; grid-row: 2; } #kcnav-drop-lab #batch-run { grid-column: 2; grid-row: 2; } #kcnav-drop-lab .form-grid, #kcnav-drop-lab .settings-grid, #kcnav-drop-lab .backup-grid { grid-template-columns: 1fr; } #kcnav-drop-lab .log-row { grid-template-columns: minmax(0,1fr) auto auto; } #kcnav-drop-lab .log-row .log-time { grid-column: 1 / -1; } #kcnav-drop-lab .encounter-message { grid-template-columns: 1fr; } #kcnav-drop-lab .encounter-message .drop-note { grid-column: 1; grid-row: auto; } }
+    @media (max-width: 650px) { #kcnav-drop-lab .drop-stage { min-height: 240px; } #kcnav-drop-lab .form-grid, #kcnav-drop-lab .settings-grid { grid-template-columns: 1fr 1fr; } #kcnav-drop-lab .target-list { grid-template-columns: 1fr; } }
+    @media (max-width: 480px) { #kcnav-drop-lab .app { gap: .75rem; } #kcnav-drop-lab .onboarding { grid-template-columns: 1fr; } #kcnav-drop-lab .onboarding .inline-actions { grid-column: 1; grid-row: auto; } #kcnav-drop-lab .context-bar { grid-template-columns: 6.5rem minmax(0,1fr); } #kcnav-drop-lab .drop-stage { min-height: 225px; } #kcnav-drop-lab .drop-card { width: min(190px,62vw); min-height: 190px; } #kcnav-drop-lab .drop-card.priority { width: min(210px,68vw); min-height: 210px; } #kcnav-drop-lab .ship-image { width: 125px; height: 150px; } #kcnav-drop-lab .drop-card.priority .ship-image { width: 140px; height: 164px; } #kcnav-drop-lab .drop-content { padding-bottom: 3.5rem; } #kcnav-drop-lab .quick-controls { grid-template-columns: .85fr 1.2fr 1fr; } #kcnav-drop-lab .quick-controls .btn { min-height: 44px; padding-inline: .45rem; } #kcnav-drop-lab .primary-metrics { grid-template-columns: 1fr 1fr; } #kcnav-drop-lab .primary-metrics .metric strong { font-size: 1.05rem; } #kcnav-drop-lab .form-grid, #kcnav-drop-lab .settings-grid, #kcnav-drop-lab .backup-grid { grid-template-columns: 1fr; } #kcnav-drop-lab .target-item { grid-template-columns: minmax(0,1fr) auto auto; gap: .35rem; } #kcnav-drop-lab .target-state span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); } #kcnav-drop-lab .log-row { grid-template-columns: minmax(0,1fr) auto auto; } #kcnav-drop-lab .log-row .log-time { grid-column: 1 / -1; } #kcnav-drop-lab .encounter-message { grid-template-columns: 1fr; } #kcnav-drop-lab .encounter-message .drop-note { grid-column: 1; grid-row: auto; } #kcnav-drop-lab .preferences-panel { position: fixed; left: 1rem; right: 1rem; top: auto; width: auto; } }
     @media (prefers-reduced-motion: reduce) { #kcnav-drop-lab .drop-card.drawing, #kcnav-drop-lab .drop-card.reveal, #kcnav-drop-lab .drop-stage, #kcnav-drop-lab .drop-stage::before, #kcnav-drop-lab .effect-flash, #kcnav-drop-lab .effect-ring, #kcnav-drop-lab .spark { animation: none !important; } #kcnav-drop-lab .priority-curtain { transition: none; } }
   </style>
 
   <main class="app">
-    <h1 class="sr-only">ドロップシミュレーター</h1>
+    <header class="app-header">
+      <h1 class="app-title">KCNav Drop Lab</h1>
+      <p class="app-description">掘りの確率と記録を、ひとつに。</p>
+    </header>
+    <section class="card onboarding" id="onboarding" aria-labelledby="onboarding-title" hidden>
+      <h2 class="onboarding-title" id="onboarding-title">初めてですか？</h2>
+      <p>最初から入っているサンプルで試すか、自分のKCNavデータを登録できます。</p>
+      <div class="inline-actions"><button class="btn btn-primary" id="onboarding-dismiss" type="button">サンプルで試す</button><button class="btn" id="onboarding-open-import" type="button">自分のKCNavデータを登録</button></div>
+    </section>
     <div class="topbar">
-      <div class="topbar-row"><label class="field" for="profile-select"><span class="sr-only">海域</span><select class="form-select" id="profile-select" aria-label="海域"></select></label><button class="btn sound-toggle" id="theme-toggle" type="button" title="表示テーマを 自動 → ライト → ダーク で切り替える">テーマ 自動</button><button class="btn sound-toggle" id="fast-toggle" type="button" aria-pressed="false" title="ドロップ演出を短縮する">演出 標準</button><button class="btn sound-toggle" id="sound-toggle" type="button" aria-pressed="false">音 OFF</button><label class="field volume-field" for="sound-volume"><span class="sr-only">音量</span><input type="range" id="sound-volume" min="0" max="100" step="5" aria-label="音量"></label></div>
-    </div>
-
-    <div class="workspace"><section class="card drop-stage" id="drop-stage" aria-busy="false"><span class="stage-status" id="stage-status">判定待ち</span><span class="radar-sweep" aria-hidden="true"></span><div class="stage-effects" aria-hidden="true"><span class="effect-flash"></span><span class="effect-ring"></span><span class="effect-ring"></span><span class="effect-ring"></span><span class="spark"></span><span class="spark"></span><span class="spark"></span><span class="spark"></span><span class="spark"></span><span class="spark"></span><span class="spark"></span><span class="spark"></span><span class="spark"></span></div><span class="priority-curtain" aria-hidden="true"></span><div class="drop-card" id="drop-card"><div class="drop-content" id="drop-content"><span class="drop-label">DROP</span></div></div><div class="encounter-message" id="encounter-message"><span class="drop-label" id="message-label">索敵待機</span><span class="drop-name" id="message-name">周回を開始</span><span class="drop-note" id="message-note">KCNav実測データ</span></div></section></div>
-
-    <div class="quick-controls">
-      <button class="btn btn-block" id="single-run" type="button">1周</button>
-      <button class="btn btn-primary btn-block" id="ten-run" type="button">10周</button>
-      <label class="field" for="rounds"><span class="sr-only">指定周回数</span><input class="form-control" id="rounds" type="number" min="1" max="9999" value="20" inputmode="numeric" aria-label="指定周回数"></label>
-      <button class="btn btn-block" id="batch-run" type="button">指定周回</button>
-    </div>
-
-    <details class="record-panel" id="record-panel">
-      <summary>実戦記録モード（ワンタップ記録）</summary>
-      <div class="detail-body">
-        <div class="record-head"><label class="field" for="quick-rank"><span class="sr-only">評価</span><select class="form-select" id="quick-rank" aria-label="評価"><option>S</option><option>A</option><option>B</option></select></label><span class="muted">タップした艦を現在時刻で記録します</span></div>
-        <div class="record-buttons" id="quick-record-list"></div>
-        <div class="inline-actions"><label class="field grow" for="quick-other"><span class="sr-only">その他の艦</span><select class="form-select" id="quick-other" aria-label="その他の艦"></select></label><button class="btn" id="quick-other-record" type="button">記録</button></div>
-        <div class="record-feedback" id="record-feedback" hidden><span class="muted" id="last-log-text"></span><button class="btn btn-ghost" id="undo-log" type="button">直前の記録を取り消す</button></div>
+      <div class="topbar-row">
+        <label class="field" for="profile-select"><span class="sr-only">海域</span><select class="form-select" id="profile-select" aria-label="海域"></select></label>
+        <details class="preferences"><summary class="btn">表示・音</summary><div class="preferences-panel"><button class="btn sound-toggle" id="theme-toggle" type="button" title="表示テーマを 自動 → ライト → ダーク で切り替える">テーマ 自動</button><button class="btn sound-toggle" id="fast-toggle" type="button" aria-pressed="false" title="ドロップ演出を短縮する">演出 標準</button><button class="btn sound-toggle" id="sound-toggle" type="button" aria-pressed="false">音 OFF</button><label class="field volume-field" for="sound-volume"><span>音量</span><input type="range" id="sound-volume" min="0" max="100" step="5" aria-label="音量"></label></div></details>
       </div>
-    </details>
+    </div>
 
-    <section class="results" aria-labelledby="results-heading">
-      <div class="results-head"><h2 class="section-heading" id="results-heading">レア成果</h2><button class="btn btn-ghost" id="clear-session" type="button" hidden>消去</button></div>
-      <div class="session-summary" id="session-summary">今回 0周</div>
-      <div class="result-grid" id="result-grid"><span class="empty">まだ周回していません</span></div>
+    <div class="mode-switch" role="tablist" aria-label="利用モード">
+      <button class="btn" id="simulation-tab" type="button" role="tab" aria-selected="true" aria-controls="simulation-panel">シミュレーション</button>
+      <button class="btn" id="record-tab" type="button" role="tab" aria-selected="false" aria-controls="record-panel">実戦記録</button>
+    </div>
+
+    <section class="card context-bar" aria-label="現在の条件">
+      <label class="field" for="rank-select"><span>勝利評価</span><select class="form-select" id="rank-select"></select></label>
+      <div class="context-targets"><div class="field"><span>目標</span><strong id="target-summary">未設定</strong></div><button class="btn" id="edit-targets" type="button" aria-expanded="false" aria-controls="target-panel">編集</button></div>
+    </section>
+    <details class="card target-panel" id="target-panel"><summary class="sr-only">目標艦を編集</summary><div class="detail-body"><div class="target-box"><span>目標艦</span><div class="target-picker" id="target-list"></div></div></div></details>
+
+    <section class="mode-panel" id="simulation-panel" role="tabpanel" aria-labelledby="simulation-tab">
+      <div class="workspace"><section class="card drop-stage is-idle" id="drop-stage" aria-busy="false"><span class="stage-status" id="stage-status">判定待ち</span><span class="radar-sweep" aria-hidden="true"></span><div class="stage-effects" aria-hidden="true"><span class="effect-flash"></span><span class="effect-ring"></span><span class="effect-ring"></span><span class="effect-ring"></span><span class="spark"></span><span class="spark"></span><span class="spark"></span><span class="spark"></span><span class="spark"></span><span class="spark"></span><span class="spark"></span><span class="spark"></span><span class="spark"></span></div><span class="priority-curtain" aria-hidden="true"></span><div class="drop-card" id="drop-card"><div class="drop-content" id="drop-content"><span class="drop-label">DROP</span></div></div><div class="encounter-message" id="encounter-message"><span class="drop-label" id="message-label">索敵待機</span><span class="drop-name" id="message-name">抽選結果をここに表示</span><span class="drop-note" id="message-note">KCNav実測データ</span></div></section></div>
+
+      <div class="quick-controls">
+        <button class="btn btn-block" id="single-run" type="button">1周</button>
+        <button class="btn btn-primary btn-block" id="ten-run" type="button">10周</button>
+        <details class="custom-run"><summary class="btn btn-block">その他…</summary><div class="custom-run-panel"><label class="field" for="rounds"><span>周回数</span><input class="form-control" id="rounds" type="number" min="1" max="9999" value="20" inputmode="numeric" aria-describedby="rounds-error"></label><button class="btn" id="batch-run" type="button">実行</button><p class="input-error" id="rounds-error" hidden>1〜9999の整数を入力してください</p></div></details>
+      </div>
+
+      <div class="primary-metrics" aria-label="主な確率">
+        <div class="metric"><span class="muted" id="goal-probability-label">20周で目標達成</span><strong id="goal-probability">—</strong></div>
+        <div class="metric"><span class="muted">90%達成の目安</span><strong id="rounds-ninety">—</strong></div>
+      </div>
+      <div class="quick-status" id="quick-status"></div>
+
+      <section class="results" id="results" aria-labelledby="results-heading" hidden>
+        <div class="results-head"><h2 class="section-heading" id="results-heading">今回の成果</h2><button class="btn btn-ghost" id="clear-session" type="button" hidden>消去</button></div>
+        <div class="session-summary" id="session-summary"></div>
+        <div class="result-grid" id="result-grid"></div>
+      </section>
+
+      <details class="probability-details">
+        <summary>詳しい確率</summary>
+        <div class="detail-body">
+          <div class="settings-grid">
+            <label class="field" for="goal-mode"><span>目標条件</span><select class="form-select" id="goal-mode"><option value="any">いずれか1隻</option><option value="all">すべて1隻以上</option></select></label>
+            <div class="metric"><span class="muted">期待ドロップ数</span><strong id="expected-targets">—</strong></div>
+            <div class="metric"><span class="muted">50%達成の目安</span><strong id="rounds-half">—</strong></div>
+          </div>
+          <details><summary>資材コスト（任意）</summary><div class="detail-body"><div class="settings-grid">
+            <label class="field" for="cost-fuel"><span>1周の燃料</span><input class="form-control" id="cost-fuel" type="number" min="0" inputmode="numeric" placeholder="0"></label>
+            <label class="field" for="cost-ammo"><span>1周の弾薬</span><input class="form-control" id="cost-ammo" type="number" min="0" inputmode="numeric" placeholder="0"></label>
+            <label class="field" for="cost-bucket"><span>1周のバケツ</span><input class="form-control" id="cost-bucket" type="number" min="0" step="0.1" inputmode="decimal" placeholder="0"></label>
+          </div><div class="quick-status" id="cost-status"></div></div></details>
+          <details><summary>今回の全履歴</summary><div class="detail-body"><div class="recent" id="recent-results"></div></div></details>
+        </div>
+      </details>
     </section>
 
-    <details class="tools-panel">
-      <summary>設定・記録</summary>
+    <section class="mode-panel card" id="record-panel" role="tabpanel" aria-labelledby="record-tab" hidden>
+      <div class="record-head"><span class="muted">上の勝利評価で、タップした艦を現在時刻に記録します</span></div>
+      <div class="record-buttons" id="quick-record-list"></div>
+      <div class="inline-actions"><label class="field grow" for="quick-other"><span>その他の艦</span><select class="form-select" id="quick-other"></select></label><button class="btn" id="quick-other-record" type="button">記録</button></div>
+      <div class="record-feedback" id="record-feedback" hidden><span class="muted" id="last-log-text"></span><button class="btn btn-ghost" id="undo-log" type="button">直前の記録を取り消す</button></div>
+      <div class="results-head"><p class="muted" id="log-summary"></p><button class="btn btn-ghost" id="clear-logs" type="button">全消去</button></div>
+      <div class="table-wrap" id="log-analysis-wrap" hidden><table><thead><tr><th>艦</th><th>評価</th><th>実戦</th><th>実戦率</th><th>KCNav率</th><th>傾向</th><th>運勢</th></tr></thead><tbody id="log-analysis"></tbody></table><span class="muted">実戦率は同じ評価の記録数を母数に計算します。「ドロップなし」も記録すると理論率と正しく比較できます。</span></div>
+      <div class="log-list" id="log-list"></div>
+    </section>
+
+    <details class="tools-panel" id="tools-panel">
+      <summary>設定</summary>
       <div class="detail-body">
-        <div class="profile-meta" id="profile-meta"></div>
-        <div class="save-status" id="storage-status">この端末に自動保存</div>
-        <div class="muted">ショートカット: Space=1周 ／ 2=10周 ／ 3=指定周回 ／ M=音 ／ F=演出 ／ T=テーマ ／ Esc=演出スキップ。ドロップ画面のタップは待機中=1周・演出中=スキップです。</div>
-        <details>
-          <summary>抽選設定と確率</summary>
-          <div class="detail-body">
-            <div class="settings-grid">
-              <label class="field" for="rank-select"><span>勝利評価</span><select class="form-select" id="rank-select"></select></label>
-              <label class="field" for="goal-mode"><span>目標条件</span><select class="form-select" id="goal-mode"><option value="any">いずれか1隻</option><option value="all">すべて1隻以上</option></select></label>
-              <div class="metric"><span class="muted">目標達成確率</span><strong id="goal-probability">—</strong></div>
-              <div class="metric"><span class="muted">期待される目標艦数</span><strong id="expected-targets">—</strong></div>
-              <div class="metric"><span class="muted">50%達成の目安</span><strong id="rounds-half">—</strong></div>
-              <div class="metric"><span class="muted">90%達成の目安</span><strong id="rounds-ninety">—</strong></div>
-            </div>
-            <div class="quick-status" id="quick-status"></div>
-            <div class="settings-grid">
-              <label class="field" for="cost-fuel"><span>1周の燃料</span><input class="form-control" id="cost-fuel" type="number" min="0" inputmode="numeric" placeholder="0"></label>
-              <label class="field" for="cost-ammo"><span>1周の弾薬</span><input class="form-control" id="cost-ammo" type="number" min="0" inputmode="numeric" placeholder="0"></label>
-              <label class="field" for="cost-bucket"><span>1周のバケツ</span><input class="form-control" id="cost-bucket" type="number" min="0" step="0.1" inputmode="decimal" placeholder="0"></label>
-            </div>
-            <div class="quick-status" id="cost-status"></div>
-            <div class="target-box"><span>目標艦（クリックで 目標 → 入手済み → 解除）</span><div class="target-list" id="target-list"></div></div>
-          </div>
-        </details>
-
-        <details>
-          <summary>今回の全履歴</summary>
-          <div class="detail-body"><div class="recent" id="recent-results"><span class="empty">まだ周回していません</span></div></div>
-        </details>
-
-        <details>
-          <summary>実戦記録</summary>
-          <div class="detail-body">
-            <div class="controls">
-              <label class="field grow"><span>ドロップ艦</span><select class="form-select" id="log-ship"></select></label>
-              <label class="field"><span>評価</span><select class="form-select" id="log-rank"><option>S</option><option>A</option><option>B</option></select></label>
-              <button class="btn btn-primary" id="add-log" type="button">現在時刻で記録</button>
-              <button class="btn btn-ghost" id="clear-logs" type="button">実戦ログを全消去</button>
-            </div>
-            <p class="muted" id="log-summary"></p>
-            <div class="table-wrap" id="log-analysis-wrap" hidden><table><thead><tr><th>艦</th><th>評価</th><th>実戦</th><th>実戦率</th><th>KCNav率</th><th>傾向</th><th>運勢</th></tr></thead><tbody id="log-analysis"></tbody></table><span class="muted">実戦率は同じ評価の記録数を母数に計算します。「ドロップなし」も記録すると理論率と正しく比較できます。運勢は同条件でその結果以下（以上）になる確率です。</span></div>
-            <div class="log-list" id="log-list"></div>
-          </div>
-        </details>
-
+        <div class="settings-meta"><span class="profile-meta" id="profile-meta"></span><span class="save-status" id="storage-status">この端末に自動保存</span></div>
+        <section class="settings-group" aria-labelledby="data-settings-heading">
+          <h2 class="settings-group-title" id="data-settings-heading">プリセットとデータ</h2>
         <details id="import-section">
-          <summary>KCNavから海域を登録</summary>
+          <summary>KCNavデータを登録・更新</summary>
           <div class="detail-body">
-            <div class="form-grid">
-              <label class="field"><span>プリセット名</span><input class="form-control" id="import-title" value="新しい掘り先"></label>
-              <label class="field"><span>海域</span><input class="form-control" id="import-map" placeholder="E4-2"></label>
-              <label class="field"><span>難易度</span><select class="form-select" id="import-difficulty"><option>甲</option><option>乙</option><option>丙</option><option>丁</option><option>-</option></select></label>
-              <label class="field"><span>マス</span><input class="form-control" id="import-node" placeholder="Z"></label>
-            </div>
+            <div class="import-actions" aria-label="登録方法"><button class="btn" id="import-new" type="button" aria-pressed="true">新しい海域として登録</button><button class="btn" id="import-update" type="button" aria-pressed="false">現在の海域を更新</button></div>
             <label class="field" for="kcnav-text"><span>KCNavコピーテキスト</span><textarea class="form-control" id="kcnav-text" placeholder="Indiana&#9;3.68%&#9;7/190&#9;S"></textarea></label>
-            <div class="inline-actions"><button class="btn" id="parse-kcnav" type="button">解析して確認</button><button class="btn btn-primary" id="save-import" type="button" disabled>新規プリセットとして保存</button><button class="btn" id="update-import" type="button" disabled>現在のドロップ表を更新</button></div>
+            <div class="inline-actions"><button class="btn btn-primary" id="parse-kcnav" type="button">解析</button></div>
             <p class="parse-status" id="parse-status" role="status"></p>
-            <div class="table-wrap"><table><thead><tr><th>艦</th><th>率</th><th>件数</th><th>評価</th></tr></thead><tbody id="parse-preview"></tbody></table></div>
+            <div class="import-confirmation" id="import-confirmation" hidden>
+              <div class="form-grid">
+                <label class="field" id="import-title-field"><span>プリセット名</span><input class="form-control" id="import-title" value="新しい掘り先"></label>
+                <label class="field"><span>海域</span><input class="form-control" id="import-map" placeholder="E4-2"></label>
+                <label class="field"><span>難易度</span><select class="form-select" id="import-difficulty"><option>甲</option><option>乙</option><option>丙</option><option>丁</option><option>-</option></select></label>
+                <label class="field"><span>マス</span><input class="form-control" id="import-node" placeholder="Z"></label>
+              </div>
+              <div class="table-wrap"><table><thead><tr><th>艦</th><th>率</th><th>件数</th><th>評価</th></tr></thead><tbody id="parse-preview"></tbody></table></div>
+              <div class="inline-actions"><button class="btn btn-primary" id="save-import" type="button" disabled>新しい海域として保存</button><button class="btn btn-primary" id="update-import" type="button" disabled hidden>現在の海域を更新</button></div>
+            </div>
           </div>
         </details>
 
@@ -269,6 +324,7 @@
             </div>
           </div>
         </details>
+        </section>
       </div>
     </details>
     <div class="sr-only" id="app-status" role="status" aria-live="polite" aria-atomic="true"></div>
@@ -292,6 +348,7 @@
       const FAST_KEY = 'kcnav-drop-lab-fast-v1';
       const VOLUME_KEY = 'kcnav-drop-lab-volume-v1';
       const THEME_KEY = 'kcnav-drop-lab-theme-v1';
+      const ONBOARDING_KEY = 'kcnav-drop-lab-onboarding-v1';
       const SHIP_MASTER_URL = 'https://raw.githubusercontent.com/kcwiki/kancolle-data/master/db/ship.json';
       const SHIP_CARD_BASE = 'https://w01y.kancolle-server.com/kcs2/resources/ship/card/';
       const SHIP_ASSET_KEYS = [6657,5699,3371,8909,7719,6229,5449,8561,2987,5501,3127,9319,4365,9811,9927,2423,3439,1865,5925,4409,5509,1517,9695,9255,5325,3691,5519,6949,5607,9539,4133,7795,5465,2659,6381,6875,4019,9195,5645,2887,1213,1815,8671,3015,3147,2991,7977,7045,1619,7909,4451,6573,4545,8251,5983,2849,7249,7449,9477,5963,2711,9019,7375,2201,5631,4893,7653,3719,8819,5839,1853,9843,9119,7023,5681,2345,9873,6349,9315,3795,9737,4633,4173,7549,7171,6147,4723,5039,2723,7815,6201,5999,5339,4431,2911,4435,3611,4423,9517,3243];
@@ -357,6 +414,8 @@
       let fastMode = loadFastPreference();
       let soundVolume = loadVolumePreference();
       let themePreference = loadThemePreference();
+      let uiMode = 'simulation';
+      let importMode = 'new';
       let audioContext = null;
       let audioBus = null;
       const reduceMotion = Boolean(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches);
@@ -503,7 +562,7 @@
         else dialog.removeAttribute('open');
         const resolve=confirmResolver; confirmResolver=null; if(resolve)resolve(result);
       }
-      function readRounds(normalize=false) { const text=$('#rounds').value.trim(); const raw=Number(text); const valid=text!=='' && Number.isInteger(raw) && raw>=1 && raw<=9999; if(valid)return raw; if(!normalize)return null; const value=Number.isFinite(raw)?Math.min(9999,Math.max(1,Math.round(raw))):20; $('#rounds').value=value; return value; }
+      function readRounds() { const input=$('#rounds'); const text=input.value.trim(); const raw=Number(text); const valid=text!=='' && Number.isInteger(raw) && raw>=1 && raw<=9999; input.setAttribute('aria-invalid',String(!valid)); $('#rounds-error').hidden=valid; return valid?raw:null; }
       function currentRank() { return $('#rank-select').value; }
       function sessionKey() { return `${activeProfile().id}:${currentRank()}`; }
       function currentSession() { const key=sessionKey(); if(!sessions[key])sessions[key]=[]; return sessions[key]; }
@@ -558,33 +617,41 @@
         $('#rank-select').value = ranks.includes(previous) ? previous : ranks[0]||'';
         $('#edit-title').value=profile.title||''; $('#edit-map').value=profile.map||''; $('#edit-difficulty').value=['甲','乙','丙','丁','-'].includes(profile.difficulty)?profile.difficulty:'-'; $('#edit-node').value=profile.node||'';
         $('#cost-fuel').value=profile.costs?.fuel||''; $('#cost-ammo').value=profile.costs?.ammo||''; $('#cost-bucket').value=profile.costs?.bucket||'';
-        renderTargets(); renderDropTable(); renderLogControls(); renderLogs(); resetStage(); updateMetrics(); renderSession(); renderImageStatus(profile);
+        renderTargets(); renderDropTable(); renderLogs(); resetStage(); updateMetrics(); renderSession(); renderImageStatus(profile);
         preloadImportantImages(profile);
         resolveImagesForProfile(profile);
       }
       function renderTargets() {
         const profile = activeProfile();
         const rows = tableFor(profile,currentRank());
-        $('#target-list').innerHTML = rows.map(row => { const selected = profile.targets.includes(row.ship); const obtained = selected && profile.obtained.includes(row.ship); return `<button class="btn${selected?' is-selected':''}${obtained?' is-obtained':''}" type="button" aria-pressed="${selected}" data-target="${escapeHtml(row.ship)}">${obtained?'✓ ':''}${escapeHtml(row.ship)}</button>`; }).join('');
-        $$('[data-target]').forEach(button => button.addEventListener('click',() => {
-          const ship=button.dataset.target;
-          if(!profile.targets.includes(ship)) profile.targets.push(ship);
-          else if(!profile.obtained.includes(ship)) profile.obtained.push(ship);
-          else { profile.targets=profile.targets.filter(item=>item!==ship); profile.obtained=profile.obtained.filter(item=>item!==ship); }
-          saveState(); renderTargets(); updateMetrics(); renderSession(); renderLogs();
+        const selectedRows=rows.filter(row=>profile.targets.includes(row.ship));
+        const otherRows=rows.filter(row=>!profile.targets.includes(row.ship));
+        const selectedMarkup=selectedRows.length?`<div class="target-list-label"><span>選択中</span><span>入手済み</span><span></span></div><div class="target-list">${selectedRows.map(row=>{const obtained=profile.obtained.includes(row.ship);return `<div class="target-item is-target${obtained?' is-obtained':''}"><span class="target-name">${escapeHtml(row.ship)}</span><label class="target-state"><input type="checkbox" data-target-obtained="${escapeHtml(row.ship)}" aria-label="${escapeHtml(row.ship)}を入手済みにする"${obtained?' checked':''}><span>入手済み</span></label><button class="btn btn-ghost target-remove" type="button" data-target-remove="${escapeHtml(row.ship)}" aria-label="${escapeHtml(row.ship)}を目標から外す">×</button></div>`;}).join('')}</div>`:'<span class="empty">目標艦は未設定です</span>';
+        const addMarkup=otherRows.length?`<div class="target-add"><label class="field" for="target-add-select"><span class="sr-only">追加する艦</span><select class="form-select" id="target-add-select">${otherRows.map(row=>`<option>${escapeHtml(row.ship)}</option>`).join('')}</select></label><button class="btn" id="target-add-button" type="button">目標に追加</button></div>`:'<span class="muted">追加できる艦はありません</span>';
+        $('#target-list').innerHTML=selectedMarkup+addMarkup;
+        $$('[data-target-obtained]').forEach(input => input.addEventListener('change',() => {
+          const ship=input.dataset.targetObtained;
+          if(input.checked && !profile.obtained.includes(ship)) profile.obtained.push(ship);
+          if(!input.checked) profile.obtained=profile.obtained.filter(item=>item!==ship);
+          input.closest('.target-item')?.classList.toggle('is-obtained',input.checked);
+          saveState(); updateTargetSummary(); updateMetrics(); renderSession(); renderLogs();
         }));
+        $$('[data-target-remove]').forEach(button=>button.addEventListener('click',()=>{const ship=button.dataset.targetRemove;profile.targets=profile.targets.filter(item=>item!==ship);profile.obtained=profile.obtained.filter(item=>item!==ship);saveState();renderTargets();updateMetrics();renderSession();renderLogs();$('#target-add-select')?.focus();announce(`${ship}を目標から外しました`);}));
+        $('#target-add-button')?.addEventListener('click',()=>{const select=$('#target-add-select');const ship=select?.value;if(!ship)return;profile.targets.push(ship);saveState();renderTargets();updateMetrics();renderSession();renderLogs();$(`[data-target-obtained="${CSS.escape(ship)}"]`)?.focus();announce(`${ship}を目標に追加しました`);});
+        updateTargetSummary();
       }
+      function updateTargetSummary() { const profile=activeProfile(); const selected=activeTargets(profile,currentRank()); const remaining=selected.filter(ship=>!profile.obtained.includes(ship)); $('#target-summary').textContent=selected.length?`残り${remaining.length}隻 / 目標${selected.length}隻`:'未設定'; }
       function renderDropTable() {
         const profile=activeProfile(); const rows=profile.drops;
         const remainderRows=profileRanks(profile).map(rank=>{const remainder=1-tableFor(profile,rank).reduce((value,row)=>value+row.rate,0);return remainder>.0005?`<tr><td>ドロップなし・その他</td><td>${escapeHtml(rank)}</td><td>${formatPercent(remainder)}</td><td class="muted">—</td><td class="muted">—</td></tr>`:'';}).join('');
         $('#drop-table').innerHTML = rows.map(row => `<tr><td>${escapeHtml(row.ship)}</td><td>${escapeHtml(row.rank)}</td><td>${formatPercent(row.rate)}</td><td>${row.count}/${row.total}</td><td><select class="form-select tier-select" aria-label="${escapeHtml(row.ship)}の格付け" data-tier="${escapeHtml(row.ship)}"><option value="priority">最優先</option><option value="rare">レア</option><option value="normal">通常</option></select></td></tr>`).join('')+remainderRows;
         $$('[data-tier]').forEach(select => { select.value=tierOf(profile,select.dataset.tier); select.addEventListener('change',() => { profile.tiers[select.dataset.tier]=select.value; $$('[data-tier]').filter(peer=>peer.dataset.tier===select.dataset.tier).forEach(peer=>peer.value=select.value); saveState(); renderSession(); preloadImportantImages(profile); }); });
       }
-      function renderLogControls() { const profile=activeProfile(); const ships=unionShips(profile); $('#log-ship').innerHTML=ships.length?ships.map(ship=>`<option>${escapeHtml(ship)}</option>`).join('')+'<option>ドロップなし</option>':'<option value="">未設定</option>'; $('#add-log').disabled=!ships.length; }
       function renderLogs() {
         const profile=activeProfile(); const logs=profile.logs || []; const rankCounts={}; logs.forEach(log=>rankCounts[log.rank]=(rankCounts[log.rank]||0)+1);
+        $('#clear-logs').disabled=!logs.length;
         $('#log-summary').textContent = `実戦記録 ${logs.length}件　${Object.entries(rankCounts).map(([rank,count])=>`${rank} ${count}`).join(' / ')}`;
-        $('#log-list').innerHTML = logs.length ? logs.slice(-50).reverse().map(log=>`<div class="log-row"><span class="log-time muted">${escapeHtml(log.time)}</span><span class="chip ${tierOf(profile,log.ship)}">${escapeHtml(log.ship)}</span><span>${escapeHtml(log.rank)}</span><button class="btn btn-ghost" type="button" data-delete-log="${escapeHtml(log.id)}">削除</button></div>`).join('')+(logs.length>50?'<span class="muted">最新50件を表示しています</span>':'') : '<span class="empty">記録はありません</span>';
+        $('#log-list').innerHTML = logs.length ? logs.slice(-50).reverse().map(log=>`<div class="log-row"><span class="log-time muted">${escapeHtml(log.time)}</span><span class="chip ${tierOf(profile,log.ship)}">${escapeHtml(log.ship)}</span><span>${escapeHtml(log.rank)}</span><button class="btn btn-ghost" type="button" data-delete-log="${escapeHtml(log.id)}" aria-label="${escapeHtml(log.ship)}、${escapeHtml(log.rank)}勝利、${escapeHtml(log.time)}の記録を削除">削除</button></div>`).join('')+(logs.length>50?'<span class="muted">最新50件を表示しています</span>':'') : '<span class="empty">記録はありません</span>';
         $$('[data-delete-log]').forEach(button=>button.addEventListener('click',()=>{profile.logs=logs.filter(log=>log.id!==button.dataset.deleteLog);saveState();renderLogs();}));
         renderLogAnalysis(profile,logs);
         renderQuickRecord(profile);
@@ -594,7 +661,7 @@
         const hunting=profile.targets.filter(ship=>!profile.obtained.includes(ship));
         const featured=[...hunting,'ドロップなし'];
         $('#quick-record-list').innerHTML=ships.length?featured.map(ship=>`<button class="btn${ship==='ドロップなし'?'':' btn-primary'}" type="button" data-quick-record="${escapeHtml(ship)}">${escapeHtml(ship)}</button>`).join(''):'<span class="empty">先にKCNavからドロップ表を登録してください</span>';
-        $$('[data-quick-record]').forEach(button=>button.addEventListener('click',()=>recordLog(button.dataset.quickRecord,$('#quick-rank').value)));
+        $$('[data-quick-record]').forEach(button=>button.addEventListener('click',()=>recordLog(button.dataset.quickRecord,currentRank())));
         const others=ships.filter(ship=>!hunting.includes(ship));
         $('#quick-other').innerHTML=others.map(ship=>`<option>${escapeHtml(ship)}</option>`).join('');
         $('#quick-other-record').disabled=!others.length;
@@ -606,7 +673,7 @@
         if(!ship)return;
         const profile=activeProfile(); profile.logs=profile.logs||[];
         profile.logs.push({id:uid('log'),ship,rank,time:new Date().toLocaleString('ja-JP')});
-        saveState(); renderLogs(); announce(`${ship}、${rank}勝利として記録しました`);
+        saveState(); renderLogs(); $$('[data-quick-record]').find(button=>button.dataset.quickRecord===ship)?.focus(); announce(`${ship}、${rank}勝利として記録しました`);
       }
       function undoLastLog() {
         const profile=activeProfile(); const logs=profile.logs||[];
@@ -659,14 +726,15 @@
         $('#rounds-ninety').textContent=allObtained?'達成':formatRounds(ninetyRounds);
         renderCostEstimate(profile,ninetyRounds);
         $('#batch-run').disabled=isAnimating || !rows.length || rounds===null;
-        if(rounds===null){$('#goal-probability').textContent='周回数を確認';$('#expected-targets').textContent='—';$('#quick-status').textContent='周回数を1〜9999で入力してください';return;}
+        $('#goal-probability-label').textContent=rounds===null?'指定周回で目標達成':`${rounds}周で目標達成`;
+        if(rounds===null){$('#goal-probability').textContent='入力を確認';$('#expected-targets').textContent='—';$('#quick-status').textContent='周回数を1〜9999で入力してください';return;}
         let chance=0;
-        if(canEstimate) chance = mode==='any' ? 1-(1-sum)**rounds : probabilityAll(probabilities,rounds);
+        const anyChance=targets.length?Math.max(0,Math.min(1,1-(1-sum)**rounds)):0;
+        if(canEstimate) chance = mode==='any' ? anyChance : probabilityAll(probabilities,rounds);
         $('#goal-probability').textContent=allObtained?'全目標入手済み':!targets.length ? '目標艦を選択' : tooManyForAll ? 'すべて条件は12艦まで' : formatPercent(chance);
         $('#expected-targets').textContent=targets.length ? `${(rounds*sum).toFixed(2)}隻` : '—';
         const obtainedNote=selected.length>targets.length?`（入手済み${selected.length-targets.length}隻を除く）`:'';
-        const condition=mode==='any'?`${targets.length}隻のいずれか`:`${targets.length}隻すべて`;
-        $('#quick-status').textContent=allObtained?`${currentRank()}勝利・目標艦をすべて入手済みです`:!targets.length?`${currentRank()}勝利・目標艦を設定してください`:tooManyForAll?`${currentRank()}勝利・すべて条件は12艦まで`:`${currentRank()}勝利・${rounds}周で${condition}${obtainedNote}を入手：${formatPercent(chance)}`;
+        $('#quick-status').textContent=allObtained?`${currentRank()}勝利・目標艦をすべて入手済み`:!targets.length?`${currentRank()}勝利・目標艦を設定してください`:tooManyForAll?`${currentRank()}勝利・すべて条件は12艦まで`:`${currentRank()}勝利・残り${targets.length}隻${obtainedNote}`;
       }
       function readCostInput(selector) { const value=Number($(selector).value); return Number.isFinite(value) && value>0 ? value : 0; }
       function renderCostEstimate(profile,ninetyRounds) {
@@ -693,6 +761,7 @@
       function run(count) {
         if(isAnimating || !count)return;
         if(!tableFor(activeProfile(),currentRank()).length){announce('先にKCNavからドロップ表を登録してください');return;}
+        $('#drop-stage').classList.remove('is-idle');
         pendingResults=[]; for(let i=0;i<count;i++)pendingResults.push(drawOne());
         const highlighted=pendingResults.filter(row=>tierOf(activeProfile(),row.ship)==='priority').concat(pendingResults.filter(row=>tierOf(activeProfile(),row.ship)==='rare'));
         let priorityShown=false;
@@ -709,7 +778,7 @@
         clearTimers();
         const tier=tierOf(activeProfile(),row.ship);
         const stage=$('#drop-stage');
-        stage.classList.remove('reveal-rare','reveal-priority','priority-suspense','compact-priority');
+        stage.classList.remove('is-idle','reveal-rare','reveal-priority','priority-suspense','compact-priority');
         stage.classList.add('scanning');
         $('#drop-card').className=tier==='normal'?'drop-card':'drop-card drawing';
         $('#stage-status').textContent='ドロップ確認中…';
@@ -749,7 +818,7 @@
         $('#encounter-message').className=`encounter-message ${tier}`; $('#message-label').textContent=tier==='priority'?'最優先艦':label; $('#message-name').textContent=row.ship; $('#message-note').textContent=`${formatPercent(row.rate||0)}・${row.rank||''}勝利`;
         playEffect(tier,tier,compact);
         const dropImage=$('#drop-content img'); if(dropImage) dropImage.addEventListener('error',()=>{if(navigator.onLine!==false && state.imageCache?.[row.ship]===image){state.imageCache[row.ship]=null;saveState();renderImageStatus(profile);}dropImage.replaceWith(Object.assign(document.createElement('div'),{className:'ship-placeholder',textContent:'艦'}));},{once:true});
-        announce(`${row.ship}、${tierLabel(tier)}艦を獲得`);
+        if(pendingResults.length===1)announce(`${row.ship}、${tierLabel(tier)}艦を獲得`);
         schedule(playNextDrop,(reduceMotion||fastMode)?120:tier==='priority'?(compact?720:1080):tier==='rare'?980:330);
       }
       function skipAnimation() {
@@ -760,14 +829,15 @@
         clearTimers(); finishRun();
       }
       function finishRun() { clearTimers(); const session=currentSession(); session.push(...pendingResults); const total=pendingResults.length; const priority=pendingResults.filter(row=>tierOf(activeProfile(),row.ship)==='priority').length; const rare=pendingResults.filter(row=>tierOf(activeProfile(),row.ship)==='rare').length; pendingResults=[]; animationQueue=[]; setBusy(false); renderSession(); announce(`${total}周の抽選完了。最優先${priority}隻、レア${rare}隻`); }
-      function resetStage() { clearTimers(); pendingResults=[]; animationQueue=[]; setBusy(false); $('#drop-stage').classList.remove('reveal-rare','reveal-priority','scanning','priority-suspense','compact-priority'); $('#drop-card').className='drop-card'; $('#stage-status').textContent='判定待ち'; $('#drop-content').innerHTML='<span class="drop-label">DROP</span>'; $('#encounter-message').className='encounter-message'; $('#message-label').textContent='索敵待機'; $('#message-name').textContent='周回を開始'; $('#message-note').textContent='KCNav実測データ'; }
+      function resetStage() { clearTimers(); pendingResults=[]; animationQueue=[]; setBusy(false); $('#drop-stage').className='card drop-stage is-idle'; $('#drop-card').className='drop-card'; $('#stage-status').textContent='判定待ち'; $('#drop-content').innerHTML='<span class="drop-label">DROP</span>'; $('#encounter-message').className='encounter-message'; $('#message-label').textContent='索敵待機'; $('#message-name').textContent='抽選結果をここに表示'; $('#message-note').textContent='KCNav実測データ'; }
       function renderSession() {
         const profile=activeProfile(); const session=currentSession(); const priorityCount=session.filter(row=>tierOf(profile,row.ship)==='priority').length; const rareCount=session.filter(row=>tierOf(profile,row.ship)==='rare').length; const normalCount=session.length-priorityCount-rareCount;
+        $('#results').hidden=!session.length;
         $('#session-summary').textContent=`今回 ${session.length}周・最優先 ${priorityCount}隻・レア ${rareCount}隻`;
         const important=[...new Set(session.filter(row=>tierOf(profile,row.ship)!=='normal').map(row=>row.ship))];
-        $('#result-grid').innerHTML=important.length?important.map(ship=>{const count=session.filter(row=>row.ship===ship).length;const tier=tierOf(profile,ship);const image=imageFor(ship);return `<div class="result-cell hit">${image?`<img class="result-thumb" src="${escapeHtml(image)}" alt="">`:''}<span>${escapeHtml(ship)} <small class="tier-mark">${tierLabel(tier)}</small></span><strong>${count}</strong></div>`;}).join(''):session.length?'<span class="empty">レア艦なし</span>':'<span class="empty">まだ周回していません</span>';
+        $('#result-grid').innerHTML=important.length?important.map(ship=>{const count=session.filter(row=>row.ship===ship).length;const tier=tierOf(profile,ship);const image=imageFor(ship);return `<div class="result-cell hit">${image?`<img class="result-thumb" src="${escapeHtml(image)}" alt="">`:''}<span>${escapeHtml(ship)} <small class="tier-mark">${tierLabel(tier)}</small></span><strong>${count}</strong></div>`;}).join(''):session.length?'<span class="empty">レア艦なし</span>':'';
         $$('#result-grid img').forEach(image=>image.addEventListener('error',()=>image.remove(),{once:true}));
-        $('#recent-results').innerHTML=session.length?`<span class="recent-label">直近${Math.min(8,session.length)}件</span>`+session.slice(-8).reverse().map(row=>{const tier=tierOf(profile,row.ship);return `<span class="chip ${tier}">${tier!=='normal'?`<small>${tierLabel(tier)}</small> `:''}${escapeHtml(row.ship)}</span>`;}).join(''):'<span class="empty">まだ周回していません</span>';
+        $('#recent-results').innerHTML=session.length?`<span class="recent-label">直近${Math.min(8,session.length)}件</span>`+session.slice(-8).reverse().map(row=>{const tier=tierOf(profile,row.ship);return `<span class="chip ${tier}">${tier!=='normal'?`<small>${tierLabel(tier)}</small> `:''}${escapeHtml(row.ship)}</span>`;}).join(''):'';
         $('#clear-session').hidden=!session.length;
       }
 
@@ -802,9 +872,9 @@
       function renderParsePreview() {
         $('#parse-preview').innerHTML=parsedImport?.rows.map(row=>`<tr><td>${escapeHtml(row.ship)}</td><td>${formatPercent(row.rate)}</td><td>${row.count}/${row.total}</td><td>${row.rank}</td></tr>`).join('')||'';
         const ranks=parsedImport?.rows ? [...new Set(parsedImport.rows.map(row=>row.rank))].map(rank=>{const group=parsedImport.rows.filter(row=>row.rank===rank);return `${rank}: ${group[0].total}件・${group.length}艦`;}).join(' / ') : '';
-        const errors=parsedImport?.errors||[]; const ignored=parsedImport?.ignored||[]; const summary=parsedImport?`入力${parsedImport.inputLines}行・解析${parsedImport.rows.length}行・無視${ignored.length}行` : ''; const invalid=!parsedImport?.rows.length || errors.some(error=>/検出|重複|読み取れません|母数が複数|100%を超え/.test(error)); $('#parse-status').className=`parse-status${errors.length||ignored.length?' warning':''}`; $('#parse-status').textContent=errors.length?`${summary}　${errors.join(' / ')}`:ignored.length?`${summary}　無視した行: ${ignored.join(', ')}`:`解析成功　${summary}　${ranks}`; $('#save-import').disabled=invalid; $('#update-import').disabled=invalid;
+        const errors=parsedImport?.errors||[]; const ignored=parsedImport?.ignored||[]; const summary=parsedImport?`入力${parsedImport.inputLines}行・解析${parsedImport.rows.length}行・無視${ignored.length}行` : ''; const invalid=!parsedImport?.rows.length || errors.some(error=>/検出|重複|読み取れません|母数が複数|100%を超え/.test(error)); $('#parse-status').className=`parse-status${errors.length||ignored.length?' warning':''}`; $('#parse-status').textContent=errors.length?`${summary}　${errors.join(' / ')}`:ignored.length?`${summary}　無視した行: ${ignored.join(', ')}`:`解析成功　${summary}　${ranks}`; $('#import-confirmation').hidden=invalid; $('#save-import').disabled=invalid; $('#update-import').disabled=invalid;
       }
-      function clearParsedImport(message) { parsedImport=null; $('#kcnav-text').value=''; $('#parse-preview').innerHTML=''; $('#parse-status').textContent=message; $('#save-import').disabled=true; $('#update-import').disabled=true; }
+      function clearParsedImport(message) { parsedImport=null; $('#kcnav-text').value=''; $('#parse-preview').innerHTML=''; $('#parse-status').textContent=message; $('#import-confirmation').hidden=true; $('#save-import').disabled=true; $('#update-import').disabled=true; }
       function saveImportedProfile() {
         if(!parsedImport?.rows.length) return;
         const ships=[...new Set(parsedImport.rows.map(row=>row.ship))]; const knownTiers=Object.fromEntries(ships.filter(ship=>defaultTiers[ship]).map(ship=>[ship,defaultTiers[ship]])); const knownTargets=ships.filter(ship=>knownTiers[ship]==='priority');
@@ -821,7 +891,7 @@
         profile.tiers=Object.fromEntries(ships.map(ship=>[ship,profile.tiers?.[ship]||defaultTiers[ship]||'normal']));
         profile.source='KCNav貼り付け'; profile.updatedAt=new Date().toLocaleDateString('ja-JP');
         Object.keys(sessions).filter(key=>key.startsWith(`${profile.id}:`)).forEach(key=>delete sessions[key]);
-        saveState(); clearParsedImport('現在のプリセットを更新しました'); renderProfile(); announce(`${profile.title}のドロップ表を更新しました`);
+        saveState(); clearParsedImport('現在のプリセットを更新しました'); renderProfile(); $('#import-section').open=false; announce(`${profile.title}のドロップ表を更新しました`);
       }
       function saveProfileMeta() {
         const profile=activeProfile(); const title=$('#edit-title').value.trim();
@@ -831,12 +901,30 @@
       }
       function duplicateProfile() { const source=activeProfile(); const copy=clone(source); copy.id=uid('profile'); copy.title=`${source.title} コピー`; copy.logs=[]; state.profiles.push(copy); state.activeId=copy.id; saveState(); renderProfile(); announce(`${copy.title}を作成しました`); }
       async function deleteProfile() { const profile=activeProfile(); const last=state.profiles.length===1; const message=last?`最後のプリセット「${profile.title}」を削除します。実戦ログ ${profile.logs?.length||0}件も削除され、未設定プリセットに置き換わります。`:`プリセット「${profile.title}」を削除します。実戦ログ ${profile.logs?.length||0}件も削除されます。`; if(!await askConfirmation(message,'プリセットを削除'))return; const index=state.profiles.findIndex(item=>item.id===profile.id); Object.keys(sessions).filter(key=>key.startsWith(`${profile.id}:`)).forEach(key=>delete sessions[key]); if(last){const empty=createEmptyProfile();state.profiles=[empty];state.activeId=empty.id;}else{state.profiles.splice(index,1);state.activeId=state.profiles[Math.max(0,index-1)].id;} saveState();renderProfile();announce(`${profile.title}を削除しました`); }
-      function addLog() { recordLog($('#log-ship').value,$('#log-rank').value); }
       async function clearLogs() { const profile=activeProfile(); const count=profile.logs?.length||0; if(!count)return; if(!await askConfirmation(`海域「${profile.title}」の実戦ログ ${count}件をすべて消去します。`,'ログを消去'))return; profile.logs=[]; saveState(); renderLogs(); announce('実戦ログを消去しました'); }
       async function clearCurrentSession() { const session=currentSession(); if(!session.length){announce('消去するシミュレーション結果はありません');return;} if(!await askConfirmation(`現在のシミュレーション結果 ${session.length}周分を消去します。`,'結果を消去'))return; sessions[sessionKey()]=[]; renderSession(); resetStage(); announce('現在のシミュレーション結果を消去しました'); }
       function exportJSON() { const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'}); const url=URL.createObjectURL(blob); const link=document.createElement('a'); link.href=url; link.download=`kcnav-drop-lab-${new Date().toISOString().slice(0,10)}.json`; link.click(); setTimeout(()=>URL.revokeObjectURL(url),1000); }
       async function importJSON() { const file=$('#import-json-file').files[0]; if(!file)return; const value=JSON.parse(await file.text()); if(!validateState(value))throw new Error('対応するバックアップではありません'); if(!await askConfirmation('現在の全海域と実戦ログを、このバックアップで置き換えます。','復元する'))return; try{localStorage.setItem(BACKUP_KEY,JSON.stringify(state));}catch{} state=normalizeState(value); state.activeId=state.profiles.some(profile=>profile.id===state.activeId)?state.activeId:state.profiles[0].id; sessions={}; saveState(); renderProfile(); announce('バックアップから復元しました'); }
       function escapeHtml(value) { return String(value??'').replace(/[&<>'"]/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char])); }
+      function onboardingSeen() { try { return localStorage.getItem(ONBOARDING_KEY)==='seen'; } catch { return false; } }
+      function renderMode() {
+        const simulation=uiMode==='simulation';
+        $('#simulation-tab').setAttribute('aria-selected',String(simulation)); $('#record-tab').setAttribute('aria-selected',String(!simulation));
+        $('#simulation-panel').hidden=!simulation; $('#record-panel').hidden=simulation;
+      }
+      function setMode(mode) { uiMode=mode==='record'?'record':'simulation'; renderMode(); (uiMode==='simulation'?$('#simulation-tab'):$('#record-tab')).focus(); }
+      function renderImportMode() {
+        const isNew=importMode==='new';
+        $('#import-new').setAttribute('aria-pressed',String(isNew)); $('#import-update').setAttribute('aria-pressed',String(!isNew));
+        $('#import-title-field').hidden=!isNew; $('#save-import').hidden=!isNew; $('#update-import').hidden=isNew;
+      }
+      function setImportMode(mode) { importMode=mode==='update'?'update':'new'; parsedImport=null; $('#parse-preview').innerHTML=''; $('#parse-status').textContent=importMode==='new'?'KCNavの表を貼り付けて解析してください':`${activeProfile().title}の更新用データを貼り付けてください`; $('#import-confirmation').hidden=true; renderImportMode(); $('#kcnav-text').focus(); }
+      function finishOnboarding(openImport=false) {
+        try { localStorage.setItem(ONBOARDING_KEY,'seen'); } catch {}
+        $('#onboarding').hidden=true;
+        if(openImport){ setImportMode('new'); $('#tools-panel').open=true; $('#import-section').open=true; requestAnimationFrame(()=>{$('#import-section').scrollIntoView({behavior:reduceMotion?'auto':'smooth',block:'start'});$('#kcnav-text').focus();}); }
+      }
+      function renderOnboarding() { $('#onboarding').hidden=onboardingSeen(); }
 
       $('#profile-select').addEventListener('change',event=>{state.activeId=event.target.value;saveState();renderProfile();});
       $('#sound-toggle').addEventListener('click',toggleSound);
@@ -845,33 +933,26 @@
       $('#sound-volume').addEventListener('input',event=>{soundVolume=Math.min(100,Math.max(0,Number(event.target.value)||0));applyVolume();});
       $('#sound-volume').addEventListener('change',()=>{saveVolumePreference();playEffect('toggle');});
       $('#undo-log').addEventListener('click',undoLastLog);
-      $('#quick-other-record').addEventListener('click',()=>recordLog($('#quick-other').value,$('#quick-rank').value));
-      $('#drop-stage').addEventListener('click',()=>{ if(isAnimating)skipAnimation(); else if(!$('#single-run').disabled)run(1); });
+      $('#quick-other-record').addEventListener('click',()=>recordLog($('#quick-other').value,currentRank()));
       document.addEventListener('keydown',event=>{
-        if(event.altKey||event.ctrlKey||event.metaKey)return;
-        const target=event.target;
-        if(target && (/^(input|select|textarea|button|summary|a)$/i.test(target.tagName) || target.isContentEditable))return;
-        if($('#confirm-dialog').open)return;
-        const key=event.key;
-        if(key===' '||key==='1'){ event.preventDefault(); if(isAnimating)skipAnimation(); else $('#single-run').click(); }
-        else if(key==='2'){ event.preventDefault(); $('#ten-run').click(); }
-        else if(key==='3'){ event.preventDefault(); $('#batch-run').click(); }
-        else if(key==='m'||key==='M'){ toggleSound(); }
-        else if(key==='f'||key==='F'){ toggleFast(); }
-        else if(key==='t'||key==='T'){ cycleTheme(); }
-        else if(key==='Escape'){ skipAnimation(); }
+        if(event.key==='Escape' && !$('#confirm-dialog').open && isAnimating){event.preventDefault();skipAnimation();}
       });
+      $('#simulation-tab').addEventListener('click',()=>setMode('simulation')); $('#record-tab').addEventListener('click',()=>setMode('record'));
+      $('.mode-switch').addEventListener('keydown',event=>{if(!['ArrowLeft','ArrowRight'].includes(event.key))return;event.preventDefault();setMode(uiMode==='simulation'?'record':'simulation');});
+      $('#edit-targets').addEventListener('click',()=>{$('#target-panel').open=!$('#target-panel').open;}); $('#target-panel').addEventListener('toggle',()=>{$('#edit-targets').setAttribute('aria-expanded',String($('#target-panel').open));});
       $('#duplicate-profile').addEventListener('click',duplicateProfile); $('#delete-profile').addEventListener('click',deleteProfile);
-      $('#rank-select').addEventListener('change',()=>{renderTargets();renderLogControls();renderDropTable();updateMetrics();renderSession();resetStage();});
-      $('#rounds').addEventListener('input',updateMetrics); $('#rounds').addEventListener('blur',()=>{readRounds(true);updateMetrics();}); $('#goal-mode').addEventListener('change',updateMetrics);
-      $('#single-run').addEventListener('click',()=>run(1)); $('#ten-run').addEventListener('click',()=>run(10)); $('#batch-run').addEventListener('click',()=>{const rounds=readRounds(true);updateMetrics();run(rounds);}); $('#clear-session').addEventListener('click',clearCurrentSession);
+      $('#rank-select').addEventListener('change',()=>{renderTargets();renderDropTable();updateMetrics();renderSession();resetStage();});
+      $('#rounds').addEventListener('input',updateMetrics); $('#rounds').addEventListener('blur',updateMetrics); $('#goal-mode').addEventListener('change',updateMetrics);
+      $('#single-run').addEventListener('click',()=>run(1)); $('#ten-run').addEventListener('click',()=>run(10)); $('#batch-run').addEventListener('click',()=>{const rounds=readRounds();updateMetrics();if(rounds!==null)run(rounds);}); $('#clear-session').addEventListener('click',clearCurrentSession);
       $('#parse-kcnav').addEventListener('click',()=>{parsedImport=parseKCNav($('#kcnav-text').value);applyParsedMeta();renderParsePreview();}); $('#save-import').addEventListener('click',saveImportedProfile); $('#update-import').addEventListener('click',updateImportedProfile);
+      $('#import-new').addEventListener('click',()=>setImportMode('new')); $('#import-update').addEventListener('click',()=>setImportMode('update'));
       ['#cost-fuel','#cost-ammo','#cost-bucket'].forEach(selector=>{ $(selector).addEventListener('input',()=>{activeProfile().costs={fuel:readCostInput('#cost-fuel'),ammo:readCostInput('#cost-ammo'),bucket:readCostInput('#cost-bucket')};updateMetrics();}); $(selector).addEventListener('change',saveState); });
       $('#save-profile-meta').addEventListener('click',saveProfileMeta); $('#refresh-images').addEventListener('click',()=>resolveImagesForProfile(activeProfile(),true));
-      $('#add-log').addEventListener('click',addLog); $('#clear-logs').addEventListener('click',clearLogs);
+      $('#clear-logs').addEventListener('click',clearLogs);
       $('#export-json').addEventListener('click',exportJSON); $('#import-json').addEventListener('click',()=>importJSON().catch(error=>{$('#storage-status').textContent=error.message;announce(error.message);}));
+      $('#onboarding-open-import').addEventListener('click',()=>finishOnboarding(true)); $('#onboarding-dismiss').addEventListener('click',()=>finishOnboarding(false));
       $('#confirm-cancel').addEventListener('click',()=>finishConfirmation(false)); $('#confirm-ok').addEventListener('click',()=>finishConfirmation(true)); $('#confirm-dialog').addEventListener('cancel',event=>{event.preventDefault();finishConfirmation(false);});
-      applyTheme(); renderThemeControl(); renderSoundControl(); renderFastControl(); renderProfile();
+      applyTheme(); renderThemeControl(); renderSoundControl(); renderFastControl(); renderMode(); renderImportMode(); renderProfile(); renderOnboarding();
     })();
   </script>
 </div>

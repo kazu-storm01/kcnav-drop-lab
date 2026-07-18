@@ -49,14 +49,19 @@ function allowImageDataHosts(html) {
 }
 
 const source = readFileSync(sourcePath, 'utf8').replace(/\r\n/g, '\n').trim();
-let output = readFileSync(outputPath, 'utf8');
+let output = readFileSync(outputPath, 'utf8').replace(
+  '<html lang="en">',
+  '<html lang="ja">',
+);
 const match = output.match(
   /<iframe\b[^>]*\bsrcdoc="([\s\S]*?)"\s*><\/iframe>/i,
 );
 
 if (!match) throw new Error('Application iframe srcdoc was not found');
 
-let srcdoc = decodeHtml(match[1]).replace(/\r\n/g, '\n');
+let srcdoc = decodeHtml(match[1])
+  .replace(/\r\n/g, '\n')
+  .replace('<html lang="en">', '<html lang="ja">');
 const start = srcdoc.indexOf(fragmentStart);
 const end = srcdoc.indexOf(fragmentEnd, start);
 
