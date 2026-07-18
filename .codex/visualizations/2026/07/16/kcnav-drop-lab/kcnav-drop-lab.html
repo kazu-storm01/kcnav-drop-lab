@@ -177,6 +177,8 @@
               <label class="field" for="goal-mode"><span>目標条件</span><select class="form-select" id="goal-mode"><option value="any">いずれか1隻</option><option value="all">すべて1隻以上</option></select></label>
               <div class="metric"><span class="muted">目標達成確率</span><strong id="goal-probability">—</strong></div>
               <div class="metric"><span class="muted">期待される目標艦数</span><strong id="expected-targets">—</strong></div>
+              <div class="metric"><span class="muted">50%達成の目安</span><strong id="rounds-half">—</strong></div>
+              <div class="metric"><span class="muted">90%達成の目安</span><strong id="rounds-ninety">—</strong></div>
             </div>
             <div class="quick-status" id="quick-status"></div>
             <div class="target-box"><span>目標艦</span><div class="target-list" id="target-list"></div></div>
@@ -197,7 +199,9 @@
               <button class="btn btn-primary" id="add-log" type="button">現在時刻で記録</button>
               <button class="btn btn-ghost" id="clear-logs" type="button">実戦ログを全消去</button>
             </div>
-            <p class="muted" id="log-summary"></p><div class="log-list" id="log-list"></div>
+            <p class="muted" id="log-summary"></p>
+            <div class="table-wrap" id="log-analysis-wrap" hidden><table><thead><tr><th>艦</th><th>評価</th><th>実戦</th><th>実戦率</th><th>KCNav率</th><th>傾向</th></tr></thead><tbody id="log-analysis"></tbody></table><span class="muted">実戦率は同じ評価の記録数を母数に計算します。</span></div>
+            <div class="log-list" id="log-list"></div>
           </div>
         </details>
 
@@ -515,20 +519,53 @@
         $('#log-summary').textContent = `実戦記録 ${logs.length}件　${Object.entries(rankCounts).map(([rank,count])=>`${rank} ${count}`).join(' / ')}`;
         $('#log-list').innerHTML = logs.length ? logs.slice(-50).reverse().map(log=>`<div class="log-row"><span class="log-time muted">${escapeHtml(log.time)}</span><span class="chip ${tierOf(profile,log.ship)}">${escapeHtml(log.ship)}</span><span>${escapeHtml(log.rank)}</span><button class="btn btn-ghost" type="button" data-delete-log="${escapeHtml(log.id)}">削除</button></div>`).join('')+(logs.length>50?'<span class="muted">最新50件を表示しています</span>':'') : '<span class="empty">記録はありません</span>';
         $$('[data-delete-log]').forEach(button=>button.addEventListener('click',()=>{profile.logs=logs.filter(log=>log.id!==button.dataset.deleteLog);saveState();renderLogs();}));
+        renderLogAnalysis(profile,logs);
+      }
+      function renderLogAnalysis(profile,logs) {
+        const wrap=$('#log-analysis-wrap');
+        if(!logs.length){wrap.hidden=true;$('#log-analysis').innerHTML='';return;}
+        const rankOrder=['S','A','B','C'];
+        const rankTotals={}; logs.forEach(log=>rankTotals[log.rank]=(rankTotals[log.rank]||0)+1);
+        const groups={}; logs.forEach(log=>{(groups[log.rank]??={})[log.ship]=(groups[log.rank][log.ship]||0)+1;});
+        const cells=[];
+        Object.keys(groups).sort((a,b)=>rankOrder.indexOf(a)-rankOrder.indexOf(b)).forEach(rank=>{
+          const total=rankTotals[rank];
+          Object.entries(groups[rank]).sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0],'ja')).forEach(([ship,count])=>{
+            const theory=profile.drops.find(row=>row.rank===rank && row.ship===ship)?.rate;
+            const actual=count/total;
+            const trend=theory===undefined?'<span class="muted">表外</span>':`${actual>=theory?'上振れ +':'下振れ −'}${(Math.abs(actual-theory)*100).toFixed(2)}pt`;
+            cells.push(`<tr><td>${escapeHtml(ship)}</td><td>${escapeHtml(rank)}</td><td>${count}/${total}</td><td>${formatPercent(actual)}</td><td>${theory===undefined?'—':formatPercent(theory)}</td><td>${trend}</td></tr>`);
+          });
+        });
+        $('#log-analysis').innerHTML=cells.join('');
+        wrap.hidden=false;
       }
       function updateMetrics() {
         const profile=activeProfile(); const rows=tableFor(profile,currentRank()); const rounds=readRounds(false); const targets=activeTargets(profile,currentRank()); const probabilities=targets.map(ship=>rows.find(row=>row.ship===ship).rate); const sum=probabilities.reduce((a,b)=>a+b,0); const mode=$('#goal-mode').value;
+        const tooManyForAll=mode==='all' && targets.length>12;
+        const canEstimate=Boolean(targets.length) && !tooManyForAll;
+        $('#rounds-half').textContent=canEstimate?formatRounds(roundsForChance(probabilities,sum,mode,.5)):'—';
+        $('#rounds-ninety').textContent=canEstimate?formatRounds(roundsForChance(probabilities,sum,mode,.9)):'—';
         $('#batch-run').disabled=isAnimating || !rows.length || rounds===null;
         if(rounds===null){$('#goal-probability').textContent='周回数を確認';$('#expected-targets').textContent='—';$('#quick-status').textContent='周回数を1〜9999で入力してください';return;}
         let chance=0;
-        const tooManyForAll=mode==='all' && targets.length>12;
-        if(targets.length && !tooManyForAll) chance = mode==='any' ? 1-(1-sum)**rounds : probabilityAll(probabilities,rounds);
+        if(canEstimate) chance = mode==='any' ? 1-(1-sum)**rounds : probabilityAll(probabilities,rounds);
         $('#goal-probability').textContent=!targets.length ? '目標艦を選択' : tooManyForAll ? 'すべて条件は12艦まで' : formatPercent(chance);
         $('#expected-targets').textContent=targets.length ? `${(rounds*sum).toFixed(2)}隻` : '—';
         const condition=mode==='any'?`${targets.length}隻のいずれか`:`${targets.length}隻すべて`;
         $('#quick-status').textContent=!targets.length?`${currentRank()}勝利・目標艦を設定してください`:tooManyForAll?`${currentRank()}勝利・すべて条件は12艦まで`:`${currentRank()}勝利・${rounds}周で${condition}を入手：${formatPercent(chance)}`;
       }
       function probabilityAll(probabilities,rounds) { let result=0; const size=1<<probabilities.length; for(let mask=0;mask<size;mask++){let excluded=0,bits=0;for(let i=0;i<probabilities.length;i++){if(mask&(1<<i)){excluded+=probabilities[i];bits++;}}result+=(bits%2?-1:1)*(1-excluded)**rounds;}return Math.max(0,Math.min(1,result)); }
+      function roundsForChance(probabilities,sum,mode,target) {
+        if(mode==='any'){ if(sum<=0)return null; if(sum>=1)return 1; return Math.ceil(Math.log(1-target)/Math.log(1-sum)); }
+        if(!probabilities.length || probabilities.some(rate=>rate<=0))return null;
+        let high=1;
+        while(probabilityAll(probabilities,high)<target){ high*=2; if(high>99999)return Infinity; }
+        let low=Math.max(1,high/2);
+        while(low<high){ const mid=Math.floor((low+high)/2); if(probabilityAll(probabilities,mid)>=target)high=mid; else low=mid+1; }
+        return low;
+      }
+      function formatRounds(value) { return value===null?'—':Number.isFinite(value)?`${value}周`:'99999周超'; }
       function drawOne() {
         const rows=tableFor(activeProfile(),currentRank()); let cursor=0; const wheel=rows.map(row=>({...row,limit:cursor+=row.rate})); const roll=Math.random(); return wheel.find(row=>roll<row.limit) || {ship:'ドロップなし・その他',rate:Math.max(0,1-cursor),rank:currentRank(),count:0,total:rows[0]?.total||0};
       }

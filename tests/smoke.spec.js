@@ -1,8 +1,23 @@
 import { expect, test } from '@playwright/test';
 
+const tinyPng = Buffer.from(
+  'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=',
+  'base64',
+);
+
 test('public app starts without seeded battle logs and can simulate one run', async ({
   page,
 }) => {
+  await page.route('**/*', (route) => {
+    const url = new URL(route.request().url());
+    if (url.hostname === '127.0.0.1') return route.continue();
+    if (url.hostname === 'raw.githubusercontent.com')
+      return route.fulfill({ contentType: 'application/json', body: '[]' });
+    if (route.request().resourceType() === 'image')
+      return route.fulfill({ contentType: 'image/png', body: tinyPng });
+    return route.fulfill({ status: 204, body: '' });
+  });
+
   const browserErrors = [];
   page.on('pageerror', (error) => browserErrors.push(error.message));
   page.on('console', (message) => {
@@ -31,9 +46,20 @@ test('public app starts without seeded battle logs and can simulate one run', as
     .toBe('on');
 
   await app.getByText('設定・記録', { exact: true }).click();
+  await app.getByText('抽選設定と確率', { exact: true }).click();
+  await expect(app.locator('#rounds-half')).toHaveText('11周');
+  await expect(app.locator('#rounds-ninety')).toHaveText('36周');
+
   await app.getByText('実戦記録', { exact: true }).click();
   await expect(app.getByText('実戦記録 0件', { exact: true })).toBeVisible();
   await expect(app.getByText('記録はありません', { exact: true })).toBeVisible();
+  await expect(app.locator('#log-analysis-wrap')).toBeHidden();
+
+  await app.getByRole('button', { name: '現在時刻で記録' }).click();
+  await expect(app.locator('#log-analysis-wrap')).toBeVisible();
+  await expect(app.locator('#log-analysis')).toContainText('1/1');
+  await expect(app.locator('#log-analysis')).toContainText('100.00%');
+  await expect(app.locator('#log-analysis')).toContainText('上振れ');
 
   await app.getByRole('button', { name: '1周', exact: true }).click();
   await expect(app.getByText(/今回 1周・/)).toBeVisible();
@@ -55,13 +81,7 @@ test('a KCNav preset can be edited and resolves an unbundled ship image', async 
   await page.route(
     'https://w01y.kancolle-server.com/kcs2/resources/ship/card/0597_7129.png',
     (route) =>
-      route.fulfill({
-        contentType: 'image/png',
-        body: Buffer.from(
-          'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=',
-          'base64',
-        ),
-      }),
+      route.fulfill({ contentType: 'image/png', body: tinyPng }),
   );
 
   await page.goto('/outputs/kcnav-drop-lab.html');
