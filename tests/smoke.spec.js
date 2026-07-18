@@ -114,10 +114,27 @@ test('public app starts without seeded battle logs and can simulate one run', as
   await expect(app.locator('#rounds')).toHaveAttribute('aria-invalid', 'true');
   await expect(app.locator('#rounds-error')).toBeVisible();
   await expect(app.locator('#batch-run')).toBeDisabled();
+  await expect(app.locator('#goal-probability-label')).toHaveText(
+    '20周で目標達成',
+  );
+  await expect(app.locator('#goal-probability')).toHaveText('72.88%');
   await app.locator('#rounds').fill('20');
   await expect(app.locator('#rounds')).toHaveAttribute('aria-invalid', 'false');
   await expect(app.locator('#rounds-error')).toBeHidden();
   await app.getByText('その他…', { exact: true }).click();
+
+  await app.locator('#rounds-chips [data-rounds="50"]').click();
+  await expect(app.locator('#goal-probability-label')).toHaveText(
+    '50周で目標達成',
+  );
+  await expect(
+    app.locator('#rounds-chips [data-rounds="50"]'),
+  ).toHaveAttribute('aria-pressed', 'true');
+  await app.locator('#rounds-chips [data-rounds="20"]').click();
+  await expect(app.locator('#goal-probability-label')).toHaveText(
+    '20周で目標達成',
+  );
+
   await app.getByText('詳しい確率', { exact: true }).click();
   await expect(app.locator('#rounds-half')).toHaveText('11周');
   await expect(app.locator('#rounds-ninety')).toHaveText('36周');
@@ -140,13 +157,28 @@ test('public app starts without seeded battle logs and can simulate one run', as
   await app.locator('#cost-fuel').fill('100');
   await expect(app.locator('#cost-status')).toContainText('燃料 3,600');
 
+  await app.locator('#target-add-select').selectOption('蒼龍');
+  await app.getByRole('button', { name: '目標に追加' }).click();
+  const souryuuItem = app.locator('.target-item').filter({ hasText: '蒼龍' });
+  await expect(souryuuItem).toContainText('最優先');
+  await souryuuItem
+    .getByRole('button', { name: '蒼龍を目標から外す' })
+    .click();
+
   await app.getByRole('tab', { name: '実戦記録' }).click();
+  await expect(app.locator('#goal-probability')).toBeVisible();
   await expect(app.getByText('実戦記録 0件', { exact: true })).toBeVisible();
   await expect(app.getByText('記録はありません', { exact: true })).toBeVisible();
   await expect(app.locator('#log-analysis-wrap')).toBeHidden();
+  await expect(app.locator('#luck-summary')).toBeHidden();
 
   await app.locator('[data-quick-record="Indiana"]').click();
   await expect(app.locator('[data-quick-record="Indiana"]')).toBeFocused();
+  await expect(app.locator('#luck-summary')).toBeVisible();
+  await expect(app.locator('#luck-summary')).toContainText('Indiana：1/1周');
+  await expect(app.locator('#luck-summary')).toContainText('上位3.7%');
+  await expect(app.locator('#luck-summary')).toContainText('想定の範囲内');
+  await app.getByText('詳しい分析', { exact: true }).click();
   await expect(app.locator('#log-analysis-wrap')).toBeVisible();
   await expect(app.locator('#log-analysis')).toContainText('1/1');
   await expect(app.locator('#log-analysis')).toContainText('100.00%');
@@ -174,6 +206,9 @@ test('public app starts without seeded battle logs and can simulate one run', as
     );
   });
   await expect(app.getByText(/今回 1周・/)).toBeVisible();
+
+  await app.locator('#drop-stage').click();
+  await expect(app.getByText(/今回 2周・/)).toBeVisible();
 
   expect(browserErrors).toEqual([]);
 });
@@ -204,7 +239,6 @@ test('a KCNav preset can be edited and resolves an unbundled ship image', async 
   await expect(app.locator('#tools-panel')).toHaveAttribute('open', '');
   await expect(app.locator('#import-section')).toHaveAttribute('open', '');
   await app.locator('#kcnav-text').fill('E-9-1 甲 Xマス\nダミー艦\t50.00%\t1/2\tS');
-  await app.getByRole('button', { name: '解析', exact: true }).click();
   await expect(app.locator('#import-map')).toHaveValue('E9-1');
   await expect(app.locator('#import-difficulty')).toHaveValue('甲');
   await expect(app.locator('#import-node')).toHaveValue('X');

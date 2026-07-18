@@ -120,6 +120,11 @@
     #kcnav-drop-lab .input-error { grid-column: 1 / -1; margin: 0; color: light-dark(rgb(178 48 6), var(--destructive)); font-size: .85rem; }
     #kcnav-drop-lab .primary-metrics { display: grid; grid-template-columns: 1fr 1fr; gap: .55rem; }
     #kcnav-drop-lab .primary-metrics .metric { padding: .65rem .75rem; border: 1px solid var(--border); background: color-mix(in srgb, var(--secondary) 32%, transparent); }
+    #kcnav-drop-lab .rounds-chips { display: flex; flex-wrap: wrap; gap: .35rem; align-items: center; }
+    #kcnav-drop-lab .rounds-chips .btn { min-width: 2.6rem; padding: .25rem .55rem; font-size: .85rem; }
+    #kcnav-drop-lab .rounds-chips .btn[aria-pressed="true"] { border-color: var(--primary); background: color-mix(in srgb, var(--primary) 14%, var(--secondary)); }
+    #kcnav-drop-lab .luck-summary { display: grid; gap: .3rem; padding: .55rem .7rem; border: 1px solid var(--border); border-left: 3px solid var(--primary); background: color-mix(in srgb, var(--secondary) 32%, transparent); font-size: .92rem; line-height: 1.5; }
+    #kcnav-drop-lab .drop-stage { cursor: pointer; }
     #kcnav-drop-lab .quick-status { color: var(--muted-foreground); font-size: .9rem; line-height: 1.5; }
     #kcnav-drop-lab .settings-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .65rem; }
     #kcnav-drop-lab .metric { display: grid; gap: .18rem; padding-bottom: .55rem; border-bottom: 1px solid var(--border); }
@@ -211,6 +216,7 @@
     <div class="topbar">
       <div class="topbar-row">
         <label class="field" for="profile-select"><span class="sr-only">海域</span><select class="form-select" id="profile-select" aria-label="海域"></select></label>
+        <button class="btn" id="open-import" type="button" title="KCNavデータを登録・更新する">＋登録</button>
         <details class="preferences"><summary class="btn">表示・音</summary><div class="preferences-panel"><button class="btn sound-toggle" id="theme-toggle" type="button" title="表示テーマを 自動 → ライト → ダーク で切り替える">テーマ 自動</button><button class="btn sound-toggle" id="fast-toggle" type="button" aria-pressed="false" title="ドロップ演出を短縮する">演出 標準</button><button class="btn sound-toggle" id="sound-toggle" type="button" aria-pressed="false">音 OFF</button><label class="field volume-field" for="sound-volume"><span>音量</span><input type="range" id="sound-volume" min="0" max="100" step="5" aria-label="音量"></label></div></details>
       </div>
     </div>
@@ -226,20 +232,21 @@
     </section>
     <details class="card target-panel" id="target-panel"><summary class="sr-only">目標艦を編集</summary><div class="detail-body"><div class="target-box"><span>目標艦</span><div class="target-picker" id="target-list"></div></div></div></details>
 
+    <div class="primary-metrics" aria-label="主な確率">
+      <div class="metric"><span class="muted" id="goal-probability-label">20周で目標達成</span><strong id="goal-probability">—</strong></div>
+      <div class="metric"><span class="muted">90%達成の目安</span><strong id="rounds-ninety">—</strong></div>
+    </div>
+    <div class="rounds-chips" id="rounds-chips" aria-label="確率計算に使う周回数"><span class="muted">周回数</span><button class="btn" type="button" data-rounds="10">10</button><button class="btn" type="button" data-rounds="20">20</button><button class="btn" type="button" data-rounds="50">50</button><button class="btn" type="button" data-rounds="100">100</button></div>
+    <div class="quick-status" id="quick-status"></div>
+
     <section class="mode-panel" id="simulation-panel" role="tabpanel" aria-labelledby="simulation-tab">
-      <div class="workspace"><section class="card drop-stage is-idle" id="drop-stage" aria-busy="false"><span class="stage-status" id="stage-status">判定待ち</span><span class="radar-sweep" aria-hidden="true"></span><div class="stage-effects" aria-hidden="true"><span class="effect-flash"></span><span class="effect-ring"></span><span class="effect-ring"></span><span class="effect-ring"></span><span class="spark"></span><span class="spark"></span><span class="spark"></span><span class="spark"></span><span class="spark"></span><span class="spark"></span><span class="spark"></span><span class="spark"></span><span class="spark"></span></div><span class="priority-curtain" aria-hidden="true"></span><div class="drop-card" id="drop-card"><div class="drop-content" id="drop-content"><span class="drop-label">DROP</span></div></div><div class="encounter-message" id="encounter-message"><span class="drop-label" id="message-label">索敵待機</span><span class="drop-name" id="message-name">抽選結果をここに表示</span><span class="drop-note" id="message-note">KCNav実測データ</span></div></section></div>
+      <div class="workspace"><section class="card drop-stage is-idle" id="drop-stage" aria-busy="false"><span class="stage-status" id="stage-status">判定待ち</span><span class="radar-sweep" aria-hidden="true"></span><div class="stage-effects" aria-hidden="true"><span class="effect-flash"></span><span class="effect-ring"></span><span class="effect-ring"></span><span class="effect-ring"></span><span class="spark"></span><span class="spark"></span><span class="spark"></span><span class="spark"></span><span class="spark"></span><span class="spark"></span><span class="spark"></span><span class="spark"></span><span class="spark"></span></div><span class="priority-curtain" aria-hidden="true"></span><div class="drop-card" id="drop-card"><div class="drop-content" id="drop-content"><span class="drop-label">DROP</span></div></div><div class="encounter-message" id="encounter-message"><span class="drop-label" id="message-label">索敵待機</span><span class="drop-name" id="message-name">タップで1周・結果をここに表示</span><span class="drop-note" id="message-note">KCNav実測データ</span></div></section></div>
 
       <div class="quick-controls">
         <button class="btn btn-block" id="single-run" type="button">1周</button>
         <button class="btn btn-primary btn-block" id="ten-run" type="button">10周</button>
         <details class="custom-run"><summary class="btn btn-block">その他…</summary><div class="custom-run-panel"><label class="field" for="rounds"><span>周回数</span><input class="form-control" id="rounds" type="number" min="1" max="9999" value="20" inputmode="numeric" aria-describedby="rounds-error"></label><button class="btn" id="batch-run" type="button">実行</button><p class="input-error" id="rounds-error" hidden>1〜9999の整数を入力してください</p></div></details>
       </div>
-
-      <div class="primary-metrics" aria-label="主な確率">
-        <div class="metric"><span class="muted" id="goal-probability-label">20周で目標達成</span><strong id="goal-probability">—</strong></div>
-        <div class="metric"><span class="muted">90%達成の目安</span><strong id="rounds-ninety">—</strong></div>
-      </div>
-      <div class="quick-status" id="quick-status"></div>
 
       <section class="results" id="results" aria-labelledby="results-heading" hidden>
         <div class="results-head"><h2 class="section-heading" id="results-heading">今回の成果</h2><button class="btn btn-ghost" id="clear-session" type="button" hidden>消去</button></div>
@@ -270,8 +277,9 @@
       <div class="record-buttons" id="quick-record-list"></div>
       <div class="inline-actions"><label class="field grow" for="quick-other"><span>その他の艦</span><select class="form-select" id="quick-other"></select></label><button class="btn" id="quick-other-record" type="button">記録</button></div>
       <div class="record-feedback" id="record-feedback" hidden><span class="muted" id="last-log-text"></span><button class="btn btn-ghost" id="undo-log" type="button">直前の記録を取り消す</button></div>
+      <div class="luck-summary" id="luck-summary" hidden></div>
       <div class="results-head"><p class="muted" id="log-summary"></p><button class="btn btn-ghost" id="clear-logs" type="button">全消去</button></div>
-      <div class="table-wrap" id="log-analysis-wrap" hidden><table><thead><tr><th>艦</th><th>評価</th><th>実戦</th><th>実戦率</th><th>KCNav率</th><th>傾向</th><th>運勢</th></tr></thead><tbody id="log-analysis"></tbody></table><span class="muted">実戦率は同じ評価の記録数を母数に計算します。「ドロップなし」も記録すると理論率と正しく比較できます。</span></div>
+      <details id="log-analysis-details" hidden><summary>詳しい分析</summary><div class="detail-body"><div class="table-wrap" id="log-analysis-wrap"><table><thead><tr><th>艦</th><th>評価</th><th>実戦</th><th>実戦率</th><th>KCNav率</th><th>傾向</th><th>運勢</th></tr></thead><tbody id="log-analysis"></tbody></table><span class="muted">実戦率は同じ評価の記録数を母数に計算します。「ドロップなし」も記録すると理論率と正しく比較できます。</span></div></div></details>
       <div class="log-list" id="log-list"></div>
     </section>
 
@@ -416,6 +424,8 @@
       let themePreference = loadThemePreference();
       let uiMode = 'simulation';
       let importMode = 'new';
+      let lastValidRounds = 20;
+      let parseTimer = null;
       let audioContext = null;
       let audioBus = null;
       const reduceMotion = Boolean(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches);
@@ -626,7 +636,7 @@
         const rows = tableFor(profile,currentRank());
         const selectedRows=rows.filter(row=>profile.targets.includes(row.ship));
         const otherRows=rows.filter(row=>!profile.targets.includes(row.ship));
-        const selectedMarkup=selectedRows.length?`<div class="target-list-label"><span>選択中</span><span>入手済み</span><span></span></div><div class="target-list">${selectedRows.map(row=>{const obtained=profile.obtained.includes(row.ship);return `<div class="target-item is-target${obtained?' is-obtained':''}"><span class="target-name">${escapeHtml(row.ship)}</span><label class="target-state"><input type="checkbox" data-target-obtained="${escapeHtml(row.ship)}" aria-label="${escapeHtml(row.ship)}を入手済みにする"${obtained?' checked':''}><span>入手済み</span></label><button class="btn btn-ghost target-remove" type="button" data-target-remove="${escapeHtml(row.ship)}" aria-label="${escapeHtml(row.ship)}を目標から外す">×</button></div>`;}).join('')}</div>`:'<span class="empty">目標艦は未設定です</span>';
+        const selectedMarkup=selectedRows.length?`<div class="target-list-label"><span>選択中</span><span>入手済み</span><span></span></div><div class="target-list">${selectedRows.map(row=>{const obtained=profile.obtained.includes(row.ship);return `<div class="target-item is-target${obtained?' is-obtained':''}"><span class="target-name">${escapeHtml(row.ship)} <small class="tier-mark">${tierLabel(tierOf(profile,row.ship))}</small></span><label class="target-state"><input type="checkbox" data-target-obtained="${escapeHtml(row.ship)}" aria-label="${escapeHtml(row.ship)}を入手済みにする"${obtained?' checked':''}><span>入手済み</span></label><button class="btn btn-ghost target-remove" type="button" data-target-remove="${escapeHtml(row.ship)}" aria-label="${escapeHtml(row.ship)}を目標から外す">×</button></div>`;}).join('')}</div>`:'<span class="empty">目標艦は未設定です</span>';
         const addMarkup=otherRows.length?`<div class="target-add"><label class="field" for="target-add-select"><span class="sr-only">追加する艦</span><select class="form-select" id="target-add-select">${otherRows.map(row=>`<option>${escapeHtml(row.ship)}</option>`).join('')}</select></label><button class="btn" id="target-add-button" type="button">目標に追加</button></div>`:'<span class="muted">追加できる艦はありません</span>';
         $('#target-list').innerHTML=selectedMarkup+addMarkup;
         $$('[data-target-obtained]').forEach(input => input.addEventListener('change',() => {
@@ -637,7 +647,7 @@
           saveState(); updateTargetSummary(); updateMetrics(); renderSession(); renderLogs();
         }));
         $$('[data-target-remove]').forEach(button=>button.addEventListener('click',()=>{const ship=button.dataset.targetRemove;profile.targets=profile.targets.filter(item=>item!==ship);profile.obtained=profile.obtained.filter(item=>item!==ship);saveState();renderTargets();updateMetrics();renderSession();renderLogs();$('#target-add-select')?.focus();announce(`${ship}を目標から外しました`);}));
-        $('#target-add-button')?.addEventListener('click',()=>{const select=$('#target-add-select');const ship=select?.value;if(!ship)return;profile.targets.push(ship);saveState();renderTargets();updateMetrics();renderSession();renderLogs();$(`[data-target-obtained="${CSS.escape(ship)}"]`)?.focus();announce(`${ship}を目標に追加しました`);});
+        $('#target-add-button')?.addEventListener('click',()=>{const select=$('#target-add-select');const ship=select?.value;if(!ship)return;profile.targets.push(ship);const promoted=tierOf(profile,ship)==='normal';if(promoted)profile.tiers[ship]='priority';saveState();renderTargets();renderDropTable();updateMetrics();renderSession();renderLogs();$(`[data-target-obtained="${CSS.escape(ship)}"]`)?.focus();announce(promoted?`${ship}を目標に追加し、格付けを最優先にしました`:`${ship}を目標に追加しました`);});
         updateTargetSummary();
       }
       function updateTargetSummary() { const profile=activeProfile(); const selected=activeTargets(profile,currentRank()); const remaining=selected.filter(ship=>!profile.obtained.includes(ship)); $('#target-summary').textContent=selected.length?`残り${remaining.length}隻 / 目標${selected.length}隻`:'未設定'; }
@@ -681,13 +691,13 @@
         saveState(); renderLogs(); announce(`${last.ship}の記録を取り消しました`);
       }
       function renderLogAnalysis(profile,logs) {
-        const wrap=$('#log-analysis-wrap');
-        if(!logs.length){wrap.hidden=true;$('#log-analysis').innerHTML='';return;}
+        const details=$('#log-analysis-details'); const summaryBox=$('#luck-summary');
+        if(!logs.length){details.hidden=true;summaryBox.hidden=true;summaryBox.innerHTML='';$('#log-analysis').innerHTML='';return;}
         const rankOrder=['S','A','B','C'];
         const rankTotals={}; logs.forEach(log=>rankTotals[log.rank]=(rankTotals[log.rank]||0)+1);
         const groups={}; logs.forEach(log=>{(groups[log.rank]??={})[log.ship]=(groups[log.rank][log.ship]||0)+1;});
         const hunting=profile.targets.filter(ship=>!profile.obtained.includes(ship));
-        const cells=[];
+        const cells=[]; const summaryLines=[];
         Object.keys(groups).sort((a,b)=>rankOrder.indexOf(a)-rankOrder.indexOf(b)).forEach(rank=>{
           const total=rankTotals[rank];
           const rankRows=tableFor(profile,rank);
@@ -703,12 +713,18 @@
               const cumulative=below?binomialCumulative(total,count,theory):1-binomialCumulative(total,count-1,theory);
               const percent=(cumulative*100).toFixed(1);
               luck=below?`<span${cumulative<.05?' class="warning"':''}>下位${percent}%</span>`:`上位${percent}%`;
+              if(hunting.includes(ship)){
+                const verdict=below?(cumulative<.05?'<span class="warning">統計的な下振れ</span>':cumulative<.25?'やや下振れ':'想定の範囲内'):(cumulative<.05?'強運':'順調');
+                summaryLines.push(`<div>${escapeHtml(ship)}：${count}/${total}周（KCNav ${formatPercent(theory)}）・${below?'下位':'上位'}${percent}%・${verdict}</div>`);
+              }
             }
             cells.push(`<tr><td>${escapeHtml(ship)}</td><td>${escapeHtml(rank)}</td><td>${count}/${total}</td><td>${formatPercent(actual)}</td><td>${theory===undefined?'—':formatPercent(theory)}</td><td>${trend}</td><td>${luck}</td></tr>`);
           });
         });
         $('#log-analysis').innerHTML=cells.join('');
-        wrap.hidden=false;
+        summaryBox.innerHTML=summaryLines.join('');
+        summaryBox.hidden=!summaryLines.length;
+        details.hidden=false;
       }
       function binomialCumulative(n,k,p) {
         if(k<0)return 0; if(k>=n)return 1;
@@ -717,7 +733,7 @@
         return Math.min(1,sum);
       }
       function updateMetrics() {
-        const profile=activeProfile(); const rows=tableFor(profile,currentRank()); const rounds=readRounds(false); const selected=activeTargets(profile,currentRank()); const targets=selected.filter(ship=>!profile.obtained.includes(ship)); const allObtained=Boolean(selected.length) && !targets.length; const probabilities=targets.map(ship=>rows.find(row=>row.ship===ship).rate); const sum=probabilities.reduce((a,b)=>a+b,0); const mode=$('#goal-mode').value;
+        const profile=activeProfile(); const rows=tableFor(profile,currentRank()); const inputRounds=readRounds(); if(inputRounds!==null)lastValidRounds=inputRounds; const rounds=lastValidRounds; const selected=activeTargets(profile,currentRank()); const targets=selected.filter(ship=>!profile.obtained.includes(ship)); const allObtained=Boolean(selected.length) && !targets.length; const probabilities=targets.map(ship=>rows.find(row=>row.ship===ship).rate); const sum=probabilities.reduce((a,b)=>a+b,0); const mode=$('#goal-mode').value;
         const tooManyForAll=mode==='all' && targets.length>12;
         const canEstimate=Boolean(targets.length) && !tooManyForAll;
         const halfRounds=canEstimate?roundsForChance(probabilities,sum,mode,.5):null;
@@ -725,16 +741,14 @@
         $('#rounds-half').textContent=allObtained?'達成':formatRounds(halfRounds);
         $('#rounds-ninety').textContent=allObtained?'達成':formatRounds(ninetyRounds);
         renderCostEstimate(profile,ninetyRounds);
-        $('#batch-run').disabled=isAnimating || !rows.length || rounds===null;
-        $('#goal-probability-label').textContent=rounds===null?'指定周回で目標達成':`${rounds}周で目標達成`;
-        if(rounds===null){$('#goal-probability').textContent='入力を確認';$('#expected-targets').textContent='—';$('#quick-status').textContent='周回数を1〜9999で入力してください';return;}
+        $('#batch-run').disabled=isAnimating || !rows.length || inputRounds===null;
+        $('#goal-probability-label').textContent=`${rounds}周で目標達成`;
+        $$('#rounds-chips [data-rounds]').forEach(button=>button.setAttribute('aria-pressed',String(Number(button.dataset.rounds)===rounds)));
         let chance=0;
-        const anyChance=targets.length?Math.max(0,Math.min(1,1-(1-sum)**rounds)):0;
-        if(canEstimate) chance = mode==='any' ? anyChance : probabilityAll(probabilities,rounds);
+        if(canEstimate) chance = mode==='any' ? Math.max(0,Math.min(1,1-(1-sum)**rounds)) : probabilityAll(probabilities,rounds);
         $('#goal-probability').textContent=allObtained?'全目標入手済み':!targets.length ? '目標艦を選択' : tooManyForAll ? 'すべて条件は12艦まで' : formatPercent(chance);
         $('#expected-targets').textContent=targets.length ? `${(rounds*sum).toFixed(2)}隻` : '—';
-        const obtainedNote=selected.length>targets.length?`（入手済み${selected.length-targets.length}隻を除く）`:'';
-        $('#quick-status').textContent=allObtained?`${currentRank()}勝利・目標艦をすべて入手済み`:!targets.length?`${currentRank()}勝利・目標艦を設定してください`:tooManyForAll?`${currentRank()}勝利・すべて条件は12艦まで`:`${currentRank()}勝利・残り${targets.length}隻${obtainedNote}`;
+        $('#quick-status').textContent=allObtained?'目標艦をすべて入手済みです':!targets.length?'目標艦を設定すると確率を計算します':tooManyForAll?'「すべて」条件は12艦まで対応です':inputRounds===null?'周回数は1〜9999で入力してください':'';
       }
       function readCostInput(selector) { const value=Number($(selector).value); return Number.isFinite(value) && value>0 ? value : 0; }
       function renderCostEstimate(profile,ninetyRounds) {
@@ -771,7 +785,7 @@
           if(priority)priorityShown=true;
           return {row,compact};
         });
-        setBusy(true); $('#stage-status').textContent=count>1?'一括抽選中…':'索敵中…'; playNextDrop();
+        setBusy(true); $('#stage-status').textContent=count>1?'一括抽選中…（タップでスキップ）':'索敵中…（タップでスキップ）'; playNextDrop();
       }
       function playNextDrop() { if(!animationQueue.length){finishRun();return;} const item=animationQueue.shift(); animateDrop(item.row,item.compact); }
       function animateDrop(row,compact=false) {
@@ -781,7 +795,7 @@
         stage.classList.remove('is-idle','reveal-rare','reveal-priority','priority-suspense','compact-priority');
         stage.classList.add('scanning');
         $('#drop-card').className=tier==='normal'?'drop-card':'drop-card drawing';
-        $('#stage-status').textContent='ドロップ確認中…';
+        $('#stage-status').textContent='ドロップ確認中…（タップでスキップ）';
         $('#message-label').textContent='CONTACT';
         $('#message-name').textContent='艦影を確認中';
         $('#message-note').textContent='索敵継続';
@@ -829,7 +843,7 @@
         clearTimers(); finishRun();
       }
       function finishRun() { clearTimers(); const session=currentSession(); session.push(...pendingResults); const total=pendingResults.length; const priority=pendingResults.filter(row=>tierOf(activeProfile(),row.ship)==='priority').length; const rare=pendingResults.filter(row=>tierOf(activeProfile(),row.ship)==='rare').length; pendingResults=[]; animationQueue=[]; setBusy(false); renderSession(); announce(`${total}周の抽選完了。最優先${priority}隻、レア${rare}隻`); }
-      function resetStage() { clearTimers(); pendingResults=[]; animationQueue=[]; setBusy(false); $('#drop-stage').className='card drop-stage is-idle'; $('#drop-card').className='drop-card'; $('#stage-status').textContent='判定待ち'; $('#drop-content').innerHTML='<span class="drop-label">DROP</span>'; $('#encounter-message').className='encounter-message'; $('#message-label').textContent='索敵待機'; $('#message-name').textContent='抽選結果をここに表示'; $('#message-note').textContent='KCNav実測データ'; }
+      function resetStage() { clearTimers(); pendingResults=[]; animationQueue=[]; setBusy(false); $('#drop-stage').className='card drop-stage is-idle'; $('#drop-card').className='drop-card'; $('#stage-status').textContent='判定待ち'; $('#drop-content').innerHTML='<span class="drop-label">DROP</span>'; $('#encounter-message').className='encounter-message'; $('#message-label').textContent='索敵待機'; $('#message-name').textContent='タップで1周・結果をここに表示'; $('#message-note').textContent='KCNav実測データ'; }
       function renderSession() {
         const profile=activeProfile(); const session=currentSession(); const priorityCount=session.filter(row=>tierOf(profile,row.ship)==='priority').length; const rareCount=session.filter(row=>tierOf(profile,row.ship)==='rare').length; const normalCount=session.length-priorityCount-rareCount;
         $('#results').hidden=!session.length;
@@ -919,10 +933,14 @@
         $('#import-title-field').hidden=!isNew; $('#save-import').hidden=!isNew; $('#update-import').hidden=isNew;
       }
       function setImportMode(mode) { importMode=mode==='update'?'update':'new'; parsedImport=null; $('#parse-preview').innerHTML=''; $('#parse-status').textContent=importMode==='new'?'KCNavの表を貼り付けて解析してください':`${activeProfile().title}の更新用データを貼り付けてください`; $('#import-confirmation').hidden=true; renderImportMode(); $('#kcnav-text').focus(); }
+      function openImportSection() {
+        setImportMode('new'); $('#tools-panel').open=true; $('#import-section').open=true;
+        requestAnimationFrame(()=>{$('#import-section').scrollIntoView({behavior:reduceMotion?'auto':'smooth',block:'start'});$('#kcnav-text').focus();});
+      }
       function finishOnboarding(openImport=false) {
         try { localStorage.setItem(ONBOARDING_KEY,'seen'); } catch {}
         $('#onboarding').hidden=true;
-        if(openImport){ setImportMode('new'); $('#tools-panel').open=true; $('#import-section').open=true; requestAnimationFrame(()=>{$('#import-section').scrollIntoView({behavior:reduceMotion?'auto':'smooth',block:'start'});$('#kcnav-text').focus();}); }
+        if(openImport) openImportSection();
       }
       function renderOnboarding() { $('#onboarding').hidden=onboardingSeen(); }
 
@@ -945,6 +963,10 @@
       $('#rounds').addEventListener('input',updateMetrics); $('#rounds').addEventListener('blur',updateMetrics); $('#goal-mode').addEventListener('change',updateMetrics);
       $('#single-run').addEventListener('click',()=>run(1)); $('#ten-run').addEventListener('click',()=>run(10)); $('#batch-run').addEventListener('click',()=>{const rounds=readRounds();updateMetrics();if(rounds!==null)run(rounds);}); $('#clear-session').addEventListener('click',clearCurrentSession);
       $('#parse-kcnav').addEventListener('click',()=>{parsedImport=parseKCNav($('#kcnav-text').value);applyParsedMeta();renderParsePreview();}); $('#save-import').addEventListener('click',saveImportedProfile); $('#update-import').addEventListener('click',updateImportedProfile);
+      $('#kcnav-text').addEventListener('input',()=>{ clearTimeout(parseTimer); parseTimer=setTimeout(()=>{ if(!$('#kcnav-text').value.trim())return; parsedImport=parseKCNav($('#kcnav-text').value); applyParsedMeta(); renderParsePreview(); },400); });
+      $('#open-import').addEventListener('click',openImportSection);
+      $$('#rounds-chips [data-rounds]').forEach(button=>button.addEventListener('click',()=>{$('#rounds').value=button.dataset.rounds;updateMetrics();}));
+      $('#drop-stage').addEventListener('click',()=>{ if(isAnimating){skipAnimation();return;} if(!$('#single-run').disabled)run(1); });
       $('#import-new').addEventListener('click',()=>setImportMode('new')); $('#import-update').addEventListener('click',()=>setImportMode('update'));
       ['#cost-fuel','#cost-ammo','#cost-bucket'].forEach(selector=>{ $(selector).addEventListener('input',()=>{activeProfile().costs={fuel:readCostInput('#cost-fuel'),ammo:readCostInput('#cost-ammo'),bucket:readCostInput('#cost-bucket')};updateMetrics();}); $(selector).addEventListener('change',saveState); });
       $('#save-profile-meta').addEventListener('click',saveProfileMeta); $('#refresh-images').addEventListener('click',()=>resolveImagesForProfile(activeProfile(),true));

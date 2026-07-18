@@ -870,6 +870,11 @@ html&gt;body{padding:0}&lt;/style&gt;
     #kcnav-drop-lab .input-error { grid-column: 1 / -1; margin: 0; color: light-dark(rgb(178 48 6), var(--destructive)); font-size: .85rem; }
     #kcnav-drop-lab .primary-metrics { display: grid; grid-template-columns: 1fr 1fr; gap: .55rem; }
     #kcnav-drop-lab .primary-metrics .metric { padding: .65rem .75rem; border: 1px solid var(--border); background: color-mix(in srgb, var(--secondary) 32%, transparent); }
+    #kcnav-drop-lab .rounds-chips { display: flex; flex-wrap: wrap; gap: .35rem; align-items: center; }
+    #kcnav-drop-lab .rounds-chips .btn { min-width: 2.6rem; padding: .25rem .55rem; font-size: .85rem; }
+    #kcnav-drop-lab .rounds-chips .btn[aria-pressed=&quot;true&quot;] { border-color: var(--primary); background: color-mix(in srgb, var(--primary) 14%, var(--secondary)); }
+    #kcnav-drop-lab .luck-summary { display: grid; gap: .3rem; padding: .55rem .7rem; border: 1px solid var(--border); border-left: 3px solid var(--primary); background: color-mix(in srgb, var(--secondary) 32%, transparent); font-size: .92rem; line-height: 1.5; }
+    #kcnav-drop-lab .drop-stage { cursor: pointer; }
     #kcnav-drop-lab .quick-status { color: var(--muted-foreground); font-size: .9rem; line-height: 1.5; }
     #kcnav-drop-lab .settings-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .65rem; }
     #kcnav-drop-lab .metric { display: grid; gap: .18rem; padding-bottom: .55rem; border-bottom: 1px solid var(--border); }
@@ -961,6 +966,7 @@ html&gt;body{padding:0}&lt;/style&gt;
     &lt;div class=&quot;topbar&quot;&gt;
       &lt;div class=&quot;topbar-row&quot;&gt;
         &lt;label class=&quot;field&quot; for=&quot;profile-select&quot;&gt;&lt;span class=&quot;sr-only&quot;&gt;海域&lt;/span&gt;&lt;select class=&quot;form-select&quot; id=&quot;profile-select&quot; aria-label=&quot;海域&quot;&gt;&lt;/select&gt;&lt;/label&gt;
+        &lt;button class=&quot;btn&quot; id=&quot;open-import&quot; type=&quot;button&quot; title=&quot;KCNavデータを登録・更新する&quot;&gt;＋登録&lt;/button&gt;
         &lt;details class=&quot;preferences&quot;&gt;&lt;summary class=&quot;btn&quot;&gt;表示・音&lt;/summary&gt;&lt;div class=&quot;preferences-panel&quot;&gt;&lt;button class=&quot;btn sound-toggle&quot; id=&quot;theme-toggle&quot; type=&quot;button&quot; title=&quot;表示テーマを 自動 → ライト → ダーク で切り替える&quot;&gt;テーマ 自動&lt;/button&gt;&lt;button class=&quot;btn sound-toggle&quot; id=&quot;fast-toggle&quot; type=&quot;button&quot; aria-pressed=&quot;false&quot; title=&quot;ドロップ演出を短縮する&quot;&gt;演出 標準&lt;/button&gt;&lt;button class=&quot;btn sound-toggle&quot; id=&quot;sound-toggle&quot; type=&quot;button&quot; aria-pressed=&quot;false&quot;&gt;音 OFF&lt;/button&gt;&lt;label class=&quot;field volume-field&quot; for=&quot;sound-volume&quot;&gt;&lt;span&gt;音量&lt;/span&gt;&lt;input type=&quot;range&quot; id=&quot;sound-volume&quot; min=&quot;0&quot; max=&quot;100&quot; step=&quot;5&quot; aria-label=&quot;音量&quot;&gt;&lt;/label&gt;&lt;/div&gt;&lt;/details&gt;
       &lt;/div&gt;
     &lt;/div&gt;
@@ -976,20 +982,21 @@ html&gt;body{padding:0}&lt;/style&gt;
     &lt;/section&gt;
     &lt;details class=&quot;card target-panel&quot; id=&quot;target-panel&quot;&gt;&lt;summary class=&quot;sr-only&quot;&gt;目標艦を編集&lt;/summary&gt;&lt;div class=&quot;detail-body&quot;&gt;&lt;div class=&quot;target-box&quot;&gt;&lt;span&gt;目標艦&lt;/span&gt;&lt;div class=&quot;target-picker&quot; id=&quot;target-list&quot;&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/details&gt;
 
+    &lt;div class=&quot;primary-metrics&quot; aria-label=&quot;主な確率&quot;&gt;
+      &lt;div class=&quot;metric&quot;&gt;&lt;span class=&quot;muted&quot; id=&quot;goal-probability-label&quot;&gt;20周で目標達成&lt;/span&gt;&lt;strong id=&quot;goal-probability&quot;&gt;—&lt;/strong&gt;&lt;/div&gt;
+      &lt;div class=&quot;metric&quot;&gt;&lt;span class=&quot;muted&quot;&gt;90%達成の目安&lt;/span&gt;&lt;strong id=&quot;rounds-ninety&quot;&gt;—&lt;/strong&gt;&lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;rounds-chips&quot; id=&quot;rounds-chips&quot; aria-label=&quot;確率計算に使う周回数&quot;&gt;&lt;span class=&quot;muted&quot;&gt;周回数&lt;/span&gt;&lt;button class=&quot;btn&quot; type=&quot;button&quot; data-rounds=&quot;10&quot;&gt;10&lt;/button&gt;&lt;button class=&quot;btn&quot; type=&quot;button&quot; data-rounds=&quot;20&quot;&gt;20&lt;/button&gt;&lt;button class=&quot;btn&quot; type=&quot;button&quot; data-rounds=&quot;50&quot;&gt;50&lt;/button&gt;&lt;button class=&quot;btn&quot; type=&quot;button&quot; data-rounds=&quot;100&quot;&gt;100&lt;/button&gt;&lt;/div&gt;
+    &lt;div class=&quot;quick-status&quot; id=&quot;quick-status&quot;&gt;&lt;/div&gt;
+
     &lt;section class=&quot;mode-panel&quot; id=&quot;simulation-panel&quot; role=&quot;tabpanel&quot; aria-labelledby=&quot;simulation-tab&quot;&gt;
-      &lt;div class=&quot;workspace&quot;&gt;&lt;section class=&quot;card drop-stage is-idle&quot; id=&quot;drop-stage&quot; aria-busy=&quot;false&quot;&gt;&lt;span class=&quot;stage-status&quot; id=&quot;stage-status&quot;&gt;判定待ち&lt;/span&gt;&lt;span class=&quot;radar-sweep&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;&lt;div class=&quot;stage-effects&quot; aria-hidden=&quot;true&quot;&gt;&lt;span class=&quot;effect-flash&quot;&gt;&lt;/span&gt;&lt;span class=&quot;effect-ring&quot;&gt;&lt;/span&gt;&lt;span class=&quot;effect-ring&quot;&gt;&lt;/span&gt;&lt;span class=&quot;effect-ring&quot;&gt;&lt;/span&gt;&lt;span class=&quot;spark&quot;&gt;&lt;/span&gt;&lt;span class=&quot;spark&quot;&gt;&lt;/span&gt;&lt;span class=&quot;spark&quot;&gt;&lt;/span&gt;&lt;span class=&quot;spark&quot;&gt;&lt;/span&gt;&lt;span class=&quot;spark&quot;&gt;&lt;/span&gt;&lt;span class=&quot;spark&quot;&gt;&lt;/span&gt;&lt;span class=&quot;spark&quot;&gt;&lt;/span&gt;&lt;span class=&quot;spark&quot;&gt;&lt;/span&gt;&lt;span class=&quot;spark&quot;&gt;&lt;/span&gt;&lt;/div&gt;&lt;span class=&quot;priority-curtain&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;&lt;div class=&quot;drop-card&quot; id=&quot;drop-card&quot;&gt;&lt;div class=&quot;drop-content&quot; id=&quot;drop-content&quot;&gt;&lt;span class=&quot;drop-label&quot;&gt;DROP&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;encounter-message&quot; id=&quot;encounter-message&quot;&gt;&lt;span class=&quot;drop-label&quot; id=&quot;message-label&quot;&gt;索敵待機&lt;/span&gt;&lt;span class=&quot;drop-name&quot; id=&quot;message-name&quot;&gt;抽選結果をここに表示&lt;/span&gt;&lt;span class=&quot;drop-note&quot; id=&quot;message-note&quot;&gt;KCNav実測データ&lt;/span&gt;&lt;/div&gt;&lt;/section&gt;&lt;/div&gt;
+      &lt;div class=&quot;workspace&quot;&gt;&lt;section class=&quot;card drop-stage is-idle&quot; id=&quot;drop-stage&quot; aria-busy=&quot;false&quot;&gt;&lt;span class=&quot;stage-status&quot; id=&quot;stage-status&quot;&gt;判定待ち&lt;/span&gt;&lt;span class=&quot;radar-sweep&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;&lt;div class=&quot;stage-effects&quot; aria-hidden=&quot;true&quot;&gt;&lt;span class=&quot;effect-flash&quot;&gt;&lt;/span&gt;&lt;span class=&quot;effect-ring&quot;&gt;&lt;/span&gt;&lt;span class=&quot;effect-ring&quot;&gt;&lt;/span&gt;&lt;span class=&quot;effect-ring&quot;&gt;&lt;/span&gt;&lt;span class=&quot;spark&quot;&gt;&lt;/span&gt;&lt;span class=&quot;spark&quot;&gt;&lt;/span&gt;&lt;span class=&quot;spark&quot;&gt;&lt;/span&gt;&lt;span class=&quot;spark&quot;&gt;&lt;/span&gt;&lt;span class=&quot;spark&quot;&gt;&lt;/span&gt;&lt;span class=&quot;spark&quot;&gt;&lt;/span&gt;&lt;span class=&quot;spark&quot;&gt;&lt;/span&gt;&lt;span class=&quot;spark&quot;&gt;&lt;/span&gt;&lt;span class=&quot;spark&quot;&gt;&lt;/span&gt;&lt;/div&gt;&lt;span class=&quot;priority-curtain&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;&lt;div class=&quot;drop-card&quot; id=&quot;drop-card&quot;&gt;&lt;div class=&quot;drop-content&quot; id=&quot;drop-content&quot;&gt;&lt;span class=&quot;drop-label&quot;&gt;DROP&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;encounter-message&quot; id=&quot;encounter-message&quot;&gt;&lt;span class=&quot;drop-label&quot; id=&quot;message-label&quot;&gt;索敵待機&lt;/span&gt;&lt;span class=&quot;drop-name&quot; id=&quot;message-name&quot;&gt;タップで1周・結果をここに表示&lt;/span&gt;&lt;span class=&quot;drop-note&quot; id=&quot;message-note&quot;&gt;KCNav実測データ&lt;/span&gt;&lt;/div&gt;&lt;/section&gt;&lt;/div&gt;
 
       &lt;div class=&quot;quick-controls&quot;&gt;
         &lt;button class=&quot;btn btn-block&quot; id=&quot;single-run&quot; type=&quot;button&quot;&gt;1周&lt;/button&gt;
         &lt;button class=&quot;btn btn-primary btn-block&quot; id=&quot;ten-run&quot; type=&quot;button&quot;&gt;10周&lt;/button&gt;
         &lt;details class=&quot;custom-run&quot;&gt;&lt;summary class=&quot;btn btn-block&quot;&gt;その他…&lt;/summary&gt;&lt;div class=&quot;custom-run-panel&quot;&gt;&lt;label class=&quot;field&quot; for=&quot;rounds&quot;&gt;&lt;span&gt;周回数&lt;/span&gt;&lt;input class=&quot;form-control&quot; id=&quot;rounds&quot; type=&quot;number&quot; min=&quot;1&quot; max=&quot;9999&quot; value=&quot;20&quot; inputmode=&quot;numeric&quot; aria-describedby=&quot;rounds-error&quot;&gt;&lt;/label&gt;&lt;button class=&quot;btn&quot; id=&quot;batch-run&quot; type=&quot;button&quot;&gt;実行&lt;/button&gt;&lt;p class=&quot;input-error&quot; id=&quot;rounds-error&quot; hidden&gt;1〜9999の整数を入力してください&lt;/p&gt;&lt;/div&gt;&lt;/details&gt;
       &lt;/div&gt;
-
-      &lt;div class=&quot;primary-metrics&quot; aria-label=&quot;主な確率&quot;&gt;
-        &lt;div class=&quot;metric&quot;&gt;&lt;span class=&quot;muted&quot; id=&quot;goal-probability-label&quot;&gt;20周で目標達成&lt;/span&gt;&lt;strong id=&quot;goal-probability&quot;&gt;—&lt;/strong&gt;&lt;/div&gt;
-        &lt;div class=&quot;metric&quot;&gt;&lt;span class=&quot;muted&quot;&gt;90%達成の目安&lt;/span&gt;&lt;strong id=&quot;rounds-ninety&quot;&gt;—&lt;/strong&gt;&lt;/div&gt;
-      &lt;/div&gt;
-      &lt;div class=&quot;quick-status&quot; id=&quot;quick-status&quot;&gt;&lt;/div&gt;
 
       &lt;section class=&quot;results&quot; id=&quot;results&quot; aria-labelledby=&quot;results-heading&quot; hidden&gt;
         &lt;div class=&quot;results-head&quot;&gt;&lt;h2 class=&quot;section-heading&quot; id=&quot;results-heading&quot;&gt;今回の成果&lt;/h2&gt;&lt;button class=&quot;btn btn-ghost&quot; id=&quot;clear-session&quot; type=&quot;button&quot; hidden&gt;消去&lt;/button&gt;&lt;/div&gt;
@@ -1020,8 +1027,9 @@ html&gt;body{padding:0}&lt;/style&gt;
       &lt;div class=&quot;record-buttons&quot; id=&quot;quick-record-list&quot;&gt;&lt;/div&gt;
       &lt;div class=&quot;inline-actions&quot;&gt;&lt;label class=&quot;field grow&quot; for=&quot;quick-other&quot;&gt;&lt;span&gt;その他の艦&lt;/span&gt;&lt;select class=&quot;form-select&quot; id=&quot;quick-other&quot;&gt;&lt;/select&gt;&lt;/label&gt;&lt;button class=&quot;btn&quot; id=&quot;quick-other-record&quot; type=&quot;button&quot;&gt;記録&lt;/button&gt;&lt;/div&gt;
       &lt;div class=&quot;record-feedback&quot; id=&quot;record-feedback&quot; hidden&gt;&lt;span class=&quot;muted&quot; id=&quot;last-log-text&quot;&gt;&lt;/span&gt;&lt;button class=&quot;btn btn-ghost&quot; id=&quot;undo-log&quot; type=&quot;button&quot;&gt;直前の記録を取り消す&lt;/button&gt;&lt;/div&gt;
+      &lt;div class=&quot;luck-summary&quot; id=&quot;luck-summary&quot; hidden&gt;&lt;/div&gt;
       &lt;div class=&quot;results-head&quot;&gt;&lt;p class=&quot;muted&quot; id=&quot;log-summary&quot;&gt;&lt;/p&gt;&lt;button class=&quot;btn btn-ghost&quot; id=&quot;clear-logs&quot; type=&quot;button&quot;&gt;全消去&lt;/button&gt;&lt;/div&gt;
-      &lt;div class=&quot;table-wrap&quot; id=&quot;log-analysis-wrap&quot; hidden&gt;&lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;艦&lt;/th&gt;&lt;th&gt;評価&lt;/th&gt;&lt;th&gt;実戦&lt;/th&gt;&lt;th&gt;実戦率&lt;/th&gt;&lt;th&gt;KCNav率&lt;/th&gt;&lt;th&gt;傾向&lt;/th&gt;&lt;th&gt;運勢&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody id=&quot;log-analysis&quot;&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;span class=&quot;muted&quot;&gt;実戦率は同じ評価の記録数を母数に計算します。「ドロップなし」も記録すると理論率と正しく比較できます。&lt;/span&gt;&lt;/div&gt;
+      &lt;details id=&quot;log-analysis-details&quot; hidden&gt;&lt;summary&gt;詳しい分析&lt;/summary&gt;&lt;div class=&quot;detail-body&quot;&gt;&lt;div class=&quot;table-wrap&quot; id=&quot;log-analysis-wrap&quot;&gt;&lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;艦&lt;/th&gt;&lt;th&gt;評価&lt;/th&gt;&lt;th&gt;実戦&lt;/th&gt;&lt;th&gt;実戦率&lt;/th&gt;&lt;th&gt;KCNav率&lt;/th&gt;&lt;th&gt;傾向&lt;/th&gt;&lt;th&gt;運勢&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody id=&quot;log-analysis&quot;&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;span class=&quot;muted&quot;&gt;実戦率は同じ評価の記録数を母数に計算します。「ドロップなし」も記録すると理論率と正しく比較できます。&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;/details&gt;
       &lt;div class=&quot;log-list&quot; id=&quot;log-list&quot;&gt;&lt;/div&gt;
     &lt;/section&gt;
 
@@ -1166,6 +1174,8 @@ html&gt;body{padding:0}&lt;/style&gt;
       let themePreference = loadThemePreference();
       let uiMode = &#x27;simulation&#x27;;
       let importMode = &#x27;new&#x27;;
+      let lastValidRounds = 20;
+      let parseTimer = null;
       let audioContext = null;
       let audioBus = null;
       const reduceMotion = Boolean(window.matchMedia?.(&#x27;(prefers-reduced-motion: reduce)&#x27;).matches);
@@ -1376,7 +1386,7 @@ html&gt;body{padding:0}&lt;/style&gt;
         const rows = tableFor(profile,currentRank());
         const selectedRows=rows.filter(row=&gt;profile.targets.includes(row.ship));
         const otherRows=rows.filter(row=&gt;!profile.targets.includes(row.ship));
-        const selectedMarkup=selectedRows.length?`&lt;div class=&quot;target-list-label&quot;&gt;&lt;span&gt;選択中&lt;/span&gt;&lt;span&gt;入手済み&lt;/span&gt;&lt;span&gt;&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;target-list&quot;&gt;${selectedRows.map(row=&gt;{const obtained=profile.obtained.includes(row.ship);return `&lt;div class=&quot;target-item is-target${obtained?&#x27; is-obtained&#x27;:&#x27;&#x27;}&quot;&gt;&lt;span class=&quot;target-name&quot;&gt;${escapeHtml(row.ship)}&lt;/span&gt;&lt;label class=&quot;target-state&quot;&gt;&lt;input type=&quot;checkbox&quot; data-target-obtained=&quot;${escapeHtml(row.ship)}&quot; aria-label=&quot;${escapeHtml(row.ship)}を入手済みにする&quot;${obtained?&#x27; checked&#x27;:&#x27;&#x27;}&gt;&lt;span&gt;入手済み&lt;/span&gt;&lt;/label&gt;&lt;button class=&quot;btn btn-ghost target-remove&quot; type=&quot;button&quot; data-target-remove=&quot;${escapeHtml(row.ship)}&quot; aria-label=&quot;${escapeHtml(row.ship)}を目標から外す&quot;&gt;×&lt;/button&gt;&lt;/div&gt;`;}).join(&#x27;&#x27;)}&lt;/div&gt;`:&#x27;&lt;span class=&quot;empty&quot;&gt;目標艦は未設定です&lt;/span&gt;&#x27;;
+        const selectedMarkup=selectedRows.length?`&lt;div class=&quot;target-list-label&quot;&gt;&lt;span&gt;選択中&lt;/span&gt;&lt;span&gt;入手済み&lt;/span&gt;&lt;span&gt;&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;target-list&quot;&gt;${selectedRows.map(row=&gt;{const obtained=profile.obtained.includes(row.ship);return `&lt;div class=&quot;target-item is-target${obtained?&#x27; is-obtained&#x27;:&#x27;&#x27;}&quot;&gt;&lt;span class=&quot;target-name&quot;&gt;${escapeHtml(row.ship)} &lt;small class=&quot;tier-mark&quot;&gt;${tierLabel(tierOf(profile,row.ship))}&lt;/small&gt;&lt;/span&gt;&lt;label class=&quot;target-state&quot;&gt;&lt;input type=&quot;checkbox&quot; data-target-obtained=&quot;${escapeHtml(row.ship)}&quot; aria-label=&quot;${escapeHtml(row.ship)}を入手済みにする&quot;${obtained?&#x27; checked&#x27;:&#x27;&#x27;}&gt;&lt;span&gt;入手済み&lt;/span&gt;&lt;/label&gt;&lt;button class=&quot;btn btn-ghost target-remove&quot; type=&quot;button&quot; data-target-remove=&quot;${escapeHtml(row.ship)}&quot; aria-label=&quot;${escapeHtml(row.ship)}を目標から外す&quot;&gt;×&lt;/button&gt;&lt;/div&gt;`;}).join(&#x27;&#x27;)}&lt;/div&gt;`:&#x27;&lt;span class=&quot;empty&quot;&gt;目標艦は未設定です&lt;/span&gt;&#x27;;
         const addMarkup=otherRows.length?`&lt;div class=&quot;target-add&quot;&gt;&lt;label class=&quot;field&quot; for=&quot;target-add-select&quot;&gt;&lt;span class=&quot;sr-only&quot;&gt;追加する艦&lt;/span&gt;&lt;select class=&quot;form-select&quot; id=&quot;target-add-select&quot;&gt;${otherRows.map(row=&gt;`&lt;option&gt;${escapeHtml(row.ship)}&lt;/option&gt;`).join(&#x27;&#x27;)}&lt;/select&gt;&lt;/label&gt;&lt;button class=&quot;btn&quot; id=&quot;target-add-button&quot; type=&quot;button&quot;&gt;目標に追加&lt;/button&gt;&lt;/div&gt;`:&#x27;&lt;span class=&quot;muted&quot;&gt;追加できる艦はありません&lt;/span&gt;&#x27;;
         $(&#x27;#target-list&#x27;).innerHTML=selectedMarkup+addMarkup;
         $$(&#x27;[data-target-obtained]&#x27;).forEach(input =&gt; input.addEventListener(&#x27;change&#x27;,() =&gt; {
@@ -1387,7 +1397,7 @@ html&gt;body{padding:0}&lt;/style&gt;
           saveState(); updateTargetSummary(); updateMetrics(); renderSession(); renderLogs();
         }));
         $$(&#x27;[data-target-remove]&#x27;).forEach(button=&gt;button.addEventListener(&#x27;click&#x27;,()=&gt;{const ship=button.dataset.targetRemove;profile.targets=profile.targets.filter(item=&gt;item!==ship);profile.obtained=profile.obtained.filter(item=&gt;item!==ship);saveState();renderTargets();updateMetrics();renderSession();renderLogs();$(&#x27;#target-add-select&#x27;)?.focus();announce(`${ship}を目標から外しました`);}));
-        $(&#x27;#target-add-button&#x27;)?.addEventListener(&#x27;click&#x27;,()=&gt;{const select=$(&#x27;#target-add-select&#x27;);const ship=select?.value;if(!ship)return;profile.targets.push(ship);saveState();renderTargets();updateMetrics();renderSession();renderLogs();$(`[data-target-obtained=&quot;${CSS.escape(ship)}&quot;]`)?.focus();announce(`${ship}を目標に追加しました`);});
+        $(&#x27;#target-add-button&#x27;)?.addEventListener(&#x27;click&#x27;,()=&gt;{const select=$(&#x27;#target-add-select&#x27;);const ship=select?.value;if(!ship)return;profile.targets.push(ship);const promoted=tierOf(profile,ship)===&#x27;normal&#x27;;if(promoted)profile.tiers[ship]=&#x27;priority&#x27;;saveState();renderTargets();renderDropTable();updateMetrics();renderSession();renderLogs();$(`[data-target-obtained=&quot;${CSS.escape(ship)}&quot;]`)?.focus();announce(promoted?`${ship}を目標に追加し、格付けを最優先にしました`:`${ship}を目標に追加しました`);});
         updateTargetSummary();
       }
       function updateTargetSummary() { const profile=activeProfile(); const selected=activeTargets(profile,currentRank()); const remaining=selected.filter(ship=&gt;!profile.obtained.includes(ship)); $(&#x27;#target-summary&#x27;).textContent=selected.length?`残り${remaining.length}隻 / 目標${selected.length}隻`:&#x27;未設定&#x27;; }
@@ -1431,13 +1441,13 @@ html&gt;body{padding:0}&lt;/style&gt;
         saveState(); renderLogs(); announce(`${last.ship}の記録を取り消しました`);
       }
       function renderLogAnalysis(profile,logs) {
-        const wrap=$(&#x27;#log-analysis-wrap&#x27;);
-        if(!logs.length){wrap.hidden=true;$(&#x27;#log-analysis&#x27;).innerHTML=&#x27;&#x27;;return;}
+        const details=$(&#x27;#log-analysis-details&#x27;); const summaryBox=$(&#x27;#luck-summary&#x27;);
+        if(!logs.length){details.hidden=true;summaryBox.hidden=true;summaryBox.innerHTML=&#x27;&#x27;;$(&#x27;#log-analysis&#x27;).innerHTML=&#x27;&#x27;;return;}
         const rankOrder=[&#x27;S&#x27;,&#x27;A&#x27;,&#x27;B&#x27;,&#x27;C&#x27;];
         const rankTotals={}; logs.forEach(log=&gt;rankTotals[log.rank]=(rankTotals[log.rank]||0)+1);
         const groups={}; logs.forEach(log=&gt;{(groups[log.rank]??={})[log.ship]=(groups[log.rank][log.ship]||0)+1;});
         const hunting=profile.targets.filter(ship=&gt;!profile.obtained.includes(ship));
-        const cells=[];
+        const cells=[]; const summaryLines=[];
         Object.keys(groups).sort((a,b)=&gt;rankOrder.indexOf(a)-rankOrder.indexOf(b)).forEach(rank=&gt;{
           const total=rankTotals[rank];
           const rankRows=tableFor(profile,rank);
@@ -1453,12 +1463,18 @@ html&gt;body{padding:0}&lt;/style&gt;
               const cumulative=below?binomialCumulative(total,count,theory):1-binomialCumulative(total,count-1,theory);
               const percent=(cumulative*100).toFixed(1);
               luck=below?`&lt;span${cumulative&lt;.05?&#x27; class=&quot;warning&quot;&#x27;:&#x27;&#x27;}&gt;下位${percent}%&lt;/span&gt;`:`上位${percent}%`;
+              if(hunting.includes(ship)){
+                const verdict=below?(cumulative&lt;.05?&#x27;&lt;span class=&quot;warning&quot;&gt;統計的な下振れ&lt;/span&gt;&#x27;:cumulative&lt;.25?&#x27;やや下振れ&#x27;:&#x27;想定の範囲内&#x27;):(cumulative&lt;.05?&#x27;強運&#x27;:&#x27;順調&#x27;);
+                summaryLines.push(`&lt;div&gt;${escapeHtml(ship)}：${count}/${total}周（KCNav ${formatPercent(theory)}）・${below?&#x27;下位&#x27;:&#x27;上位&#x27;}${percent}%・${verdict}&lt;/div&gt;`);
+              }
             }
             cells.push(`&lt;tr&gt;&lt;td&gt;${escapeHtml(ship)}&lt;/td&gt;&lt;td&gt;${escapeHtml(rank)}&lt;/td&gt;&lt;td&gt;${count}/${total}&lt;/td&gt;&lt;td&gt;${formatPercent(actual)}&lt;/td&gt;&lt;td&gt;${theory===undefined?&#x27;—&#x27;:formatPercent(theory)}&lt;/td&gt;&lt;td&gt;${trend}&lt;/td&gt;&lt;td&gt;${luck}&lt;/td&gt;&lt;/tr&gt;`);
           });
         });
         $(&#x27;#log-analysis&#x27;).innerHTML=cells.join(&#x27;&#x27;);
-        wrap.hidden=false;
+        summaryBox.innerHTML=summaryLines.join(&#x27;&#x27;);
+        summaryBox.hidden=!summaryLines.length;
+        details.hidden=false;
       }
       function binomialCumulative(n,k,p) {
         if(k&lt;0)return 0; if(k&gt;=n)return 1;
@@ -1467,7 +1483,7 @@ html&gt;body{padding:0}&lt;/style&gt;
         return Math.min(1,sum);
       }
       function updateMetrics() {
-        const profile=activeProfile(); const rows=tableFor(profile,currentRank()); const rounds=readRounds(false); const selected=activeTargets(profile,currentRank()); const targets=selected.filter(ship=&gt;!profile.obtained.includes(ship)); const allObtained=Boolean(selected.length) &amp;&amp; !targets.length; const probabilities=targets.map(ship=&gt;rows.find(row=&gt;row.ship===ship).rate); const sum=probabilities.reduce((a,b)=&gt;a+b,0); const mode=$(&#x27;#goal-mode&#x27;).value;
+        const profile=activeProfile(); const rows=tableFor(profile,currentRank()); const inputRounds=readRounds(); if(inputRounds!==null)lastValidRounds=inputRounds; const rounds=lastValidRounds; const selected=activeTargets(profile,currentRank()); const targets=selected.filter(ship=&gt;!profile.obtained.includes(ship)); const allObtained=Boolean(selected.length) &amp;&amp; !targets.length; const probabilities=targets.map(ship=&gt;rows.find(row=&gt;row.ship===ship).rate); const sum=probabilities.reduce((a,b)=&gt;a+b,0); const mode=$(&#x27;#goal-mode&#x27;).value;
         const tooManyForAll=mode===&#x27;all&#x27; &amp;&amp; targets.length&gt;12;
         const canEstimate=Boolean(targets.length) &amp;&amp; !tooManyForAll;
         const halfRounds=canEstimate?roundsForChance(probabilities,sum,mode,.5):null;
@@ -1475,16 +1491,14 @@ html&gt;body{padding:0}&lt;/style&gt;
         $(&#x27;#rounds-half&#x27;).textContent=allObtained?&#x27;達成&#x27;:formatRounds(halfRounds);
         $(&#x27;#rounds-ninety&#x27;).textContent=allObtained?&#x27;達成&#x27;:formatRounds(ninetyRounds);
         renderCostEstimate(profile,ninetyRounds);
-        $(&#x27;#batch-run&#x27;).disabled=isAnimating || !rows.length || rounds===null;
-        $(&#x27;#goal-probability-label&#x27;).textContent=rounds===null?&#x27;指定周回で目標達成&#x27;:`${rounds}周で目標達成`;
-        if(rounds===null){$(&#x27;#goal-probability&#x27;).textContent=&#x27;入力を確認&#x27;;$(&#x27;#expected-targets&#x27;).textContent=&#x27;—&#x27;;$(&#x27;#quick-status&#x27;).textContent=&#x27;周回数を1〜9999で入力してください&#x27;;return;}
+        $(&#x27;#batch-run&#x27;).disabled=isAnimating || !rows.length || inputRounds===null;
+        $(&#x27;#goal-probability-label&#x27;).textContent=`${rounds}周で目標達成`;
+        $$(&#x27;#rounds-chips [data-rounds]&#x27;).forEach(button=&gt;button.setAttribute(&#x27;aria-pressed&#x27;,String(Number(button.dataset.rounds)===rounds)));
         let chance=0;
-        const anyChance=targets.length?Math.max(0,Math.min(1,1-(1-sum)**rounds)):0;
-        if(canEstimate) chance = mode===&#x27;any&#x27; ? anyChance : probabilityAll(probabilities,rounds);
+        if(canEstimate) chance = mode===&#x27;any&#x27; ? Math.max(0,Math.min(1,1-(1-sum)**rounds)) : probabilityAll(probabilities,rounds);
         $(&#x27;#goal-probability&#x27;).textContent=allObtained?&#x27;全目標入手済み&#x27;:!targets.length ? &#x27;目標艦を選択&#x27; : tooManyForAll ? &#x27;すべて条件は12艦まで&#x27; : formatPercent(chance);
         $(&#x27;#expected-targets&#x27;).textContent=targets.length ? `${(rounds*sum).toFixed(2)}隻` : &#x27;—&#x27;;
-        const obtainedNote=selected.length&gt;targets.length?`（入手済み${selected.length-targets.length}隻を除く）`:&#x27;&#x27;;
-        $(&#x27;#quick-status&#x27;).textContent=allObtained?`${currentRank()}勝利・目標艦をすべて入手済み`:!targets.length?`${currentRank()}勝利・目標艦を設定してください`:tooManyForAll?`${currentRank()}勝利・すべて条件は12艦まで`:`${currentRank()}勝利・残り${targets.length}隻${obtainedNote}`;
+        $(&#x27;#quick-status&#x27;).textContent=allObtained?&#x27;目標艦をすべて入手済みです&#x27;:!targets.length?&#x27;目標艦を設定すると確率を計算します&#x27;:tooManyForAll?&#x27;「すべて」条件は12艦まで対応です&#x27;:inputRounds===null?&#x27;周回数は1〜9999で入力してください&#x27;:&#x27;&#x27;;
       }
       function readCostInput(selector) { const value=Number($(selector).value); return Number.isFinite(value) &amp;&amp; value&gt;0 ? value : 0; }
       function renderCostEstimate(profile,ninetyRounds) {
@@ -1521,7 +1535,7 @@ html&gt;body{padding:0}&lt;/style&gt;
           if(priority)priorityShown=true;
           return {row,compact};
         });
-        setBusy(true); $(&#x27;#stage-status&#x27;).textContent=count&gt;1?&#x27;一括抽選中…&#x27;:&#x27;索敵中…&#x27;; playNextDrop();
+        setBusy(true); $(&#x27;#stage-status&#x27;).textContent=count&gt;1?&#x27;一括抽選中…（タップでスキップ）&#x27;:&#x27;索敵中…（タップでスキップ）&#x27;; playNextDrop();
       }
       function playNextDrop() { if(!animationQueue.length){finishRun();return;} const item=animationQueue.shift(); animateDrop(item.row,item.compact); }
       function animateDrop(row,compact=false) {
@@ -1531,7 +1545,7 @@ html&gt;body{padding:0}&lt;/style&gt;
         stage.classList.remove(&#x27;is-idle&#x27;,&#x27;reveal-rare&#x27;,&#x27;reveal-priority&#x27;,&#x27;priority-suspense&#x27;,&#x27;compact-priority&#x27;);
         stage.classList.add(&#x27;scanning&#x27;);
         $(&#x27;#drop-card&#x27;).className=tier===&#x27;normal&#x27;?&#x27;drop-card&#x27;:&#x27;drop-card drawing&#x27;;
-        $(&#x27;#stage-status&#x27;).textContent=&#x27;ドロップ確認中…&#x27;;
+        $(&#x27;#stage-status&#x27;).textContent=&#x27;ドロップ確認中…（タップでスキップ）&#x27;;
         $(&#x27;#message-label&#x27;).textContent=&#x27;CONTACT&#x27;;
         $(&#x27;#message-name&#x27;).textContent=&#x27;艦影を確認中&#x27;;
         $(&#x27;#message-note&#x27;).textContent=&#x27;索敵継続&#x27;;
@@ -1579,7 +1593,7 @@ html&gt;body{padding:0}&lt;/style&gt;
         clearTimers(); finishRun();
       }
       function finishRun() { clearTimers(); const session=currentSession(); session.push(...pendingResults); const total=pendingResults.length; const priority=pendingResults.filter(row=&gt;tierOf(activeProfile(),row.ship)===&#x27;priority&#x27;).length; const rare=pendingResults.filter(row=&gt;tierOf(activeProfile(),row.ship)===&#x27;rare&#x27;).length; pendingResults=[]; animationQueue=[]; setBusy(false); renderSession(); announce(`${total}周の抽選完了。最優先${priority}隻、レア${rare}隻`); }
-      function resetStage() { clearTimers(); pendingResults=[]; animationQueue=[]; setBusy(false); $(&#x27;#drop-stage&#x27;).className=&#x27;card drop-stage is-idle&#x27;; $(&#x27;#drop-card&#x27;).className=&#x27;drop-card&#x27;; $(&#x27;#stage-status&#x27;).textContent=&#x27;判定待ち&#x27;; $(&#x27;#drop-content&#x27;).innerHTML=&#x27;&lt;span class=&quot;drop-label&quot;&gt;DROP&lt;/span&gt;&#x27;; $(&#x27;#encounter-message&#x27;).className=&#x27;encounter-message&#x27;; $(&#x27;#message-label&#x27;).textContent=&#x27;索敵待機&#x27;; $(&#x27;#message-name&#x27;).textContent=&#x27;抽選結果をここに表示&#x27;; $(&#x27;#message-note&#x27;).textContent=&#x27;KCNav実測データ&#x27;; }
+      function resetStage() { clearTimers(); pendingResults=[]; animationQueue=[]; setBusy(false); $(&#x27;#drop-stage&#x27;).className=&#x27;card drop-stage is-idle&#x27;; $(&#x27;#drop-card&#x27;).className=&#x27;drop-card&#x27;; $(&#x27;#stage-status&#x27;).textContent=&#x27;判定待ち&#x27;; $(&#x27;#drop-content&#x27;).innerHTML=&#x27;&lt;span class=&quot;drop-label&quot;&gt;DROP&lt;/span&gt;&#x27;; $(&#x27;#encounter-message&#x27;).className=&#x27;encounter-message&#x27;; $(&#x27;#message-label&#x27;).textContent=&#x27;索敵待機&#x27;; $(&#x27;#message-name&#x27;).textContent=&#x27;タップで1周・結果をここに表示&#x27;; $(&#x27;#message-note&#x27;).textContent=&#x27;KCNav実測データ&#x27;; }
       function renderSession() {
         const profile=activeProfile(); const session=currentSession(); const priorityCount=session.filter(row=&gt;tierOf(profile,row.ship)===&#x27;priority&#x27;).length; const rareCount=session.filter(row=&gt;tierOf(profile,row.ship)===&#x27;rare&#x27;).length; const normalCount=session.length-priorityCount-rareCount;
         $(&#x27;#results&#x27;).hidden=!session.length;
@@ -1669,10 +1683,14 @@ html&gt;body{padding:0}&lt;/style&gt;
         $(&#x27;#import-title-field&#x27;).hidden=!isNew; $(&#x27;#save-import&#x27;).hidden=!isNew; $(&#x27;#update-import&#x27;).hidden=isNew;
       }
       function setImportMode(mode) { importMode=mode===&#x27;update&#x27;?&#x27;update&#x27;:&#x27;new&#x27;; parsedImport=null; $(&#x27;#parse-preview&#x27;).innerHTML=&#x27;&#x27;; $(&#x27;#parse-status&#x27;).textContent=importMode===&#x27;new&#x27;?&#x27;KCNavの表を貼り付けて解析してください&#x27;:`${activeProfile().title}の更新用データを貼り付けてください`; $(&#x27;#import-confirmation&#x27;).hidden=true; renderImportMode(); $(&#x27;#kcnav-text&#x27;).focus(); }
+      function openImportSection() {
+        setImportMode(&#x27;new&#x27;); $(&#x27;#tools-panel&#x27;).open=true; $(&#x27;#import-section&#x27;).open=true;
+        requestAnimationFrame(()=&gt;{$(&#x27;#import-section&#x27;).scrollIntoView({behavior:reduceMotion?&#x27;auto&#x27;:&#x27;smooth&#x27;,block:&#x27;start&#x27;});$(&#x27;#kcnav-text&#x27;).focus();});
+      }
       function finishOnboarding(openImport=false) {
         try { localStorage.setItem(ONBOARDING_KEY,&#x27;seen&#x27;); } catch {}
         $(&#x27;#onboarding&#x27;).hidden=true;
-        if(openImport){ setImportMode(&#x27;new&#x27;); $(&#x27;#tools-panel&#x27;).open=true; $(&#x27;#import-section&#x27;).open=true; requestAnimationFrame(()=&gt;{$(&#x27;#import-section&#x27;).scrollIntoView({behavior:reduceMotion?&#x27;auto&#x27;:&#x27;smooth&#x27;,block:&#x27;start&#x27;});$(&#x27;#kcnav-text&#x27;).focus();}); }
+        if(openImport) openImportSection();
       }
       function renderOnboarding() { $(&#x27;#onboarding&#x27;).hidden=onboardingSeen(); }
 
@@ -1695,6 +1713,10 @@ html&gt;body{padding:0}&lt;/style&gt;
       $(&#x27;#rounds&#x27;).addEventListener(&#x27;input&#x27;,updateMetrics); $(&#x27;#rounds&#x27;).addEventListener(&#x27;blur&#x27;,updateMetrics); $(&#x27;#goal-mode&#x27;).addEventListener(&#x27;change&#x27;,updateMetrics);
       $(&#x27;#single-run&#x27;).addEventListener(&#x27;click&#x27;,()=&gt;run(1)); $(&#x27;#ten-run&#x27;).addEventListener(&#x27;click&#x27;,()=&gt;run(10)); $(&#x27;#batch-run&#x27;).addEventListener(&#x27;click&#x27;,()=&gt;{const rounds=readRounds();updateMetrics();if(rounds!==null)run(rounds);}); $(&#x27;#clear-session&#x27;).addEventListener(&#x27;click&#x27;,clearCurrentSession);
       $(&#x27;#parse-kcnav&#x27;).addEventListener(&#x27;click&#x27;,()=&gt;{parsedImport=parseKCNav($(&#x27;#kcnav-text&#x27;).value);applyParsedMeta();renderParsePreview();}); $(&#x27;#save-import&#x27;).addEventListener(&#x27;click&#x27;,saveImportedProfile); $(&#x27;#update-import&#x27;).addEventListener(&#x27;click&#x27;,updateImportedProfile);
+      $(&#x27;#kcnav-text&#x27;).addEventListener(&#x27;input&#x27;,()=&gt;{ clearTimeout(parseTimer); parseTimer=setTimeout(()=&gt;{ if(!$(&#x27;#kcnav-text&#x27;).value.trim())return; parsedImport=parseKCNav($(&#x27;#kcnav-text&#x27;).value); applyParsedMeta(); renderParsePreview(); },400); });
+      $(&#x27;#open-import&#x27;).addEventListener(&#x27;click&#x27;,openImportSection);
+      $$(&#x27;#rounds-chips [data-rounds]&#x27;).forEach(button=&gt;button.addEventListener(&#x27;click&#x27;,()=&gt;{$(&#x27;#rounds&#x27;).value=button.dataset.rounds;updateMetrics();}));
+      $(&#x27;#drop-stage&#x27;).addEventListener(&#x27;click&#x27;,()=&gt;{ if(isAnimating){skipAnimation();return;} if(!$(&#x27;#single-run&#x27;).disabled)run(1); });
       $(&#x27;#import-new&#x27;).addEventListener(&#x27;click&#x27;,()=&gt;setImportMode(&#x27;new&#x27;)); $(&#x27;#import-update&#x27;).addEventListener(&#x27;click&#x27;,()=&gt;setImportMode(&#x27;update&#x27;));
       [&#x27;#cost-fuel&#x27;,&#x27;#cost-ammo&#x27;,&#x27;#cost-bucket&#x27;].forEach(selector=&gt;{ $(selector).addEventListener(&#x27;input&#x27;,()=&gt;{activeProfile().costs={fuel:readCostInput(&#x27;#cost-fuel&#x27;),ammo:readCostInput(&#x27;#cost-ammo&#x27;),bucket:readCostInput(&#x27;#cost-bucket&#x27;)};updateMetrics();}); $(selector).addEventListener(&#x27;change&#x27;,saveState); });
       $(&#x27;#save-profile-meta&#x27;).addEventListener(&#x27;click&#x27;,saveProfileMeta); $(&#x27;#refresh-images&#x27;).addEventListener(&#x27;click&#x27;,()=&gt;resolveImagesForProfile(activeProfile(),true));
