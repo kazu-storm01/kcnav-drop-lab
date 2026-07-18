@@ -50,16 +50,35 @@ test('public app starts without seeded battle logs and can simulate one run', as
   await expect(app.locator('#rounds-half')).toHaveText('11周');
   await expect(app.locator('#rounds-ninety')).toHaveText('36周');
 
+  const indianaTarget = app
+    .locator('#target-list')
+    .getByRole('button', { name: /Indiana/ });
+  await indianaTarget.click();
+  await expect(indianaTarget).toContainText('✓');
+  await expect(app.locator('#rounds-half')).toHaveText('26周');
+  await indianaTarget.click();
+  await indianaTarget.click();
+  await expect(app.locator('#rounds-half')).toHaveText('11周');
+
+  await app.locator('#cost-fuel').fill('100');
+  await expect(app.locator('#cost-status')).toContainText('燃料 3,600');
+
   await app.getByText('実戦記録', { exact: true }).click();
   await expect(app.getByText('実戦記録 0件', { exact: true })).toBeVisible();
   await expect(app.getByText('記録はありません', { exact: true })).toBeVisible();
   await expect(app.locator('#log-analysis-wrap')).toBeHidden();
+  await expect(
+    app.locator('#log-ship option', { hasText: 'ドロップなし' }),
+  ).toHaveCount(1);
 
+  await app.locator('#log-ship').selectOption('Indiana');
   await app.getByRole('button', { name: '現在時刻で記録' }).click();
   await expect(app.locator('#log-analysis-wrap')).toBeVisible();
   await expect(app.locator('#log-analysis')).toContainText('1/1');
   await expect(app.locator('#log-analysis')).toContainText('100.00%');
   await expect(app.locator('#log-analysis')).toContainText('上振れ');
+  await expect(app.locator('#log-analysis')).toContainText('上位3.7%');
+  await expect(app.locator('#log-analysis')).toContainText('下位97.9%');
 
   await app.getByRole('button', { name: '1周', exact: true }).click();
   await expect(app.getByText(/今回 1周・/)).toBeVisible();
@@ -88,6 +107,19 @@ test('a KCNav preset can be edited and resolves an unbundled ship image', async 
   const app = page.frameLocator('iframe[title="Kcnav Drop Lab"]');
 
   await app.getByText('設定・記録', { exact: true }).click();
+  await app.getByText('KCNavから海域を登録', { exact: true }).click();
+  await app.locator('#kcnav-text').fill('E-9-1 甲 Xマス\nダミー艦\t50.00%\t1/2\tS');
+  await app.getByRole('button', { name: '解析して確認' }).click();
+  await expect(app.locator('#import-map')).toHaveValue('E9-1');
+  await expect(app.locator('#import-difficulty')).toHaveValue('甲');
+  await expect(app.locator('#import-node')).toHaveValue('X');
+  await app
+    .getByRole('button', { name: '新規プリセットとして保存' })
+    .click();
+  await app.getByText('艦の格付け', { exact: true }).click();
+  await expect(app.locator('#drop-table')).toContainText('ドロップなし・その他');
+  await app.getByText('艦の格付け', { exact: true }).click();
+
   await app.getByText('KCNavから海域を登録', { exact: true }).click();
   await app.locator('#import-title').fill('自動画像テスト');
   await app.locator('#kcnav-text').fill('Atlanta\t100.00%\t1/1\tS');
@@ -119,8 +151,29 @@ test('a KCNav preset can be edited and resolves an unbundled ship image', async 
   await expect(app.locator('#drop-card')).toHaveClass(/rare reveal/);
 
   await app.getByLabel('Atlantaの格付け').selectOption('priority');
+  const sawSuspense = app.locator('#drop-stage').evaluate(
+    (node) =>
+      new Promise((resolve) => {
+        const check = () => node.classList.contains('priority-suspense');
+        if (check()) return resolve(true);
+        const observer = new MutationObserver(() => {
+          if (check()) {
+            observer.disconnect();
+            resolve(true);
+          }
+        });
+        observer.observe(node, {
+          attributes: true,
+          attributeFilter: ['class'],
+        });
+        setTimeout(() => {
+          observer.disconnect();
+          resolve(check());
+        }, 5000);
+      }),
+  );
   await app.getByRole('button', { name: '1周', exact: true }).click();
-  await expect(app.locator('#drop-stage')).toHaveClass(/priority-suspense/);
+  expect(await sawSuspense).toBe(true);
   await expect(app.locator('#drop-stage')).toHaveClass(/reveal-priority/);
   await expect(app.locator('#drop-card')).toHaveClass(/priority reveal/);
 
