@@ -870,6 +870,7 @@ html&gt;body{padding:0}&lt;/style&gt;
     #kcnav-drop-lab .input-error { grid-column: 1 / -1; margin: 0; color: light-dark(rgb(178 48 6), var(--destructive)); font-size: .85rem; }
     #kcnav-drop-lab .primary-metrics { display: grid; grid-template-columns: 1fr 1fr; gap: .55rem; }
     #kcnav-drop-lab .primary-metrics .metric { padding: .65rem .75rem; border: 1px solid var(--border); background: color-mix(in srgb, var(--secondary) 32%, transparent); }
+    #kcnav-drop-lab .hero-statement { margin: 0; padding: .7rem .85rem; border-left: 3px solid var(--primary); background: color-mix(in srgb, var(--primary) 8%, transparent); font-size: 1.08rem; line-height: 1.55; font-weight: 500; }
     #kcnav-drop-lab .rounds-chips { display: flex; flex-wrap: wrap; gap: .35rem; align-items: center; }
     #kcnav-drop-lab .rounds-chips .btn { min-width: 2.6rem; padding: .25rem .55rem; font-size: .85rem; }
     #kcnav-drop-lab .rounds-chips .btn[aria-pressed=&quot;true&quot;] { border-color: var(--primary); background: color-mix(in srgb, var(--primary) 14%, var(--secondary)); }
@@ -982,6 +983,7 @@ html&gt;body{padding:0}&lt;/style&gt;
     &lt;/section&gt;
     &lt;details class=&quot;card target-panel&quot; id=&quot;target-panel&quot;&gt;&lt;summary class=&quot;sr-only&quot;&gt;目標艦を編集&lt;/summary&gt;&lt;div class=&quot;detail-body&quot;&gt;&lt;div class=&quot;target-box&quot;&gt;&lt;span&gt;目標艦&lt;/span&gt;&lt;div class=&quot;target-picker&quot; id=&quot;target-list&quot;&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/details&gt;
 
+    &lt;p class=&quot;hero-statement&quot; id=&quot;hero-statement&quot; aria-live=&quot;polite&quot;&gt;—&lt;/p&gt;
     &lt;div class=&quot;primary-metrics&quot; aria-label=&quot;主な確率&quot;&gt;
       &lt;div class=&quot;metric&quot;&gt;&lt;span class=&quot;muted&quot; id=&quot;goal-probability-label&quot;&gt;20周で目標達成&lt;/span&gt;&lt;strong id=&quot;goal-probability&quot;&gt;—&lt;/strong&gt;&lt;/div&gt;
       &lt;div class=&quot;metric&quot;&gt;&lt;span class=&quot;muted&quot;&gt;90%達成の目安&lt;/span&gt;&lt;strong id=&quot;rounds-ninety&quot;&gt;—&lt;/strong&gt;&lt;/div&gt;
@@ -1415,6 +1417,7 @@ html&gt;body{padding:0}&lt;/style&gt;
         $$(&#x27;[data-delete-log]&#x27;).forEach(button=&gt;button.addEventListener(&#x27;click&#x27;,()=&gt;{profile.logs=logs.filter(log=&gt;log.id!==button.dataset.deleteLog);saveState();renderLogs();}));
         renderLogAnalysis(profile,logs);
         renderQuickRecord(profile);
+        renderHero();
       }
       function renderQuickRecord(profile=activeProfile()) {
         const ships=unionShips(profile);
@@ -1482,6 +1485,42 @@ html&gt;body{padding:0}&lt;/style&gt;
         for(let i=0;i&lt;k;i++){ term*=((n-i)/(i+1))*(p/(1-p)); sum+=term; }
         return Math.min(1,sum);
       }
+      function heroLuckClause(profile) {
+        const logs=profile.logs||[]; if(!logs.length)return &#x27;&#x27;;
+        const hunting=profile.targets.filter(ship=&gt;!profile.obtained.includes(ship)); if(!hunting.length)return &#x27;&#x27;;
+        const rankTotals={}; logs.forEach(log=&gt;rankTotals[log.rank]=(rankTotals[log.rank]||0)+1);
+        let extreme=null;
+        Object.keys(rankTotals).forEach(rank=&gt;{
+          const total=rankTotals[rank]; const rankRows=tableFor(profile,rank);
+          hunting.forEach(ship=&gt;{
+            const row=rankRows.find(item=&gt;item.ship===ship); if(!row || row.rate&lt;=0 || row.rate&gt;=1)return;
+            const count=logs.filter(log=&gt;log.rank===rank &amp;&amp; log.ship===ship).length;
+            const below=count/total&lt;row.rate;
+            const cumulative=below?binomialCumulative(total,count,row.rate):1-binomialCumulative(total,count-1,row.rate);
+            if(!extreme || cumulative&lt;extreme.cumulative) extreme={below,cumulative};
+          });
+        });
+        if(!extreme)return &#x27;&#x27;;
+        if(extreme.below &amp;&amp; extreme.cumulative&lt;.05)return &#x27;引きは明確に下振れ中。&#x27;;
+        if(extreme.below &amp;&amp; extreme.cumulative&lt;.25)return &#x27;引きはやや下振れ。&#x27;;
+        if(!extreme.below &amp;&amp; extreme.cumulative&lt;.05)return &#x27;引きは絶好調。&#x27;;
+        return &#x27;引きは想定どおり。&#x27;;
+      }
+      function renderHero() {
+        const element=$(&#x27;#hero-statement&#x27;); const profile=activeProfile(); const rows=tableFor(profile,currentRank());
+        if(!rows.length){element.textContent=&#x27;まずはKCNavのドロップ表を登録しよう。&#x27;;return;}
+        const selected=activeTargets(profile,currentRank()); const hunting=selected.filter(ship=&gt;!profile.obtained.includes(ship));
+        if(!selected.length){element.textContent=&#x27;目標艦を選ぶと、「あと何周で出るか」をここに表示します。&#x27;;return;}
+        if(!hunting.length){element.textContent=&#x27;目標艦はすべて入手済み。おつかれさまでした！&#x27;;return;}
+        const mode=$(&#x27;#goal-mode&#x27;).value;
+        if(mode===&#x27;all&#x27; &amp;&amp; hunting.length&gt;12){element.textContent=&#x27;「すべて」条件は12艦まで。目標を絞ろう。&#x27;;return;}
+        const probabilities=hunting.map(ship=&gt;rows.find(row=&gt;row.ship===ship).rate);
+        const sum=probabilities.reduce((a,b)=&gt;a+b,0);
+        const ninety=roundsForChance(probabilities,sum,mode,.9);
+        const subject=mode===&#x27;all&#x27;?`${hunting.length}隻すべて`:hunting.length===1?hunting[0]:`${hunting[0]}ほか${hunting.length}隻のどれか`;
+        const roundsText=ninety===null?&#x27;計算できません&#x27;:Number.isFinite(ninety)?`あと${ninety}周`:&#x27;あと99999周以上&#x27;;
+        element.textContent=`${subject}が90%出るまで、${roundsText}。${heroLuckClause(profile)}`;
+      }
       function updateMetrics() {
         const profile=activeProfile(); const rows=tableFor(profile,currentRank()); const inputRounds=readRounds(); if(inputRounds!==null)lastValidRounds=inputRounds; const rounds=lastValidRounds; const selected=activeTargets(profile,currentRank()); const targets=selected.filter(ship=&gt;!profile.obtained.includes(ship)); const allObtained=Boolean(selected.length) &amp;&amp; !targets.length; const probabilities=targets.map(ship=&gt;rows.find(row=&gt;row.ship===ship).rate); const sum=probabilities.reduce((a,b)=&gt;a+b,0); const mode=$(&#x27;#goal-mode&#x27;).value;
         const tooManyForAll=mode===&#x27;all&#x27; &amp;&amp; targets.length&gt;12;
@@ -1499,6 +1538,7 @@ html&gt;body{padding:0}&lt;/style&gt;
         $(&#x27;#goal-probability&#x27;).textContent=allObtained?&#x27;全目標入手済み&#x27;:!targets.length ? &#x27;目標艦を選択&#x27; : tooManyForAll ? &#x27;すべて条件は12艦まで&#x27; : formatPercent(chance);
         $(&#x27;#expected-targets&#x27;).textContent=targets.length ? `${(rounds*sum).toFixed(2)}隻` : &#x27;—&#x27;;
         $(&#x27;#quick-status&#x27;).textContent=allObtained?&#x27;目標艦をすべて入手済みです&#x27;:!targets.length?&#x27;目標艦を設定すると確率を計算します&#x27;:tooManyForAll?&#x27;「すべて」条件は12艦まで対応です&#x27;:inputRounds===null?&#x27;周回数は1〜9999で入力してください&#x27;:&#x27;&#x27;;
+        renderHero();
       }
       function readCostInput(selector) { const value=Number($(selector).value); return Number.isFinite(value) &amp;&amp; value&gt;0 ? value : 0; }
       function renderCostEstimate(profile,ninetyRounds) {

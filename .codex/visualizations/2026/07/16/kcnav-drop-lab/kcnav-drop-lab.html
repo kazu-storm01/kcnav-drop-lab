@@ -120,6 +120,7 @@
     #kcnav-drop-lab .input-error { grid-column: 1 / -1; margin: 0; color: light-dark(rgb(178 48 6), var(--destructive)); font-size: .85rem; }
     #kcnav-drop-lab .primary-metrics { display: grid; grid-template-columns: 1fr 1fr; gap: .55rem; }
     #kcnav-drop-lab .primary-metrics .metric { padding: .65rem .75rem; border: 1px solid var(--border); background: color-mix(in srgb, var(--secondary) 32%, transparent); }
+    #kcnav-drop-lab .hero-statement { margin: 0; padding: .7rem .85rem; border-left: 3px solid var(--primary); background: color-mix(in srgb, var(--primary) 8%, transparent); font-size: 1.08rem; line-height: 1.55; font-weight: 500; }
     #kcnav-drop-lab .rounds-chips { display: flex; flex-wrap: wrap; gap: .35rem; align-items: center; }
     #kcnav-drop-lab .rounds-chips .btn { min-width: 2.6rem; padding: .25rem .55rem; font-size: .85rem; }
     #kcnav-drop-lab .rounds-chips .btn[aria-pressed="true"] { border-color: var(--primary); background: color-mix(in srgb, var(--primary) 14%, var(--secondary)); }
@@ -232,6 +233,7 @@
     </section>
     <details class="card target-panel" id="target-panel"><summary class="sr-only">目標艦を編集</summary><div class="detail-body"><div class="target-box"><span>目標艦</span><div class="target-picker" id="target-list"></div></div></div></details>
 
+    <p class="hero-statement" id="hero-statement" aria-live="polite">—</p>
     <div class="primary-metrics" aria-label="主な確率">
       <div class="metric"><span class="muted" id="goal-probability-label">20周で目標達成</span><strong id="goal-probability">—</strong></div>
       <div class="metric"><span class="muted">90%達成の目安</span><strong id="rounds-ninety">—</strong></div>
@@ -665,6 +667,7 @@
         $$('[data-delete-log]').forEach(button=>button.addEventListener('click',()=>{profile.logs=logs.filter(log=>log.id!==button.dataset.deleteLog);saveState();renderLogs();}));
         renderLogAnalysis(profile,logs);
         renderQuickRecord(profile);
+        renderHero();
       }
       function renderQuickRecord(profile=activeProfile()) {
         const ships=unionShips(profile);
@@ -732,6 +735,42 @@
         for(let i=0;i<k;i++){ term*=((n-i)/(i+1))*(p/(1-p)); sum+=term; }
         return Math.min(1,sum);
       }
+      function heroLuckClause(profile) {
+        const logs=profile.logs||[]; if(!logs.length)return '';
+        const hunting=profile.targets.filter(ship=>!profile.obtained.includes(ship)); if(!hunting.length)return '';
+        const rankTotals={}; logs.forEach(log=>rankTotals[log.rank]=(rankTotals[log.rank]||0)+1);
+        let extreme=null;
+        Object.keys(rankTotals).forEach(rank=>{
+          const total=rankTotals[rank]; const rankRows=tableFor(profile,rank);
+          hunting.forEach(ship=>{
+            const row=rankRows.find(item=>item.ship===ship); if(!row || row.rate<=0 || row.rate>=1)return;
+            const count=logs.filter(log=>log.rank===rank && log.ship===ship).length;
+            const below=count/total<row.rate;
+            const cumulative=below?binomialCumulative(total,count,row.rate):1-binomialCumulative(total,count-1,row.rate);
+            if(!extreme || cumulative<extreme.cumulative) extreme={below,cumulative};
+          });
+        });
+        if(!extreme)return '';
+        if(extreme.below && extreme.cumulative<.05)return '引きは明確に下振れ中。';
+        if(extreme.below && extreme.cumulative<.25)return '引きはやや下振れ。';
+        if(!extreme.below && extreme.cumulative<.05)return '引きは絶好調。';
+        return '引きは想定どおり。';
+      }
+      function renderHero() {
+        const element=$('#hero-statement'); const profile=activeProfile(); const rows=tableFor(profile,currentRank());
+        if(!rows.length){element.textContent='まずはKCNavのドロップ表を登録しよう。';return;}
+        const selected=activeTargets(profile,currentRank()); const hunting=selected.filter(ship=>!profile.obtained.includes(ship));
+        if(!selected.length){element.textContent='目標艦を選ぶと、「あと何周で出るか」をここに表示します。';return;}
+        if(!hunting.length){element.textContent='目標艦はすべて入手済み。おつかれさまでした！';return;}
+        const mode=$('#goal-mode').value;
+        if(mode==='all' && hunting.length>12){element.textContent='「すべて」条件は12艦まで。目標を絞ろう。';return;}
+        const probabilities=hunting.map(ship=>rows.find(row=>row.ship===ship).rate);
+        const sum=probabilities.reduce((a,b)=>a+b,0);
+        const ninety=roundsForChance(probabilities,sum,mode,.9);
+        const subject=mode==='all'?`${hunting.length}隻すべて`:hunting.length===1?hunting[0]:`${hunting[0]}ほか${hunting.length}隻のどれか`;
+        const roundsText=ninety===null?'計算できません':Number.isFinite(ninety)?`あと${ninety}周`:'あと99999周以上';
+        element.textContent=`${subject}が90%出るまで、${roundsText}。${heroLuckClause(profile)}`;
+      }
       function updateMetrics() {
         const profile=activeProfile(); const rows=tableFor(profile,currentRank()); const inputRounds=readRounds(); if(inputRounds!==null)lastValidRounds=inputRounds; const rounds=lastValidRounds; const selected=activeTargets(profile,currentRank()); const targets=selected.filter(ship=>!profile.obtained.includes(ship)); const allObtained=Boolean(selected.length) && !targets.length; const probabilities=targets.map(ship=>rows.find(row=>row.ship===ship).rate); const sum=probabilities.reduce((a,b)=>a+b,0); const mode=$('#goal-mode').value;
         const tooManyForAll=mode==='all' && targets.length>12;
@@ -749,6 +788,7 @@
         $('#goal-probability').textContent=allObtained?'全目標入手済み':!targets.length ? '目標艦を選択' : tooManyForAll ? 'すべて条件は12艦まで' : formatPercent(chance);
         $('#expected-targets').textContent=targets.length ? `${(rounds*sum).toFixed(2)}隻` : '—';
         $('#quick-status').textContent=allObtained?'目標艦をすべて入手済みです':!targets.length?'目標艦を設定すると確率を計算します':tooManyForAll?'「すべて」条件は12艦まで対応です':inputRounds===null?'周回数は1〜9999で入力してください':'';
+        renderHero();
       }
       function readCostInput(selector) { const value=Number($(selector).value); return Number.isFinite(value) && value>0 ? value : 0; }
       function renderCostEstimate(profile,ninetyRounds) {
