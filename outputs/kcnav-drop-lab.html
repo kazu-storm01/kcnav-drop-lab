@@ -839,6 +839,7 @@ html&gt;body{padding:0}&lt;/style&gt;
     #kcnav-drop-lab .target-box { display: grid; gap: .5rem; }
     #kcnav-drop-lab .target-list { display: flex; flex-wrap: wrap; gap: .35rem; }
     #kcnav-drop-lab .target-list .btn { padding-inline: .6rem; }
+    #kcnav-drop-lab .target-list .btn.is-obtained { text-decoration: line-through; opacity: .72; }
     #kcnav-drop-lab .results { display: grid; gap: .55rem; }
     #kcnav-drop-lab .results-head { display: flex; justify-content: space-between; gap: .7rem; align-items: center; }
     #kcnav-drop-lab .section-heading { margin: 0; font-size: 1rem; font-weight: 500; }
@@ -931,7 +932,13 @@ html&gt;body{padding:0}&lt;/style&gt;
               &lt;div class=&quot;metric&quot;&gt;&lt;span class=&quot;muted&quot;&gt;90%達成の目安&lt;/span&gt;&lt;strong id=&quot;rounds-ninety&quot;&gt;—&lt;/strong&gt;&lt;/div&gt;
             &lt;/div&gt;
             &lt;div class=&quot;quick-status&quot; id=&quot;quick-status&quot;&gt;&lt;/div&gt;
-            &lt;div class=&quot;target-box&quot;&gt;&lt;span&gt;目標艦&lt;/span&gt;&lt;div class=&quot;target-list&quot; id=&quot;target-list&quot;&gt;&lt;/div&gt;&lt;/div&gt;
+            &lt;div class=&quot;settings-grid&quot;&gt;
+              &lt;label class=&quot;field&quot; for=&quot;cost-fuel&quot;&gt;&lt;span&gt;1周の燃料&lt;/span&gt;&lt;input class=&quot;form-control&quot; id=&quot;cost-fuel&quot; type=&quot;number&quot; min=&quot;0&quot; inputmode=&quot;numeric&quot; placeholder=&quot;0&quot;&gt;&lt;/label&gt;
+              &lt;label class=&quot;field&quot; for=&quot;cost-ammo&quot;&gt;&lt;span&gt;1周の弾薬&lt;/span&gt;&lt;input class=&quot;form-control&quot; id=&quot;cost-ammo&quot; type=&quot;number&quot; min=&quot;0&quot; inputmode=&quot;numeric&quot; placeholder=&quot;0&quot;&gt;&lt;/label&gt;
+              &lt;label class=&quot;field&quot; for=&quot;cost-bucket&quot;&gt;&lt;span&gt;1周のバケツ&lt;/span&gt;&lt;input class=&quot;form-control&quot; id=&quot;cost-bucket&quot; type=&quot;number&quot; min=&quot;0&quot; step=&quot;0.1&quot; inputmode=&quot;decimal&quot; placeholder=&quot;0&quot;&gt;&lt;/label&gt;
+            &lt;/div&gt;
+            &lt;div class=&quot;quick-status&quot; id=&quot;cost-status&quot;&gt;&lt;/div&gt;
+            &lt;div class=&quot;target-box&quot;&gt;&lt;span&gt;目標艦（クリックで 目標 → 入手済み → 解除）&lt;/span&gt;&lt;div class=&quot;target-list&quot; id=&quot;target-list&quot;&gt;&lt;/div&gt;&lt;/div&gt;
           &lt;/div&gt;
         &lt;/details&gt;
 
@@ -950,7 +957,7 @@ html&gt;body{padding:0}&lt;/style&gt;
               &lt;button class=&quot;btn btn-ghost&quot; id=&quot;clear-logs&quot; type=&quot;button&quot;&gt;実戦ログを全消去&lt;/button&gt;
             &lt;/div&gt;
             &lt;p class=&quot;muted&quot; id=&quot;log-summary&quot;&gt;&lt;/p&gt;
-            &lt;div class=&quot;table-wrap&quot; id=&quot;log-analysis-wrap&quot; hidden&gt;&lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;艦&lt;/th&gt;&lt;th&gt;評価&lt;/th&gt;&lt;th&gt;実戦&lt;/th&gt;&lt;th&gt;実戦率&lt;/th&gt;&lt;th&gt;KCNav率&lt;/th&gt;&lt;th&gt;傾向&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody id=&quot;log-analysis&quot;&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;span class=&quot;muted&quot;&gt;実戦率は同じ評価の記録数を母数に計算します。&lt;/span&gt;&lt;/div&gt;
+            &lt;div class=&quot;table-wrap&quot; id=&quot;log-analysis-wrap&quot; hidden&gt;&lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;艦&lt;/th&gt;&lt;th&gt;評価&lt;/th&gt;&lt;th&gt;実戦&lt;/th&gt;&lt;th&gt;実戦率&lt;/th&gt;&lt;th&gt;KCNav率&lt;/th&gt;&lt;th&gt;傾向&lt;/th&gt;&lt;th&gt;運勢&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody id=&quot;log-analysis&quot;&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;span class=&quot;muted&quot;&gt;実戦率は同じ評価の記録数を母数に計算します。「ドロップなし」も記録すると理論率と正しく比較できます。運勢は同条件でその結果以下（以上）になる確率です。&lt;/span&gt;&lt;/div&gt;
             &lt;div class=&quot;log-list&quot; id=&quot;log-list&quot;&gt;&lt;/div&gt;
           &lt;/div&gt;
         &lt;/details&gt;
@@ -1063,7 +1070,7 @@ html&gt;body{padding:0}&lt;/style&gt;
       const seedDrops = [[&#x27;蒼龍&#x27;,12],[&#x27;赤城&#x27;,11],[&#x27;那珂&#x27;,9],[&#x27;伊58&#x27;,9],[&#x27;Indiana&#x27;,7],[&#x27;衣笠&#x27;,7],[&#x27;鳳翔&#x27;,7],[&#x27;加賀&#x27;,7],[&#x27;鬼怒&#x27;,7],[&#x27;熊野&#x27;,6],[&#x27;大淀&#x27;,6],[&#x27;川内&#x27;,6],[&#x27;飛龍&#x27;,6],[&#x27;北上&#x27;,5],[&#x27;日向&#x27;,5],[&#x27;伊13&#x27;,5],[&#x27;択捉&#x27;,5],[&#x27;鈴谷&#x27;,5],[&#x27;金剛&#x27;,5],[&#x27;Wasp&#x27;,4],[&#x27;最上&#x27;,4],[&#x27;長門&#x27;,4],[&#x27;伊8&#x27;,4],[&#x27;時津風&#x27;,4],[&#x27;福江&#x27;,4],[&#x27;Lexington&#x27;,4],[&#x27;伊勢&#x27;,3],[&#x27;速吸&#x27;,3],[&#x27;妙高&#x27;,3],[&#x27;青葉&#x27;,3],[&#x27;Intrepid&#x27;,3],[&#x27;球磨&#x27;,3],[&#x27;榛名&#x27;,3],[&#x27;由良&#x27;,2],[&#x27;South Dakota&#x27;,2],[&#x27;三隈&#x27;,2],[&#x27;Saratoga&#x27;,1],[&#x27;Iowa&#x27;,1],[&#x27;伊14&#x27;,1],[&#x27;神通&#x27;,1],[&#x27;白雲&#x27;,1]].map(([ship,count]) =&gt; ({ship,count,total:190,rate:count/190,rank:&#x27;S&#x27;}));
       const seedLogs = [];
       const defaultTiers = {Indiana:&#x27;priority&#x27;,Wasp:&#x27;priority&#x27;,Iowa:&#x27;priority&#x27;,Intrepid:&#x27;rare&#x27;,Saratoga:&#x27;rare&#x27;,Lexington:&#x27;rare&#x27;,&#x27;South Dakota&#x27;:&#x27;rare&#x27;};
-      const seedProfile = {id:&#x27;e3-4-kou-z&#x27;,title:&#x27;E3-4甲 Z&#x27;,event:&#x27;2026夏 前段&#x27;,map:&#x27;E3-4&#x27;,difficulty:&#x27;甲&#x27;,node:&#x27;Z&#x27;,source:&#x27;KCNav S勝利190件&#x27;,updatedAt:&#x27;2026/07/15&#x27;,drops:seedDrops,targets:[&#x27;Indiana&#x27;,&#x27;Wasp&#x27;,&#x27;Iowa&#x27;],tiers:defaultTiers,logs:seedLogs};
+      const seedProfile = {id:&#x27;e3-4-kou-z&#x27;,title:&#x27;E3-4甲 Z&#x27;,event:&#x27;2026夏 前段&#x27;,map:&#x27;E3-4&#x27;,difficulty:&#x27;甲&#x27;,node:&#x27;Z&#x27;,source:&#x27;KCNav S勝利190件&#x27;,updatedAt:&#x27;2026/07/15&#x27;,drops:seedDrops,targets:[&#x27;Indiana&#x27;,&#x27;Wasp&#x27;,&#x27;Iowa&#x27;],obtained:[],tiers:defaultTiers,logs:seedLogs,costs:{fuel:0,ammo:0,bucket:0}};
       const fallbackState = {version:4,activeId:seedProfile.id,profiles:[seedProfile],imageCache:{}};
       let state = loadState();
       let parsedImport = null;
@@ -1084,7 +1091,7 @@ html&gt;body{padding:0}&lt;/style&gt;
       function loadState() { try { const value = JSON.parse(localStorage.getItem(STORAGE_KEY)); return validateState(value) ? normalizeState(value) : clone(fallbackState); } catch { return clone(fallbackState); } }
       function saveState() { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); $(&#x27;#storage-status&#x27;).textContent=&#x27;この端末に保存済み&#x27;; return true; } catch { $(&#x27;#storage-status&#x27;).textContent=&#x27;この端末に保存できません&#x27;; announce(&#x27;データを保存できませんでした&#x27;); return false; } }
       function validateState(value) { return Boolean(value &amp;&amp; Array.isArray(value.profiles) &amp;&amp; value.profiles.length &amp;&amp; value.profiles.every(profile =&gt; profile.id &amp;&amp; Array.isArray(profile.drops))); }
-      function normalizeState(value) { const next=clone(value); next.version=4; next.imageCache={...(next.shipImages||{}),...(next.imageCache||{})}; Object.keys(next.imageCache).forEach(ship=&gt;{if(String(next.imageCache[ship]||&#x27;&#x27;).includes(&#x27;/KC3Kai/KC3Kai/&#x27;))delete next.imageCache[ship];}); delete next.shipImages; next.profiles.forEach(profile=&gt;{profile.targets=Array.isArray(profile.targets)?profile.targets:[];profile.tiers=profile.tiers||{};profile.logs=Array.isArray(profile.logs)?profile.logs.filter(log=&gt;!/^seed-\d+$/.test(log.id||&#x27;&#x27;)):[];}); return next; }
+      function normalizeState(value) { const next=clone(value); next.version=4; next.imageCache={...(next.shipImages||{}),...(next.imageCache||{})}; Object.keys(next.imageCache).forEach(ship=&gt;{if(String(next.imageCache[ship]||&#x27;&#x27;).includes(&#x27;/KC3Kai/KC3Kai/&#x27;))delete next.imageCache[ship];}); delete next.shipImages; next.profiles.forEach(profile=&gt;{profile.targets=Array.isArray(profile.targets)?profile.targets:[];profile.obtained=(Array.isArray(profile.obtained)?profile.obtained:[]).filter(ship=&gt;profile.targets.includes(ship));profile.tiers=profile.tiers||{};profile.logs=Array.isArray(profile.logs)?profile.logs.filter(log=&gt;!/^seed-\d+$/.test(log.id||&#x27;&#x27;)):[];profile.costs={fuel:0,ammo:0,bucket:0,...(profile.costs||{})};}); return next; }
       function activeProfile() { return state.profiles.find(profile =&gt; profile.id === state.activeId) || state.profiles[0]; }
       function profileRanks(profile) { return [...new Set(profile.drops.map(row =&gt; row.rank))].sort((a,b) =&gt; [&#x27;S&#x27;,&#x27;A&#x27;,&#x27;B&#x27;,&#x27;C&#x27;].indexOf(a)-[&#x27;S&#x27;,&#x27;A&#x27;,&#x27;B&#x27;,&#x27;C&#x27;].indexOf(b)); }
       function tableFor(profile,rank) { return profile.drops.filter(row =&gt; row.rank === rank); }
@@ -1093,7 +1100,7 @@ html&gt;body{padding:0}&lt;/style&gt;
       function imageFor(ship) { return state.imageCache?.[ship] || defaultImageCatalog[ship] || &#x27;&#x27;; }
       function formatPercent(value) { return `${(value*100).toFixed(2)}%`; }
       function uid(prefix=&#x27;id&#x27;) { return `${prefix}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2,7)}`; }
-      function createEmptyProfile() { return {id:uid(&#x27;profile&#x27;),title:&#x27;未設定プリセット&#x27;,event:&#x27;&#x27;,map:&#x27;&#x27;,difficulty:&#x27;-&#x27;,node:&#x27;&#x27;,source:&#x27;KCNav未登録&#x27;,updatedAt:new Date().toLocaleDateString(&#x27;ja-JP&#x27;),drops:[],targets:[],tiers:{},logs:[]}; }
+      function createEmptyProfile() { return {id:uid(&#x27;profile&#x27;),title:&#x27;未設定プリセット&#x27;,event:&#x27;&#x27;,map:&#x27;&#x27;,difficulty:&#x27;-&#x27;,node:&#x27;&#x27;,source:&#x27;KCNav未登録&#x27;,updatedAt:new Date().toLocaleDateString(&#x27;ja-JP&#x27;),drops:[],targets:[],obtained:[],tiers:{},logs:[],costs:{fuel:0,ammo:0,bucket:0}}; }
       function assetKey(id,type) { const text=`ship_${type}`; const sum=[...text].reduce((value,char)=&gt;value+char.charCodeAt(0),0); return ((17*(id+7)*SHIP_ASSET_KEYS[(sum+id*text.length)%100])%8973)+1000; }
       function cardImageForId(id) { return `${SHIP_CARD_BASE}${String(id).padStart(4,&#x27;0&#x27;)}_${assetKey(id,&#x27;card&#x27;)}.png`; }
       function announce(message) { $(&#x27;#app-status&#x27;).textContent=&#x27;&#x27;; requestAnimationFrame(()=&gt;{$(&#x27;#app-status&#x27;).textContent=message;}); }
@@ -1248,6 +1255,7 @@ html&gt;body{padding:0}&lt;/style&gt;
         $(&#x27;#rank-select&#x27;).innerHTML = ranks.length?ranks.map(rank =&gt; `&lt;option&gt;${escapeHtml(rank)}&lt;/option&gt;`).join(&#x27;&#x27;):&#x27;&lt;option value=&quot;&quot;&gt;未設定&lt;/option&gt;&#x27;;
         $(&#x27;#rank-select&#x27;).value = ranks.includes(previous) ? previous : ranks[0]||&#x27;&#x27;;
         $(&#x27;#edit-title&#x27;).value=profile.title||&#x27;&#x27;; $(&#x27;#edit-map&#x27;).value=profile.map||&#x27;&#x27;; $(&#x27;#edit-difficulty&#x27;).value=[&#x27;甲&#x27;,&#x27;乙&#x27;,&#x27;丙&#x27;,&#x27;丁&#x27;,&#x27;-&#x27;].includes(profile.difficulty)?profile.difficulty:&#x27;-&#x27;; $(&#x27;#edit-node&#x27;).value=profile.node||&#x27;&#x27;;
+        $(&#x27;#cost-fuel&#x27;).value=profile.costs?.fuel||&#x27;&#x27;; $(&#x27;#cost-ammo&#x27;).value=profile.costs?.ammo||&#x27;&#x27;; $(&#x27;#cost-bucket&#x27;).value=profile.costs?.bucket||&#x27;&#x27;;
         renderTargets(); renderDropTable(); renderLogControls(); renderLogs(); resetStage(); updateMetrics(); renderSession(); renderImageStatus(profile);
         preloadImportantImages(profile);
         resolveImagesForProfile(profile);
@@ -1255,15 +1263,22 @@ html&gt;body{padding:0}&lt;/style&gt;
       function renderTargets() {
         const profile = activeProfile();
         const rows = tableFor(profile,currentRank());
-        $(&#x27;#target-list&#x27;).innerHTML = rows.map(row =&gt; { const selected = profile.targets.includes(row.ship); return `&lt;button class=&quot;btn${selected?&#x27; is-selected&#x27;:&#x27;&#x27;}&quot; type=&quot;button&quot; aria-pressed=&quot;${selected}&quot; data-target=&quot;${escapeHtml(row.ship)}&quot;&gt;${escapeHtml(row.ship)}&lt;/button&gt;`; }).join(&#x27;&#x27;);
-        $$(&#x27;[data-target]&#x27;).forEach(button =&gt; button.addEventListener(&#x27;click&#x27;,() =&gt; { const ship=button.dataset.target; const index=profile.targets.indexOf(ship); if(index&gt;=0) profile.targets.splice(index,1); else profile.targets.push(ship); saveState(); renderTargets(); updateMetrics(); renderSession(); }));
+        $(&#x27;#target-list&#x27;).innerHTML = rows.map(row =&gt; { const selected = profile.targets.includes(row.ship); const obtained = selected &amp;&amp; profile.obtained.includes(row.ship); return `&lt;button class=&quot;btn${selected?&#x27; is-selected&#x27;:&#x27;&#x27;}${obtained?&#x27; is-obtained&#x27;:&#x27;&#x27;}&quot; type=&quot;button&quot; aria-pressed=&quot;${selected}&quot; data-target=&quot;${escapeHtml(row.ship)}&quot;&gt;${obtained?&#x27;✓ &#x27;:&#x27;&#x27;}${escapeHtml(row.ship)}&lt;/button&gt;`; }).join(&#x27;&#x27;);
+        $$(&#x27;[data-target]&#x27;).forEach(button =&gt; button.addEventListener(&#x27;click&#x27;,() =&gt; {
+          const ship=button.dataset.target;
+          if(!profile.targets.includes(ship)) profile.targets.push(ship);
+          else if(!profile.obtained.includes(ship)) profile.obtained.push(ship);
+          else { profile.targets=profile.targets.filter(item=&gt;item!==ship); profile.obtained=profile.obtained.filter(item=&gt;item!==ship); }
+          saveState(); renderTargets(); updateMetrics(); renderSession(); renderLogs();
+        }));
       }
       function renderDropTable() {
         const profile=activeProfile(); const rows=profile.drops;
-        $(&#x27;#drop-table&#x27;).innerHTML = rows.map(row =&gt; `&lt;tr&gt;&lt;td&gt;${escapeHtml(row.ship)}&lt;/td&gt;&lt;td&gt;${escapeHtml(row.rank)}&lt;/td&gt;&lt;td&gt;${formatPercent(row.rate)}&lt;/td&gt;&lt;td&gt;${row.count}/${row.total}&lt;/td&gt;&lt;td&gt;&lt;select class=&quot;form-select tier-select&quot; aria-label=&quot;${escapeHtml(row.ship)}の格付け&quot; data-tier=&quot;${escapeHtml(row.ship)}&quot;&gt;&lt;option value=&quot;priority&quot;&gt;最優先&lt;/option&gt;&lt;option value=&quot;rare&quot;&gt;レア&lt;/option&gt;&lt;option value=&quot;normal&quot;&gt;通常&lt;/option&gt;&lt;/select&gt;&lt;/td&gt;&lt;/tr&gt;`).join(&#x27;&#x27;);
+        const remainderRows=profileRanks(profile).map(rank=&gt;{const remainder=1-tableFor(profile,rank).reduce((value,row)=&gt;value+row.rate,0);return remainder&gt;.0005?`&lt;tr&gt;&lt;td&gt;ドロップなし・その他&lt;/td&gt;&lt;td&gt;${escapeHtml(rank)}&lt;/td&gt;&lt;td&gt;${formatPercent(remainder)}&lt;/td&gt;&lt;td class=&quot;muted&quot;&gt;—&lt;/td&gt;&lt;td class=&quot;muted&quot;&gt;—&lt;/td&gt;&lt;/tr&gt;`:&#x27;&#x27;;}).join(&#x27;&#x27;);
+        $(&#x27;#drop-table&#x27;).innerHTML = rows.map(row =&gt; `&lt;tr&gt;&lt;td&gt;${escapeHtml(row.ship)}&lt;/td&gt;&lt;td&gt;${escapeHtml(row.rank)}&lt;/td&gt;&lt;td&gt;${formatPercent(row.rate)}&lt;/td&gt;&lt;td&gt;${row.count}/${row.total}&lt;/td&gt;&lt;td&gt;&lt;select class=&quot;form-select tier-select&quot; aria-label=&quot;${escapeHtml(row.ship)}の格付け&quot; data-tier=&quot;${escapeHtml(row.ship)}&quot;&gt;&lt;option value=&quot;priority&quot;&gt;最優先&lt;/option&gt;&lt;option value=&quot;rare&quot;&gt;レア&lt;/option&gt;&lt;option value=&quot;normal&quot;&gt;通常&lt;/option&gt;&lt;/select&gt;&lt;/td&gt;&lt;/tr&gt;`).join(&#x27;&#x27;)+remainderRows;
         $$(&#x27;[data-tier]&#x27;).forEach(select =&gt; { select.value=tierOf(profile,select.dataset.tier); select.addEventListener(&#x27;change&#x27;,() =&gt; { profile.tiers[select.dataset.tier]=select.value; $$(&#x27;[data-tier]&#x27;).filter(peer=&gt;peer.dataset.tier===select.dataset.tier).forEach(peer=&gt;peer.value=select.value); saveState(); renderSession(); preloadImportantImages(profile); }); });
       }
-      function renderLogControls() { const profile=activeProfile(); const ships=unionShips(profile); $(&#x27;#log-ship&#x27;).innerHTML=ships.length?ships.map(ship=&gt;`&lt;option&gt;${escapeHtml(ship)}&lt;/option&gt;`).join(&#x27;&#x27;):&#x27;&lt;option value=&quot;&quot;&gt;未設定&lt;/option&gt;&#x27;; $(&#x27;#add-log&#x27;).disabled=!ships.length; }
+      function renderLogControls() { const profile=activeProfile(); const ships=unionShips(profile); $(&#x27;#log-ship&#x27;).innerHTML=ships.length?ships.map(ship=&gt;`&lt;option&gt;${escapeHtml(ship)}&lt;/option&gt;`).join(&#x27;&#x27;)+&#x27;&lt;option&gt;ドロップなし&lt;/option&gt;&#x27;:&#x27;&lt;option value=&quot;&quot;&gt;未設定&lt;/option&gt;&#x27;; $(&#x27;#add-log&#x27;).disabled=!ships.length; }
       function renderLogs() {
         const profile=activeProfile(); const logs=profile.logs || []; const rankCounts={}; logs.forEach(log=&gt;rankCounts[log.rank]=(rankCounts[log.rank]||0)+1);
         $(&#x27;#log-summary&#x27;).textContent = `実戦記録 ${logs.length}件　${Object.entries(rankCounts).map(([rank,count])=&gt;`${rank} ${count}`).join(&#x27; / &#x27;)}`;
@@ -1277,33 +1292,62 @@ html&gt;body{padding:0}&lt;/style&gt;
         const rankOrder=[&#x27;S&#x27;,&#x27;A&#x27;,&#x27;B&#x27;,&#x27;C&#x27;];
         const rankTotals={}; logs.forEach(log=&gt;rankTotals[log.rank]=(rankTotals[log.rank]||0)+1);
         const groups={}; logs.forEach(log=&gt;{(groups[log.rank]??={})[log.ship]=(groups[log.rank][log.ship]||0)+1;});
+        const hunting=profile.targets.filter(ship=&gt;!profile.obtained.includes(ship));
         const cells=[];
         Object.keys(groups).sort((a,b)=&gt;rankOrder.indexOf(a)-rankOrder.indexOf(b)).forEach(rank=&gt;{
           const total=rankTotals[rank];
+          const rankRows=tableFor(profile,rank);
+          hunting.forEach(ship=&gt;{ if(!(ship in groups[rank]) &amp;&amp; rankRows.some(row=&gt;row.ship===ship)) groups[rank][ship]=0; });
+          const theoryFor=ship=&gt;ship===&#x27;ドロップなし&#x27;?(rankRows.length?Math.max(0,1-rankRows.reduce((value,row)=&gt;value+row.rate,0)):undefined):rankRows.find(row=&gt;row.ship===ship)?.rate;
           Object.entries(groups[rank]).sort((a,b)=&gt;b[1]-a[1]||a[0].localeCompare(b[0],&#x27;ja&#x27;)).forEach(([ship,count])=&gt;{
-            const theory=profile.drops.find(row=&gt;row.rank===rank &amp;&amp; row.ship===ship)?.rate;
+            const theory=theoryFor(ship);
             const actual=count/total;
-            const trend=theory===undefined?&#x27;&lt;span class=&quot;muted&quot;&gt;表外&lt;/span&gt;&#x27;:`${actual&gt;=theory?&#x27;上振れ +&#x27;:&#x27;下振れ −&#x27;}${(Math.abs(actual-theory)*100).toFixed(2)}pt`;
-            cells.push(`&lt;tr&gt;&lt;td&gt;${escapeHtml(ship)}&lt;/td&gt;&lt;td&gt;${escapeHtml(rank)}&lt;/td&gt;&lt;td&gt;${count}/${total}&lt;/td&gt;&lt;td&gt;${formatPercent(actual)}&lt;/td&gt;&lt;td&gt;${theory===undefined?&#x27;—&#x27;:formatPercent(theory)}&lt;/td&gt;&lt;td&gt;${trend}&lt;/td&gt;&lt;/tr&gt;`);
+            const below=theory!==undefined &amp;&amp; actual&lt;theory;
+            const trend=theory===undefined?&#x27;&lt;span class=&quot;muted&quot;&gt;表外&lt;/span&gt;&#x27;:`${below?&#x27;下振れ −&#x27;:&#x27;上振れ +&#x27;}${(Math.abs(actual-theory)*100).toFixed(2)}pt`;
+            let luck=&#x27;&lt;span class=&quot;muted&quot;&gt;—&lt;/span&gt;&#x27;;
+            if(theory!==undefined &amp;&amp; theory&gt;0 &amp;&amp; theory&lt;1){
+              const cumulative=below?binomialCumulative(total,count,theory):1-binomialCumulative(total,count-1,theory);
+              const percent=(cumulative*100).toFixed(1);
+              luck=below?`&lt;span${cumulative&lt;.05?&#x27; class=&quot;warning&quot;&#x27;:&#x27;&#x27;}&gt;下位${percent}%&lt;/span&gt;`:`上位${percent}%`;
+            }
+            cells.push(`&lt;tr&gt;&lt;td&gt;${escapeHtml(ship)}&lt;/td&gt;&lt;td&gt;${escapeHtml(rank)}&lt;/td&gt;&lt;td&gt;${count}/${total}&lt;/td&gt;&lt;td&gt;${formatPercent(actual)}&lt;/td&gt;&lt;td&gt;${theory===undefined?&#x27;—&#x27;:formatPercent(theory)}&lt;/td&gt;&lt;td&gt;${trend}&lt;/td&gt;&lt;td&gt;${luck}&lt;/td&gt;&lt;/tr&gt;`);
           });
         });
         $(&#x27;#log-analysis&#x27;).innerHTML=cells.join(&#x27;&#x27;);
         wrap.hidden=false;
       }
+      function binomialCumulative(n,k,p) {
+        if(k&lt;0)return 0; if(k&gt;=n)return 1;
+        let term=(1-p)**n, sum=term;
+        for(let i=0;i&lt;k;i++){ term*=((n-i)/(i+1))*(p/(1-p)); sum+=term; }
+        return Math.min(1,sum);
+      }
       function updateMetrics() {
-        const profile=activeProfile(); const rows=tableFor(profile,currentRank()); const rounds=readRounds(false); const targets=activeTargets(profile,currentRank()); const probabilities=targets.map(ship=&gt;rows.find(row=&gt;row.ship===ship).rate); const sum=probabilities.reduce((a,b)=&gt;a+b,0); const mode=$(&#x27;#goal-mode&#x27;).value;
+        const profile=activeProfile(); const rows=tableFor(profile,currentRank()); const rounds=readRounds(false); const selected=activeTargets(profile,currentRank()); const targets=selected.filter(ship=&gt;!profile.obtained.includes(ship)); const allObtained=Boolean(selected.length) &amp;&amp; !targets.length; const probabilities=targets.map(ship=&gt;rows.find(row=&gt;row.ship===ship).rate); const sum=probabilities.reduce((a,b)=&gt;a+b,0); const mode=$(&#x27;#goal-mode&#x27;).value;
         const tooManyForAll=mode===&#x27;all&#x27; &amp;&amp; targets.length&gt;12;
         const canEstimate=Boolean(targets.length) &amp;&amp; !tooManyForAll;
-        $(&#x27;#rounds-half&#x27;).textContent=canEstimate?formatRounds(roundsForChance(probabilities,sum,mode,.5)):&#x27;—&#x27;;
-        $(&#x27;#rounds-ninety&#x27;).textContent=canEstimate?formatRounds(roundsForChance(probabilities,sum,mode,.9)):&#x27;—&#x27;;
+        const halfRounds=canEstimate?roundsForChance(probabilities,sum,mode,.5):null;
+        const ninetyRounds=canEstimate?roundsForChance(probabilities,sum,mode,.9):null;
+        $(&#x27;#rounds-half&#x27;).textContent=allObtained?&#x27;達成&#x27;:formatRounds(halfRounds);
+        $(&#x27;#rounds-ninety&#x27;).textContent=allObtained?&#x27;達成&#x27;:formatRounds(ninetyRounds);
+        renderCostEstimate(profile,ninetyRounds);
         $(&#x27;#batch-run&#x27;).disabled=isAnimating || !rows.length || rounds===null;
         if(rounds===null){$(&#x27;#goal-probability&#x27;).textContent=&#x27;周回数を確認&#x27;;$(&#x27;#expected-targets&#x27;).textContent=&#x27;—&#x27;;$(&#x27;#quick-status&#x27;).textContent=&#x27;周回数を1〜9999で入力してください&#x27;;return;}
         let chance=0;
         if(canEstimate) chance = mode===&#x27;any&#x27; ? 1-(1-sum)**rounds : probabilityAll(probabilities,rounds);
-        $(&#x27;#goal-probability&#x27;).textContent=!targets.length ? &#x27;目標艦を選択&#x27; : tooManyForAll ? &#x27;すべて条件は12艦まで&#x27; : formatPercent(chance);
+        $(&#x27;#goal-probability&#x27;).textContent=allObtained?&#x27;全目標入手済み&#x27;:!targets.length ? &#x27;目標艦を選択&#x27; : tooManyForAll ? &#x27;すべて条件は12艦まで&#x27; : formatPercent(chance);
         $(&#x27;#expected-targets&#x27;).textContent=targets.length ? `${(rounds*sum).toFixed(2)}隻` : &#x27;—&#x27;;
+        const obtainedNote=selected.length&gt;targets.length?`（入手済み${selected.length-targets.length}隻を除く）`:&#x27;&#x27;;
         const condition=mode===&#x27;any&#x27;?`${targets.length}隻のいずれか`:`${targets.length}隻すべて`;
-        $(&#x27;#quick-status&#x27;).textContent=!targets.length?`${currentRank()}勝利・目標艦を設定してください`:tooManyForAll?`${currentRank()}勝利・すべて条件は12艦まで`:`${currentRank()}勝利・${rounds}周で${condition}を入手：${formatPercent(chance)}`;
+        $(&#x27;#quick-status&#x27;).textContent=allObtained?`${currentRank()}勝利・目標艦をすべて入手済みです`:!targets.length?`${currentRank()}勝利・目標艦を設定してください`:tooManyForAll?`${currentRank()}勝利・すべて条件は12艦まで`:`${currentRank()}勝利・${rounds}周で${condition}${obtainedNote}を入手：${formatPercent(chance)}`;
+      }
+      function readCostInput(selector) { const value=Number($(selector).value); return Number.isFinite(value) &amp;&amp; value&gt;0 ? value : 0; }
+      function renderCostEstimate(profile,ninetyRounds) {
+        const {fuel=0,ammo=0,bucket=0}=profile.costs||{};
+        const anyCost=fuel&gt;0||ammo&gt;0||bucket&gt;0;
+        if(!anyCost || ninetyRounds===null || !Number.isFinite(ninetyRounds)){$(&#x27;#cost-status&#x27;).textContent=anyCost?&#x27;目標艦を設定すると90%達成までの資材を試算します&#x27;:&#x27;&#x27;;return;}
+        const format=perRun=&gt;{const total=perRun*ninetyRounds;return Number.isInteger(total)?total.toLocaleString(&#x27;ja-JP&#x27;):total.toFixed(1);};
+        $(&#x27;#cost-status&#x27;).textContent=`90%達成（${ninetyRounds}周）の目安：燃料 ${format(fuel)}・弾薬 ${format(ammo)}・バケツ ${format(bucket)}`;
       }
       function probabilityAll(probabilities,rounds) { let result=0; const size=1&lt;&lt;probabilities.length; for(let mask=0;mask&lt;size;mask++){let excluded=0,bits=0;for(let i=0;i&lt;probabilities.length;i++){if(mask&amp;(1&lt;&lt;i)){excluded+=probabilities[i];bits++;}}result+=(bits%2?-1:1)*(1-excluded)**rounds;}return Math.max(0,Math.min(1,result)); }
       function roundsForChance(probabilities,sum,mode,target) {
@@ -1376,7 +1420,7 @@ html&gt;body{padding:0}&lt;/style&gt;
         $(&#x27;#drop-content&#x27;).innerHTML=image?`&lt;img class=&quot;ship-image&quot; src=&quot;${escapeHtml(image)}&quot; alt=&quot;&quot;&gt;`:&#x27;&lt;div class=&quot;ship-placeholder&quot; aria-hidden=&quot;true&quot;&gt;艦&lt;/div&gt;&#x27;;
         $(&#x27;#encounter-message&#x27;).className=`encounter-message ${tier}`; $(&#x27;#message-label&#x27;).textContent=tier===&#x27;priority&#x27;?&#x27;最優先艦&#x27;:label; $(&#x27;#message-name&#x27;).textContent=row.ship; $(&#x27;#message-note&#x27;).textContent=`${formatPercent(row.rate||0)}・${row.rank||&#x27;&#x27;}勝利`;
         playEffect(tier,tier,compact);
-        const dropImage=$(&#x27;#drop-content img&#x27;); if(dropImage) dropImage.addEventListener(&#x27;error&#x27;,()=&gt;{if(state.imageCache?.[row.ship]===image){state.imageCache[row.ship]=null;saveState();renderImageStatus(profile);}dropImage.replaceWith(Object.assign(document.createElement(&#x27;div&#x27;),{className:&#x27;ship-placeholder&#x27;,textContent:&#x27;艦&#x27;}));},{once:true});
+        const dropImage=$(&#x27;#drop-content img&#x27;); if(dropImage) dropImage.addEventListener(&#x27;error&#x27;,()=&gt;{if(navigator.onLine!==false &amp;&amp; state.imageCache?.[row.ship]===image){state.imageCache[row.ship]=null;saveState();renderImageStatus(profile);}dropImage.replaceWith(Object.assign(document.createElement(&#x27;div&#x27;),{className:&#x27;ship-placeholder&#x27;,textContent:&#x27;艦&#x27;}));},{once:true});
         announce(`${row.ship}、${tierLabel(tier)}艦を獲得`);
         schedule(playNextDrop,reduceMotion?120:tier===&#x27;priority&#x27;?(compact?720:1080):tier===&#x27;rare&#x27;?980:330);
       }
@@ -1393,12 +1437,12 @@ html&gt;body{padding:0}&lt;/style&gt;
       }
 
       function parseKCNav(text) {
-        const rows=[]; const errors=[]; const ignored=[]; let inputLines=0;
+        const rows=[]; const errors=[]; const ignored=[]; const meta={map:&#x27;&#x27;,difficulty:&#x27;&#x27;,node:&#x27;&#x27;}; let inputLines=0;
         text.split(/\r?\n/).forEach((raw,index)=&gt;{
           const line=raw.trim(); if(!line || /^(戦闘評価|艦名|名前)/.test(line)) return;
           inputLines++;
           const match=line.match(/^(.+?)\s+(\d+(?:\.\d+)?)%\s+(\d+)\s*\/\s*(\d+)\s+([SABCDEF])(?:\s|$)/i);
-          if(!match) { ignored.push(index+1); return; }
+          if(!match) { ignored.push(index+1); scanMetaLine(line,meta); return; }
           const [,ship,rateText,countText,totalText,rankText]=match; const count=Number(countText),total=Number(totalText),shown=Number(rateText)/100,computed=count/total;
           if(!ship || !total) { errors.push(`${index+1}行目を読み取れません`); return; }
           rows.push({ship:ship.trim(),count,total,rate:computed,shownRate:shown,rank:rankText.toUpperCase()});
@@ -1407,7 +1451,18 @@ html&gt;body{padding:0}&lt;/style&gt;
         if(!rows.length) errors.push(&#x27;KCNavのドロップ行を検出できませんでした&#x27;);
         const duplicateKeys=new Set(); rows.forEach(row=&gt;{const key=`${row.rank}:${row.ship}`;if(duplicateKeys.has(key))errors.push(`${row.ship}（${row.rank}）が重複しています`);duplicateKeys.add(key);});
         [...new Set(rows.map(row=&gt;row.rank))].forEach(rank=&gt;{const group=rows.filter(row=&gt;row.rank===rank);const totals=[...new Set(group.map(row=&gt;row.total))];const sum=group.reduce((value,row)=&gt;value+row.rate,0);if(totals.length&gt;1)errors.push(`${rank}評価の母数が複数あります`);if(sum&gt;1.001)errors.push(`${rank}評価の合計率が100%を超えています`);});
-        return {rows,errors,ignored,inputLines};
+        return {rows,errors,ignored,inputLines,meta};
+      }
+      function scanMetaLine(line,meta) {
+        if(!meta.map){ const event=line.match(/\bE-?(\d+)-(\d+)\b/i); const normal=event?null:line.match(/(?:^|\s)(\d)-(\d)(?:\s|$)/); if(event)meta.map=`E${event[1]}-${event[2]}`; else if(normal)meta.map=`${normal[1]}-${normal[2]}`; }
+        if(!meta.difficulty){ const found=line.match(/[甲乙丙丁]/); if(found)meta.difficulty=found[0]; }
+        if(!meta.node){ const found=line.match(/([A-Z]\d?)マス/)||line.match(/\bNode\s+([A-Z]\d?)\b/i); if(found)meta.node=found[1]; }
+      }
+      function applyParsedMeta() {
+        const meta=parsedImport?.meta; if(!meta || !parsedImport.rows.length)return;
+        if(meta.map &amp;&amp; !$(&#x27;#import-map&#x27;).value.trim())$(&#x27;#import-map&#x27;).value=meta.map;
+        if(meta.node &amp;&amp; !$(&#x27;#import-node&#x27;).value.trim())$(&#x27;#import-node&#x27;).value=meta.node;
+        if(meta.difficulty)$(&#x27;#import-difficulty&#x27;).value=meta.difficulty;
       }
       function renderParsePreview() {
         $(&#x27;#parse-preview&#x27;).innerHTML=parsedImport?.rows.map(row=&gt;`&lt;tr&gt;&lt;td&gt;${escapeHtml(row.ship)}&lt;/td&gt;&lt;td&gt;${formatPercent(row.rate)}&lt;/td&gt;&lt;td&gt;${row.count}/${row.total}&lt;/td&gt;&lt;td&gt;${row.rank}&lt;/td&gt;&lt;/tr&gt;`).join(&#x27;&#x27;)||&#x27;&#x27;;
@@ -1418,7 +1473,7 @@ html&gt;body{padding:0}&lt;/style&gt;
       function saveImportedProfile() {
         if(!parsedImport?.rows.length) return;
         const ships=[...new Set(parsedImport.rows.map(row=&gt;row.ship))]; const knownTiers=Object.fromEntries(ships.filter(ship=&gt;defaultTiers[ship]).map(ship=&gt;[ship,defaultTiers[ship]])); const knownTargets=ships.filter(ship=&gt;knownTiers[ship]===&#x27;priority&#x27;);
-        const title=$(&#x27;#import-title&#x27;).value.trim()||&#x27;新しい掘り先&#x27;; const profile={id:uid(&#x27;profile&#x27;),title,event:&#x27;&#x27;,map:$(&#x27;#import-map&#x27;).value.trim(),difficulty:$(&#x27;#import-difficulty&#x27;).value,node:$(&#x27;#import-node&#x27;).value.trim(),source:&#x27;KCNav貼り付け&#x27;,updatedAt:new Date().toLocaleDateString(&#x27;ja-JP&#x27;),drops:parsedImport.rows.map(({shownRate,...row})=&gt;row),targets:knownTargets,tiers:knownTiers,logs:[]};
+        const title=$(&#x27;#import-title&#x27;).value.trim()||&#x27;新しい掘り先&#x27;; const profile={id:uid(&#x27;profile&#x27;),title,event:&#x27;&#x27;,map:$(&#x27;#import-map&#x27;).value.trim(),difficulty:$(&#x27;#import-difficulty&#x27;).value,node:$(&#x27;#import-node&#x27;).value.trim(),source:&#x27;KCNav貼り付け&#x27;,updatedAt:new Date().toLocaleDateString(&#x27;ja-JP&#x27;),drops:parsedImport.rows.map(({shownRate,...row})=&gt;row),targets:knownTargets,obtained:[],tiers:knownTiers,logs:[],costs:{fuel:0,ammo:0,bucket:0}};
         const replaceEmpty=state.profiles.length===1 &amp;&amp; !activeProfile().drops.length; if(replaceEmpty)state.profiles=[profile];else state.profiles.push(profile); state.activeId=profile.id; saveState(); clearParsedImport(&#x27;登録しました&#x27;); renderProfile(); $(&#x27;#import-section&#x27;).open=false; announce(`${title}を登録しました`);
       }
       async function updateImportedProfile() {
@@ -1427,6 +1482,7 @@ html&gt;body{padding:0}&lt;/style&gt;
         const ships=[...new Set(parsedImport.rows.map(row=&gt;row.ship))]; const shipSet=new Set(ships);
         profile.drops=parsedImport.rows.map(({shownRate,...row})=&gt;row);
         profile.targets=[...new Set(profile.targets.filter(ship=&gt;shipSet.has(ship)).concat(ships.filter(ship=&gt;defaultTiers[ship]===&#x27;priority&#x27;)))];
+        profile.obtained=(profile.obtained||[]).filter(ship=&gt;profile.targets.includes(ship));
         profile.tiers=Object.fromEntries(ships.map(ship=&gt;[ship,profile.tiers?.[ship]||defaultTiers[ship]||&#x27;normal&#x27;]));
         profile.source=&#x27;KCNav貼り付け&#x27;; profile.updatedAt=new Date().toLocaleDateString(&#x27;ja-JP&#x27;);
         Object.keys(sessions).filter(key=&gt;key.startsWith(`${profile.id}:`)).forEach(key=&gt;delete sessions[key]);
@@ -1453,7 +1509,8 @@ html&gt;body{padding:0}&lt;/style&gt;
       $(&#x27;#rank-select&#x27;).addEventListener(&#x27;change&#x27;,()=&gt;{renderTargets();renderLogControls();renderDropTable();updateMetrics();renderSession();resetStage();});
       $(&#x27;#rounds&#x27;).addEventListener(&#x27;input&#x27;,updateMetrics); $(&#x27;#rounds&#x27;).addEventListener(&#x27;blur&#x27;,()=&gt;{readRounds(true);updateMetrics();}); $(&#x27;#goal-mode&#x27;).addEventListener(&#x27;change&#x27;,updateMetrics);
       $(&#x27;#single-run&#x27;).addEventListener(&#x27;click&#x27;,()=&gt;run(1)); $(&#x27;#ten-run&#x27;).addEventListener(&#x27;click&#x27;,()=&gt;run(10)); $(&#x27;#batch-run&#x27;).addEventListener(&#x27;click&#x27;,()=&gt;{const rounds=readRounds(true);updateMetrics();run(rounds);}); $(&#x27;#clear-session&#x27;).addEventListener(&#x27;click&#x27;,clearCurrentSession);
-      $(&#x27;#parse-kcnav&#x27;).addEventListener(&#x27;click&#x27;,()=&gt;{parsedImport=parseKCNav($(&#x27;#kcnav-text&#x27;).value);renderParsePreview();}); $(&#x27;#save-import&#x27;).addEventListener(&#x27;click&#x27;,saveImportedProfile); $(&#x27;#update-import&#x27;).addEventListener(&#x27;click&#x27;,updateImportedProfile);
+      $(&#x27;#parse-kcnav&#x27;).addEventListener(&#x27;click&#x27;,()=&gt;{parsedImport=parseKCNav($(&#x27;#kcnav-text&#x27;).value);applyParsedMeta();renderParsePreview();}); $(&#x27;#save-import&#x27;).addEventListener(&#x27;click&#x27;,saveImportedProfile); $(&#x27;#update-import&#x27;).addEventListener(&#x27;click&#x27;,updateImportedProfile);
+      [&#x27;#cost-fuel&#x27;,&#x27;#cost-ammo&#x27;,&#x27;#cost-bucket&#x27;].forEach(selector=&gt;{ $(selector).addEventListener(&#x27;input&#x27;,()=&gt;{activeProfile().costs={fuel:readCostInput(&#x27;#cost-fuel&#x27;),ammo:readCostInput(&#x27;#cost-ammo&#x27;),bucket:readCostInput(&#x27;#cost-bucket&#x27;)};updateMetrics();}); $(selector).addEventListener(&#x27;change&#x27;,saveState); });
       $(&#x27;#save-profile-meta&#x27;).addEventListener(&#x27;click&#x27;,saveProfileMeta); $(&#x27;#refresh-images&#x27;).addEventListener(&#x27;click&#x27;,()=&gt;resolveImagesForProfile(activeProfile(),true));
       $(&#x27;#add-log&#x27;).addEventListener(&#x27;click&#x27;,addLog); $(&#x27;#clear-logs&#x27;).addEventListener(&#x27;click&#x27;,clearLogs);
       $(&#x27;#export-json&#x27;).addEventListener(&#x27;click&#x27;,exportJSON); $(&#x27;#import-json&#x27;).addEventListener(&#x27;click&#x27;,()=&gt;importJSON().catch(error=&gt;{$(&#x27;#storage-status&#x27;).textContent=error.message;announce(error.message);}));
