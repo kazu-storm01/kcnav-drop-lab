@@ -38,6 +38,29 @@ test('public app starts without seeded battle logs and can simulate one run', as
   await expect(soundToggle).toHaveAttribute('aria-pressed', 'true');
   await expect(soundToggle).toHaveText('音 ON');
 
+  const themeToggle = app.locator('#theme-toggle');
+  await expect(themeToggle).toHaveText('テーマ 自動');
+  await themeToggle.click();
+  await expect(themeToggle).toHaveText('テーマ ライト');
+  await themeToggle.click();
+  await expect(themeToggle).toHaveText('テーマ ダーク');
+  await expect
+    .poll(() =>
+      app.locator('body').evaluate(() =>
+        localStorage.getItem('kcnav-drop-lab-theme-v1'),
+      ),
+    )
+    .toBe('dark');
+  await expect
+    .poll(() =>
+      app.locator('body').evaluate(
+        () => getComputedStyle(document.documentElement).colorScheme,
+      ),
+    )
+    .toBe('dark');
+  await themeToggle.click();
+  await expect(themeToggle).toHaveText('テーマ 自動');
+
   const fastToggle = app.locator('#fast-toggle');
   await expect(fastToggle).toHaveText('演出 標準');
   await fastToggle.click();

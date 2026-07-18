@@ -154,7 +154,7 @@
   <main class="app">
     <h1 class="sr-only">ドロップシミュレーター</h1>
     <div class="topbar">
-      <div class="topbar-row"><label class="field" for="profile-select"><span class="sr-only">海域</span><select class="form-select" id="profile-select" aria-label="海域"></select></label><button class="btn sound-toggle" id="fast-toggle" type="button" aria-pressed="false" title="ドロップ演出を短縮する">演出 標準</button><button class="btn sound-toggle" id="sound-toggle" type="button" aria-pressed="false">音 OFF</button><label class="field volume-field" for="sound-volume"><span class="sr-only">音量</span><input type="range" id="sound-volume" min="0" max="100" step="5" aria-label="音量"></label></div>
+      <div class="topbar-row"><label class="field" for="profile-select"><span class="sr-only">海域</span><select class="form-select" id="profile-select" aria-label="海域"></select></label><button class="btn sound-toggle" id="theme-toggle" type="button" title="表示テーマを 自動 → ライト → ダーク で切り替える">テーマ 自動</button><button class="btn sound-toggle" id="fast-toggle" type="button" aria-pressed="false" title="ドロップ演出を短縮する">演出 標準</button><button class="btn sound-toggle" id="sound-toggle" type="button" aria-pressed="false">音 OFF</button><label class="field volume-field" for="sound-volume"><span class="sr-only">音量</span><input type="range" id="sound-volume" min="0" max="100" step="5" aria-label="音量"></label></div>
     </div>
 
     <div class="workspace"><section class="card drop-stage" id="drop-stage" aria-busy="false"><span class="stage-status" id="stage-status">判定待ち</span><span class="radar-sweep" aria-hidden="true"></span><div class="stage-effects" aria-hidden="true"><span class="effect-flash"></span><span class="effect-ring"></span><span class="effect-ring"></span><span class="effect-ring"></span><span class="spark"></span><span class="spark"></span><span class="spark"></span><span class="spark"></span><span class="spark"></span><span class="spark"></span><span class="spark"></span><span class="spark"></span><span class="spark"></span></div><span class="priority-curtain" aria-hidden="true"></span><div class="drop-card" id="drop-card"><div class="drop-content" id="drop-content"><span class="drop-label">DROP</span></div></div><div class="encounter-message" id="encounter-message"><span class="drop-label" id="message-label">索敵待機</span><span class="drop-name" id="message-name">周回を開始</span><span class="drop-note" id="message-note">KCNav実測データ</span></div></section></div>
@@ -187,7 +187,7 @@
       <div class="detail-body">
         <div class="profile-meta" id="profile-meta"></div>
         <div class="save-status" id="storage-status">この端末に自動保存</div>
-        <div class="muted">ショートカット: Space=1周 ／ 2=10周 ／ 3=指定周回 ／ M=音 ／ F=演出 ／ Esc=演出スキップ。ドロップ画面のタップは待機中=1周・演出中=スキップです。</div>
+        <div class="muted">ショートカット: Space=1周 ／ 2=10周 ／ 3=指定周回 ／ M=音 ／ F=演出 ／ T=テーマ ／ Esc=演出スキップ。ドロップ画面のタップは待機中=1周・演出中=スキップです。</div>
         <details>
           <summary>抽選設定と確率</summary>
           <div class="detail-body">
@@ -291,6 +291,7 @@
       const SOUND_KEY = 'kcnav-drop-lab-sound-v1';
       const FAST_KEY = 'kcnav-drop-lab-fast-v1';
       const VOLUME_KEY = 'kcnav-drop-lab-volume-v1';
+      const THEME_KEY = 'kcnav-drop-lab-theme-v1';
       const SHIP_MASTER_URL = 'https://raw.githubusercontent.com/kcwiki/kancolle-data/master/db/ship.json';
       const SHIP_CARD_BASE = 'https://w01y.kancolle-server.com/kcs2/resources/ship/card/';
       const SHIP_ASSET_KEYS = [6657,5699,3371,8909,7719,6229,5449,8561,2987,5501,3127,9319,4365,9811,9927,2423,3439,1865,5925,4409,5509,1517,9695,9255,5325,3691,5519,6949,5607,9539,4133,7795,5465,2659,6381,6875,4019,9195,5645,2887,1213,1815,8671,3015,3147,2991,7977,7045,1619,7909,4451,6573,4545,8251,5983,2849,7249,7449,9477,5963,2711,9019,7375,2201,5631,4893,7653,3719,8819,5839,1853,9843,9119,7023,5681,2345,9873,6349,9315,3795,9737,4633,4173,7549,7171,6147,4723,5039,2723,7815,6201,5999,5339,4431,2911,4435,3611,4423,9517,3243];
@@ -355,6 +356,7 @@
       let soundEnabled = loadSoundPreference();
       let fastMode = loadFastPreference();
       let soundVolume = loadVolumePreference();
+      let themePreference = loadThemePreference();
       let audioContext = null;
       let audioBus = null;
       const reduceMotion = Boolean(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches);
@@ -382,6 +384,19 @@
       function saveFastPreference() { try { localStorage.setItem(FAST_KEY,fastMode?'on':'off'); } catch {} }
       function loadVolumePreference() { try { const raw=localStorage.getItem(VOLUME_KEY); const value=Number(raw); return raw!==null && Number.isFinite(value) ? Math.min(100,Math.max(0,value)) : 60; } catch { return 60; } }
       function saveVolumePreference() { try { localStorage.setItem(VOLUME_KEY,String(soundVolume)); } catch {} }
+      function loadThemePreference() { try { const value=localStorage.getItem(THEME_KEY); return ['light','dark'].includes(value)?value:'auto'; } catch { return 'auto'; } }
+      function saveThemePreference() { try { localStorage.setItem(THEME_KEY,themePreference); } catch {} }
+      function applyTheme() {
+        const value=themePreference==='auto'?'':themePreference;
+        document.documentElement.style.colorScheme=value;
+        try { if(window.parent && window.parent!==window) window.parent.document.documentElement.style.colorScheme=value; } catch {}
+      }
+      function renderThemeControl() { $('#theme-toggle').textContent=themePreference==='light'?'テーマ ライト':themePreference==='dark'?'テーマ ダーク':'テーマ 自動'; }
+      function cycleTheme() {
+        themePreference=themePreference==='auto'?'light':themePreference==='light'?'dark':'auto';
+        saveThemePreference(); applyTheme(); renderThemeControl();
+        announce(themePreference==='light'?'ライトテーマに切り替えました':themePreference==='dark'?'ダークテーマに切り替えました':'テーマを自動（端末設定に追従）にしました');
+      }
       function volumeGain() { return 2.25*soundVolume/100; }
       function applyVolume() { if(audioBus)audioBus.master.gain.value=volumeGain(); }
       function audioConstructor() { return window.AudioContext || window.webkitAudioContext || null; }
@@ -826,6 +841,7 @@
       $('#profile-select').addEventListener('change',event=>{state.activeId=event.target.value;saveState();renderProfile();});
       $('#sound-toggle').addEventListener('click',toggleSound);
       $('#fast-toggle').addEventListener('click',toggleFast);
+      $('#theme-toggle').addEventListener('click',cycleTheme);
       $('#sound-volume').addEventListener('input',event=>{soundVolume=Math.min(100,Math.max(0,Number(event.target.value)||0));applyVolume();});
       $('#sound-volume').addEventListener('change',()=>{saveVolumePreference();playEffect('toggle');});
       $('#undo-log').addEventListener('click',undoLastLog);
@@ -842,6 +858,7 @@
         else if(key==='3'){ event.preventDefault(); $('#batch-run').click(); }
         else if(key==='m'||key==='M'){ toggleSound(); }
         else if(key==='f'||key==='F'){ toggleFast(); }
+        else if(key==='t'||key==='T'){ cycleTheme(); }
         else if(key==='Escape'){ skipAnimation(); }
       });
       $('#duplicate-profile').addEventListener('click',duplicateProfile); $('#delete-profile').addEventListener('click',deleteProfile);
@@ -854,7 +871,7 @@
       $('#add-log').addEventListener('click',addLog); $('#clear-logs').addEventListener('click',clearLogs);
       $('#export-json').addEventListener('click',exportJSON); $('#import-json').addEventListener('click',()=>importJSON().catch(error=>{$('#storage-status').textContent=error.message;announce(error.message);}));
       $('#confirm-cancel').addEventListener('click',()=>finishConfirmation(false)); $('#confirm-ok').addEventListener('click',()=>finishConfirmation(true)); $('#confirm-dialog').addEventListener('cancel',event=>{event.preventDefault();finishConfirmation(false);});
-      renderSoundControl(); renderFastControl(); renderProfile();
+      applyTheme(); renderThemeControl(); renderSoundControl(); renderFastControl(); renderProfile();
     })();
   </script>
 </div>
