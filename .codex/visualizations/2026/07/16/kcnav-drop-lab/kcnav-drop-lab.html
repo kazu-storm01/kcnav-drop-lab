@@ -3,8 +3,15 @@
     #kcnav-drop-lab { color: var(--foreground); }
     #kcnav-drop-lab .app { display: grid; gap: 1rem; max-width: 736px; margin: 0 auto; }
     #kcnav-drop-lab .topbar { display: grid; gap: .35rem; }
-    #kcnav-drop-lab .topbar-row { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: .5rem; align-items: end; }
+    #kcnav-drop-lab .topbar-row { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; }
+    #kcnav-drop-lab .topbar-row .field { flex: 1 1 11rem; }
+    #kcnav-drop-lab .volume-field { flex: 0 0 auto; }
+    #kcnav-drop-lab #sound-volume { width: 5.2rem; }
     #kcnav-drop-lab .sound-toggle { min-width: 5.4rem; white-space: nowrap; }
+    #kcnav-drop-lab .record-buttons { display: flex; flex-wrap: wrap; gap: .5rem; }
+    #kcnav-drop-lab .record-buttons .btn { padding: .55rem .95rem; font-size: 1rem; }
+    #kcnav-drop-lab .record-head { display: flex; gap: .6rem; align-items: center; flex-wrap: wrap; }
+    #kcnav-drop-lab .record-feedback { display: flex; gap: .6rem; align-items: center; flex-wrap: wrap; }
     #kcnav-drop-lab .sound-toggle.is-on { border-color: #88b9d3; background: color-mix(in srgb, #88b9d3 18%, var(--secondary)); }
     #kcnav-drop-lab .top-actions, #kcnav-drop-lab .controls, #kcnav-drop-lab .inline-actions { display: flex; flex-wrap: wrap; gap: .5rem; align-items: end; }
     #kcnav-drop-lab .preset-actions { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; }
@@ -140,14 +147,14 @@
     @keyframes kdl-ring { 0% { opacity: 0; transform: translate(-50%,-50%) scale(.25); } 24% { opacity: .9; } 100% { opacity: 0; transform: translate(-50%,-50%) scale(4.8); } }
     @keyframes kdl-spark { 0% { opacity: 0; transform: translate(-50%,-50%) rotate(45deg) scale(.2); } 20% { opacity: 1; } 72% { opacity: .8; } 100% { opacity: 0; transform: translate(calc(-50% + var(--tx)),calc(-50% + var(--ty))) rotate(225deg) scale(1.35); } }
     @media (max-width: 650px) { #kcnav-drop-lab .drop-stage { min-height: 330px; } #kcnav-drop-lab .form-grid, #kcnav-drop-lab .settings-grid { grid-template-columns: 1fr 1fr; } }
-    @media (max-width: 480px) { #kcnav-drop-lab .drop-stage { min-height: 310px; } #kcnav-drop-lab .drop-card { width: min(210px,68vw); min-height: 220px; } #kcnav-drop-lab .drop-card.priority { width: min(230px,74vw); min-height: 236px; } #kcnav-drop-lab .ship-image { width: 145px; height: 174px; } #kcnav-drop-lab .drop-card.priority .ship-image { width: 158px; height: 188px; } #kcnav-drop-lab .drop-content { padding-bottom: 3.7rem; } #kcnav-drop-lab .quick-controls { grid-template-columns: 1fr 1fr; } #kcnav-drop-lab #single-run, #kcnav-drop-lab #ten-run { grid-row: 1; } #kcnav-drop-lab .quick-controls .field { grid-column: 1; grid-row: 2; } #kcnav-drop-lab #batch-run { grid-column: 2; grid-row: 2; } #kcnav-drop-lab .form-grid, #kcnav-drop-lab .settings-grid, #kcnav-drop-lab .backup-grid { grid-template-columns: 1fr; } #kcnav-drop-lab .log-row { grid-template-columns: minmax(0,1fr) auto auto; } #kcnav-drop-lab .log-row .log-time { grid-column: 1 / -1; } #kcnav-drop-lab .encounter-message { grid-template-columns: 1fr; } #kcnav-drop-lab .encounter-message .drop-note { grid-column: 1; grid-row: auto; } }
+    @media (max-width: 480px) { #kcnav-drop-lab .drop-stage { min-height: 310px; } #kcnav-drop-lab .drop-card { width: min(210px,68vw); min-height: 220px; } #kcnav-drop-lab .drop-card.priority { width: min(230px,74vw); min-height: 236px; } #kcnav-drop-lab .ship-image { width: 145px; height: 174px; } #kcnav-drop-lab .drop-card.priority .ship-image { width: 158px; height: 188px; } #kcnav-drop-lab .drop-content { padding-bottom: 3.7rem; } #kcnav-drop-lab .quick-controls { grid-template-columns: 1fr 1fr; position: sticky; top: .6rem; z-index: 6; padding: .55rem; border: 1px solid var(--border); background: var(--card); box-shadow: 0 6px 18px color-mix(in srgb, var(--foreground) 18%, transparent); } #kcnav-drop-lab #single-run, #kcnav-drop-lab #ten-run { grid-row: 1; } #kcnav-drop-lab .quick-controls .field { grid-column: 1; grid-row: 2; } #kcnav-drop-lab #batch-run { grid-column: 2; grid-row: 2; } #kcnav-drop-lab .form-grid, #kcnav-drop-lab .settings-grid, #kcnav-drop-lab .backup-grid { grid-template-columns: 1fr; } #kcnav-drop-lab .log-row { grid-template-columns: minmax(0,1fr) auto auto; } #kcnav-drop-lab .log-row .log-time { grid-column: 1 / -1; } #kcnav-drop-lab .encounter-message { grid-template-columns: 1fr; } #kcnav-drop-lab .encounter-message .drop-note { grid-column: 1; grid-row: auto; } }
     @media (prefers-reduced-motion: reduce) { #kcnav-drop-lab .drop-card.drawing, #kcnav-drop-lab .drop-card.reveal, #kcnav-drop-lab .drop-stage, #kcnav-drop-lab .drop-stage::before, #kcnav-drop-lab .effect-flash, #kcnav-drop-lab .effect-ring, #kcnav-drop-lab .spark { animation: none !important; } #kcnav-drop-lab .priority-curtain { transition: none; } }
   </style>
 
   <main class="app">
     <h1 class="sr-only">ドロップシミュレーター</h1>
     <div class="topbar">
-      <div class="topbar-row"><label class="field" for="profile-select"><span class="sr-only">海域</span><select class="form-select" id="profile-select" aria-label="海域"></select></label><button class="btn sound-toggle" id="sound-toggle" type="button" aria-pressed="false">音 OFF</button></div>
+      <div class="topbar-row"><label class="field" for="profile-select"><span class="sr-only">海域</span><select class="form-select" id="profile-select" aria-label="海域"></select></label><button class="btn sound-toggle" id="fast-toggle" type="button" aria-pressed="false" title="ドロップ演出を短縮する">演出 標準</button><button class="btn sound-toggle" id="sound-toggle" type="button" aria-pressed="false">音 OFF</button><label class="field volume-field" for="sound-volume"><span class="sr-only">音量</span><input type="range" id="sound-volume" min="0" max="100" step="5" aria-label="音量"></label></div>
     </div>
 
     <div class="workspace"><section class="card drop-stage" id="drop-stage" aria-busy="false"><span class="stage-status" id="stage-status">判定待ち</span><span class="radar-sweep" aria-hidden="true"></span><div class="stage-effects" aria-hidden="true"><span class="effect-flash"></span><span class="effect-ring"></span><span class="effect-ring"></span><span class="effect-ring"></span><span class="spark"></span><span class="spark"></span><span class="spark"></span><span class="spark"></span><span class="spark"></span><span class="spark"></span><span class="spark"></span><span class="spark"></span><span class="spark"></span></div><span class="priority-curtain" aria-hidden="true"></span><div class="drop-card" id="drop-card"><div class="drop-content" id="drop-content"><span class="drop-label">DROP</span></div></div><div class="encounter-message" id="encounter-message"><span class="drop-label" id="message-label">索敵待機</span><span class="drop-name" id="message-name">周回を開始</span><span class="drop-note" id="message-note">KCNav実測データ</span></div></section></div>
@@ -158,6 +165,16 @@
       <label class="field" for="rounds"><span class="sr-only">指定周回数</span><input class="form-control" id="rounds" type="number" min="1" max="9999" value="20" inputmode="numeric" aria-label="指定周回数"></label>
       <button class="btn btn-block" id="batch-run" type="button">指定周回</button>
     </div>
+
+    <details class="record-panel" id="record-panel">
+      <summary>実戦記録モード（ワンタップ記録）</summary>
+      <div class="detail-body">
+        <div class="record-head"><label class="field" for="quick-rank"><span class="sr-only">評価</span><select class="form-select" id="quick-rank" aria-label="評価"><option>S</option><option>A</option><option>B</option></select></label><span class="muted">タップした艦を現在時刻で記録します</span></div>
+        <div class="record-buttons" id="quick-record-list"></div>
+        <div class="inline-actions"><label class="field grow" for="quick-other"><span class="sr-only">その他の艦</span><select class="form-select" id="quick-other" aria-label="その他の艦"></select></label><button class="btn" id="quick-other-record" type="button">記録</button></div>
+        <div class="record-feedback" id="record-feedback" hidden><span class="muted" id="last-log-text"></span><button class="btn btn-ghost" id="undo-log" type="button">直前の記録を取り消す</button></div>
+      </div>
+    </details>
 
     <section class="results" aria-labelledby="results-heading">
       <div class="results-head"><h2 class="section-heading" id="results-heading">レア成果</h2><button class="btn btn-ghost" id="clear-session" type="button" hidden>消去</button></div>
@@ -170,6 +187,7 @@
       <div class="detail-body">
         <div class="profile-meta" id="profile-meta"></div>
         <div class="save-status" id="storage-status">この端末に自動保存</div>
+        <div class="muted">ショートカット: Space=1周 ／ 2=10周 ／ 3=指定周回 ／ M=音 ／ F=演出 ／ Esc=演出スキップ。ドロップ画面のタップは待機中=1周・演出中=スキップです。</div>
         <details>
           <summary>抽選設定と確率</summary>
           <div class="detail-body">
@@ -271,6 +289,8 @@
       const STORAGE_KEY = 'kcnav-drop-lab-v1';
       const BACKUP_KEY = 'kcnav-drop-lab-before-restore';
       const SOUND_KEY = 'kcnav-drop-lab-sound-v1';
+      const FAST_KEY = 'kcnav-drop-lab-fast-v1';
+      const VOLUME_KEY = 'kcnav-drop-lab-volume-v1';
       const SHIP_MASTER_URL = 'https://raw.githubusercontent.com/kcwiki/kancolle-data/master/db/ship.json';
       const SHIP_CARD_BASE = 'https://w01y.kancolle-server.com/kcs2/resources/ship/card/';
       const SHIP_ASSET_KEYS = [6657,5699,3371,8909,7719,6229,5449,8561,2987,5501,3127,9319,4365,9811,9927,2423,3439,1865,5925,4409,5509,1517,9695,9255,5325,3691,5519,6949,5607,9539,4133,7795,5465,2659,6381,6875,4019,9195,5645,2887,1213,1815,8671,3015,3147,2991,7977,7045,1619,7909,4451,6573,4545,8251,5983,2849,7249,7449,9477,5963,2711,9019,7375,2201,5631,4893,7653,3719,8819,5839,1853,9843,9119,7023,5681,2345,9873,6349,9315,3795,9737,4633,4173,7549,7171,6147,4723,5039,2723,7815,6201,5999,5339,4431,2911,4435,3611,4423,9517,3243];
@@ -333,6 +353,8 @@
       let isAnimating = false;
       let confirmResolver = null;
       let soundEnabled = loadSoundPreference();
+      let fastMode = loadFastPreference();
+      let soundVolume = loadVolumePreference();
       let audioContext = null;
       let audioBus = null;
       const reduceMotion = Boolean(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches);
@@ -356,11 +378,17 @@
       function announce(message) { $('#app-status').textContent=''; requestAnimationFrame(()=>{$('#app-status').textContent=message;}); }
       function loadSoundPreference() { try { return localStorage.getItem(SOUND_KEY)==='on'; } catch { return false; } }
       function saveSoundPreference() { try { localStorage.setItem(SOUND_KEY,soundEnabled?'on':'off'); } catch {} }
+      function loadFastPreference() { try { return localStorage.getItem(FAST_KEY)==='on'; } catch { return false; } }
+      function saveFastPreference() { try { localStorage.setItem(FAST_KEY,fastMode?'on':'off'); } catch {} }
+      function loadVolumePreference() { try { const raw=localStorage.getItem(VOLUME_KEY); const value=Number(raw); return raw!==null && Number.isFinite(value) ? Math.min(100,Math.max(0,value)) : 60; } catch { return 60; } }
+      function saveVolumePreference() { try { localStorage.setItem(VOLUME_KEY,String(soundVolume)); } catch {} }
+      function volumeGain() { return 2.25*soundVolume/100; }
+      function applyVolume() { if(audioBus)audioBus.master.gain.value=volumeGain(); }
       function audioConstructor() { return window.AudioContext || window.webkitAudioContext || null; }
       function shapedNoise(index,seed=0) { const value=Math.sin((index+1+seed)*12.9898+seed*78.233)*43758.5453; return (value-Math.floor(value))*2-1; }
       function createAudioBus(context) {
         const master=context.createGain(); const compressor=context.createDynamicsCompressor(); const convolver=context.createConvolver(); const wet=context.createGain();
-        master.gain.value=1.35; compressor.threshold.value=-18; compressor.knee.value=14; compressor.ratio.value=5; compressor.attack.value=.004; compressor.release.value=.24; wet.gain.value=.26;
+        master.gain.value=volumeGain(); compressor.threshold.value=-18; compressor.knee.value=14; compressor.ratio.value=5; compressor.attack.value=.004; compressor.release.value=.24; wet.gain.value=.26;
         const impulseLength=Math.floor(context.sampleRate*.82); const impulse=context.createBuffer(2,impulseLength,context.sampleRate);
         for(let channel=0;channel<2;channel++){const data=impulse.getChannelData(channel);for(let index=0;index<impulseLength;index++){const decay=(1-index/impulseLength)**2.4;data[index]=shapedNoise(index,channel*997)*decay;}}
         convolver.buffer=impulse; master.connect(compressor); convolver.connect(wet).connect(compressor); compressor.connect(context.destination);
@@ -427,6 +455,15 @@
       function renderSoundControl() {
         const button=$('#sound-toggle'); const supported=Boolean(audioConstructor());
         button.disabled=!supported; button.classList.toggle('is-on',supported && soundEnabled); button.setAttribute('aria-pressed',String(supported && soundEnabled)); button.textContent=supported?(soundEnabled?'音 ON':'音 OFF'):'音 非対応';
+        $('#sound-volume').disabled=!supported; $('#sound-volume').value=soundVolume;
+      }
+      function renderFastControl() {
+        const button=$('#fast-toggle');
+        button.classList.toggle('is-on',fastMode); button.setAttribute('aria-pressed',String(fastMode)); button.textContent=fastMode?'演出 短縮':'演出 標準';
+      }
+      function toggleFast() {
+        fastMode=!fastMode; saveFastPreference(); renderFastControl();
+        announce(fastMode?'ドロップ演出を短縮します':'ドロップ演出を標準に戻しました');
       }
       async function toggleSound() {
         if(!audioConstructor()){announce('このブラウザは効果音に対応していません');return;}
@@ -535,6 +572,31 @@
         $('#log-list').innerHTML = logs.length ? logs.slice(-50).reverse().map(log=>`<div class="log-row"><span class="log-time muted">${escapeHtml(log.time)}</span><span class="chip ${tierOf(profile,log.ship)}">${escapeHtml(log.ship)}</span><span>${escapeHtml(log.rank)}</span><button class="btn btn-ghost" type="button" data-delete-log="${escapeHtml(log.id)}">削除</button></div>`).join('')+(logs.length>50?'<span class="muted">最新50件を表示しています</span>':'') : '<span class="empty">記録はありません</span>';
         $$('[data-delete-log]').forEach(button=>button.addEventListener('click',()=>{profile.logs=logs.filter(log=>log.id!==button.dataset.deleteLog);saveState();renderLogs();}));
         renderLogAnalysis(profile,logs);
+        renderQuickRecord(profile);
+      }
+      function renderQuickRecord(profile=activeProfile()) {
+        const ships=unionShips(profile);
+        const hunting=profile.targets.filter(ship=>!profile.obtained.includes(ship));
+        const featured=[...hunting,'ドロップなし'];
+        $('#quick-record-list').innerHTML=ships.length?featured.map(ship=>`<button class="btn${ship==='ドロップなし'?'':' btn-primary'}" type="button" data-quick-record="${escapeHtml(ship)}">${escapeHtml(ship)}</button>`).join(''):'<span class="empty">先にKCNavからドロップ表を登録してください</span>';
+        $$('[data-quick-record]').forEach(button=>button.addEventListener('click',()=>recordLog(button.dataset.quickRecord,$('#quick-rank').value)));
+        const others=ships.filter(ship=>!hunting.includes(ship));
+        $('#quick-other').innerHTML=others.map(ship=>`<option>${escapeHtml(ship)}</option>`).join('');
+        $('#quick-other-record').disabled=!others.length;
+        const logs=profile.logs||[]; const last=logs[logs.length-1];
+        $('#record-feedback').hidden=!last;
+        if(last)$('#last-log-text').textContent=`直近: ${last.ship}（${last.rank}） ${last.time}`;
+      }
+      function recordLog(ship,rank) {
+        if(!ship)return;
+        const profile=activeProfile(); profile.logs=profile.logs||[];
+        profile.logs.push({id:uid('log'),ship,rank,time:new Date().toLocaleString('ja-JP')});
+        saveState(); renderLogs(); announce(`${ship}、${rank}勝利として記録しました`);
+      }
+      function undoLastLog() {
+        const profile=activeProfile(); const logs=profile.logs||[];
+        const last=logs.pop(); if(!last)return;
+        saveState(); renderLogs(); announce(`${last.ship}の記録を取り消しました`);
       }
       function renderLogAnalysis(profile,logs) {
         const wrap=$('#log-analysis-wrap');
@@ -640,8 +702,9 @@
         $('#message-name').textContent='艦影を確認中';
         $('#message-note').textContent='索敵継続';
         playEffect('scan',tier,compact);
-        const scanDelay=reduceMotion?40:tier==='normal'?180:tier==='rare'?250:220;
-        if(tier==='priority' && !compact && !reduceMotion){
+        const quick=reduceMotion||fastMode;
+        const scanDelay=quick?40:tier==='normal'?180:tier==='rare'?250:220;
+        if(tier==='priority' && !compact && !quick){
           schedule(()=>{
             stage.classList.remove('scanning');
             stage.classList.add('priority-suspense');
@@ -672,7 +735,14 @@
         playEffect(tier,tier,compact);
         const dropImage=$('#drop-content img'); if(dropImage) dropImage.addEventListener('error',()=>{if(navigator.onLine!==false && state.imageCache?.[row.ship]===image){state.imageCache[row.ship]=null;saveState();renderImageStatus(profile);}dropImage.replaceWith(Object.assign(document.createElement('div'),{className:'ship-placeholder',textContent:'艦'}));},{once:true});
         announce(`${row.ship}、${tierLabel(tier)}艦を獲得`);
-        schedule(playNextDrop,reduceMotion?120:tier==='priority'?(compact?720:1080):tier==='rare'?980:330);
+        schedule(playNextDrop,(reduceMotion||fastMode)?120:tier==='priority'?(compact?720:1080):tier==='rare'?980:330);
+      }
+      function skipAnimation() {
+        if(!isAnimating || !pendingResults.length)return;
+        clearTimers(); animationQueue=[];
+        const last=pendingResults[pendingResults.length-1];
+        showDrop(last,tierOf(activeProfile(),last.ship)==='priority');
+        clearTimers(); finishRun();
       }
       function finishRun() { clearTimers(); const session=currentSession(); session.push(...pendingResults); const total=pendingResults.length; const priority=pendingResults.filter(row=>tierOf(activeProfile(),row.ship)==='priority').length; const rare=pendingResults.filter(row=>tierOf(activeProfile(),row.ship)==='rare').length; pendingResults=[]; animationQueue=[]; setBusy(false); renderSession(); announce(`${total}周の抽選完了。最優先${priority}隻、レア${rare}隻`); }
       function resetStage() { clearTimers(); pendingResults=[]; animationQueue=[]; setBusy(false); $('#drop-stage').classList.remove('reveal-rare','reveal-priority','scanning','priority-suspense','compact-priority'); $('#drop-card').className='drop-card'; $('#stage-status').textContent='判定待ち'; $('#drop-content').innerHTML='<span class="drop-label">DROP</span>'; $('#encounter-message').className='encounter-message'; $('#message-label').textContent='索敵待機'; $('#message-name').textContent='周回を開始'; $('#message-note').textContent='KCNav実測データ'; }
@@ -746,7 +816,7 @@
       }
       function duplicateProfile() { const source=activeProfile(); const copy=clone(source); copy.id=uid('profile'); copy.title=`${source.title} コピー`; copy.logs=[]; state.profiles.push(copy); state.activeId=copy.id; saveState(); renderProfile(); announce(`${copy.title}を作成しました`); }
       async function deleteProfile() { const profile=activeProfile(); const last=state.profiles.length===1; const message=last?`最後のプリセット「${profile.title}」を削除します。実戦ログ ${profile.logs?.length||0}件も削除され、未設定プリセットに置き換わります。`:`プリセット「${profile.title}」を削除します。実戦ログ ${profile.logs?.length||0}件も削除されます。`; if(!await askConfirmation(message,'プリセットを削除'))return; const index=state.profiles.findIndex(item=>item.id===profile.id); Object.keys(sessions).filter(key=>key.startsWith(`${profile.id}:`)).forEach(key=>delete sessions[key]); if(last){const empty=createEmptyProfile();state.profiles=[empty];state.activeId=empty.id;}else{state.profiles.splice(index,1);state.activeId=state.profiles[Math.max(0,index-1)].id;} saveState();renderProfile();announce(`${profile.title}を削除しました`); }
-      function addLog() { const profile=activeProfile(); const ship=$('#log-ship').value; const rank=$('#log-rank').value; profile.logs=profile.logs||[]; profile.logs.push({id:uid('log'),ship,rank,time:new Date().toLocaleString('ja-JP')}); saveState(); renderLogs(); announce(`${ship}、${rank}勝利として記録しました`); }
+      function addLog() { recordLog($('#log-ship').value,$('#log-rank').value); }
       async function clearLogs() { const profile=activeProfile(); const count=profile.logs?.length||0; if(!count)return; if(!await askConfirmation(`海域「${profile.title}」の実戦ログ ${count}件をすべて消去します。`,'ログを消去'))return; profile.logs=[]; saveState(); renderLogs(); announce('実戦ログを消去しました'); }
       async function clearCurrentSession() { const session=currentSession(); if(!session.length){announce('消去するシミュレーション結果はありません');return;} if(!await askConfirmation(`現在のシミュレーション結果 ${session.length}周分を消去します。`,'結果を消去'))return; sessions[sessionKey()]=[]; renderSession(); resetStage(); announce('現在のシミュレーション結果を消去しました'); }
       function exportJSON() { const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'}); const url=URL.createObjectURL(blob); const link=document.createElement('a'); link.href=url; link.download=`kcnav-drop-lab-${new Date().toISOString().slice(0,10)}.json`; link.click(); setTimeout(()=>URL.revokeObjectURL(url),1000); }
@@ -755,6 +825,25 @@
 
       $('#profile-select').addEventListener('change',event=>{state.activeId=event.target.value;saveState();renderProfile();});
       $('#sound-toggle').addEventListener('click',toggleSound);
+      $('#fast-toggle').addEventListener('click',toggleFast);
+      $('#sound-volume').addEventListener('input',event=>{soundVolume=Math.min(100,Math.max(0,Number(event.target.value)||0));applyVolume();});
+      $('#sound-volume').addEventListener('change',()=>{saveVolumePreference();playEffect('toggle');});
+      $('#undo-log').addEventListener('click',undoLastLog);
+      $('#quick-other-record').addEventListener('click',()=>recordLog($('#quick-other').value,$('#quick-rank').value));
+      $('#drop-stage').addEventListener('click',()=>{ if(isAnimating)skipAnimation(); else if(!$('#single-run').disabled)run(1); });
+      document.addEventListener('keydown',event=>{
+        if(event.altKey||event.ctrlKey||event.metaKey)return;
+        const target=event.target;
+        if(target && (/^(input|select|textarea|button|summary|a)$/i.test(target.tagName) || target.isContentEditable))return;
+        if($('#confirm-dialog').open)return;
+        const key=event.key;
+        if(key===' '||key==='1'){ event.preventDefault(); if(isAnimating)skipAnimation(); else $('#single-run').click(); }
+        else if(key==='2'){ event.preventDefault(); $('#ten-run').click(); }
+        else if(key==='3'){ event.preventDefault(); $('#batch-run').click(); }
+        else if(key==='m'||key==='M'){ toggleSound(); }
+        else if(key==='f'||key==='F'){ toggleFast(); }
+        else if(key==='Escape'){ skipAnimation(); }
+      });
       $('#duplicate-profile').addEventListener('click',duplicateProfile); $('#delete-profile').addEventListener('click',deleteProfile);
       $('#rank-select').addEventListener('change',()=>{renderTargets();renderLogControls();renderDropTable();updateMetrics();renderSession();resetStage();});
       $('#rounds').addEventListener('input',updateMetrics); $('#rounds').addEventListener('blur',()=>{readRounds(true);updateMetrics();}); $('#goal-mode').addEventListener('change',updateMetrics);
@@ -765,7 +854,7 @@
       $('#add-log').addEventListener('click',addLog); $('#clear-logs').addEventListener('click',clearLogs);
       $('#export-json').addEventListener('click',exportJSON); $('#import-json').addEventListener('click',()=>importJSON().catch(error=>{$('#storage-status').textContent=error.message;announce(error.message);}));
       $('#confirm-cancel').addEventListener('click',()=>finishConfirmation(false)); $('#confirm-ok').addEventListener('click',()=>finishConfirmation(true)); $('#confirm-dialog').addEventListener('cancel',event=>{event.preventDefault();finishConfirmation(false);});
-      renderSoundControl(); renderProfile();
+      renderSoundControl(); renderFastControl(); renderProfile();
     })();
   </script>
 </div>
