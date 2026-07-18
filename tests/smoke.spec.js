@@ -28,25 +28,13 @@ test('public app starts without seeded battle logs and can simulate one run', as
   await expect(page).toHaveTitle('Kcnav Drop Lab');
 
   const app = page.frameLocator('iframe[title="Kcnav Drop Lab"]');
-  await expect(app.getByRole('heading', { name: 'KCNav Drop Lab' })).toBeVisible();
+  await expect(app.locator('h1')).toHaveText('KCNav Drop Lab');
   await expect(page.locator('html')).toHaveAttribute('lang', 'ja');
   await expect(app.locator('html')).toHaveAttribute('lang', 'ja');
-  await expect(app.locator('#onboarding')).toBeVisible();
-  await app.getByRole('button', { name: 'サンプルで試す' }).click();
-  await expect(app.locator('#onboarding')).toBeHidden();
-  await expect
-    .poll(() =>
-      app.locator('body').evaluate(() =>
-        localStorage.getItem('kcnav-drop-lab-onboarding-v1'),
-      ),
-    )
-    .toBe('seen');
-  await page.reload();
-  await expect(app.locator('#onboarding')).toBeHidden();
   await expect(app.locator('#hero-statement')).toHaveText(
     'Indianaほか3隻のどれかが90%出るまで、あと36周。',
   );
-  await app.getByText('表示・音', { exact: true }).click();
+  await app.getByText('設定', { exact: true }).click();
   const soundToggle = app.locator('#sound-toggle');
   await expect(soundToggle).toHaveAttribute('aria-pressed', 'false');
   await soundToggle.click();
@@ -109,7 +97,7 @@ test('public app starts without seeded battle logs and can simulate one run', as
       ),
     )
     .toBe('on');
-  await app.getByText('表示・音', { exact: true }).click();
+  await app.getByText('設定', { exact: true }).click();
 
   await expect(app.locator('#results')).toBeHidden();
   await app.getByText('その他…', { exact: true }).click();
@@ -237,9 +225,8 @@ test('a KCNav preset can be edited and resolves an unbundled ship image', async 
   await page.goto('/outputs/kcnav-drop-lab.html');
   const app = page.frameLocator('iframe[title="Kcnav Drop Lab"]');
 
-  await app
-    .getByRole('button', { name: '自分のKCNavデータを登録' })
-    .click();
+  await app.locator('#profile-select').selectOption('__add__');
+  await expect(app.locator('#profile-select')).toHaveValue('e3-4-kou-z');
   await expect(app.locator('#tools-panel')).toHaveAttribute('open', '');
   await expect(app.locator('#import-section')).toHaveAttribute('open', '');
   await app.locator('#kcnav-text').fill('E-9-1 甲 Xマス\nダミー艦\t50.00%\t1/2\tS');

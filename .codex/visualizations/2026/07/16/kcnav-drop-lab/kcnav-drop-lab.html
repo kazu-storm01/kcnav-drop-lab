@@ -3,21 +3,9 @@
     #kcnav-drop-lab { color: var(--foreground); --muted-foreground: light-dark(rgb(26 28 31 / 66%), rgb(255 255 255 / 60%)); --kdl-rare: light-dark(rgb(43 118 166), rgb(185 223 242)); }
     #kcnav-drop-lab [hidden] { display: none !important; }
     #kcnav-drop-lab .app { display: grid; gap: 1rem; max-width: 736px; margin: 0 auto; }
-    #kcnav-drop-lab .app-header { display: grid; gap: .2rem; }
-    #kcnav-drop-lab .app-title { margin: 0; font-size: 1.45rem; font-weight: 600; letter-spacing: -.02em; }
-    #kcnav-drop-lab .app-description { margin: 0; color: var(--muted-foreground); line-height: 1.45; }
-    #kcnav-drop-lab .onboarding { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: .25rem .8rem; align-items: center; padding: .65rem .8rem; border-left: 3px solid var(--primary); }
-    #kcnav-drop-lab .onboarding[hidden] { display: none; }
-    #kcnav-drop-lab .onboarding-title { margin: 0; font-size: 1rem; font-weight: 600; }
-    #kcnav-drop-lab .onboarding p { margin: 0; color: var(--muted-foreground); line-height: 1.45; }
-    #kcnav-drop-lab .onboarding .inline-actions { grid-column: 2; grid-row: 1 / 3; align-self: center; }
     #kcnav-drop-lab .topbar { display: grid; gap: .35rem; }
     #kcnav-drop-lab .topbar-row { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; }
     #kcnav-drop-lab .topbar-row > .field { flex: 1 1 11rem; }
-    #kcnav-drop-lab .preferences { position: relative; border-top: 0; padding-top: 0; }
-    #kcnav-drop-lab .preferences > summary { list-style: none; font-weight: 400; }
-    #kcnav-drop-lab .preferences > summary::-webkit-details-marker { display: none; }
-    #kcnav-drop-lab .preferences-panel { position: absolute; right: 0; top: calc(100% + .4rem); z-index: 8; display: flex; flex-wrap: wrap; gap: .5rem; align-items: end; width: max-content; max-width: min(30rem,calc(100vw - 2rem)); padding: .65rem; border: 1px solid var(--border); background: var(--popover); box-shadow: 0 10px 28px color-mix(in srgb, var(--foreground) 18%, transparent); }
     #kcnav-drop-lab .volume-field { flex: 0 0 auto; }
     #kcnav-drop-lab #sound-volume { width: 5.2rem; }
     #kcnav-drop-lab .sound-toggle { min-width: 5.4rem; white-space: nowrap; }
@@ -198,24 +186,15 @@
     @keyframes kdl-ring { 0% { opacity: 0; transform: translate(-50%,-50%) scale(.25); } 24% { opacity: .9; } 100% { opacity: 0; transform: translate(-50%,-50%) scale(4.8); } }
     @keyframes kdl-spark { 0% { opacity: 0; transform: translate(-50%,-50%) rotate(45deg) scale(.2); } 20% { opacity: 1; } 72% { opacity: .8; } 100% { opacity: 0; transform: translate(calc(-50% + var(--tx)),calc(-50% + var(--ty))) rotate(225deg) scale(1.35); } }
     @media (max-width: 650px) { #kcnav-drop-lab .drop-stage { min-height: 240px; } #kcnav-drop-lab .form-grid, #kcnav-drop-lab .settings-grid { grid-template-columns: 1fr 1fr; } #kcnav-drop-lab .target-list { grid-template-columns: 1fr; } }
-    @media (max-width: 480px) { #kcnav-drop-lab .app { gap: .75rem; } #kcnav-drop-lab .onboarding { grid-template-columns: 1fr; } #kcnav-drop-lab .onboarding .inline-actions { grid-column: 1; grid-row: auto; } #kcnav-drop-lab .hero-row { grid-template-columns: 1fr; }#kcnav-drop-lab .drop-stage { min-height: 225px; } #kcnav-drop-lab .drop-card { width: min(190px,62vw); min-height: 190px; } #kcnav-drop-lab .drop-card.priority { width: min(210px,68vw); min-height: 210px; } #kcnav-drop-lab .ship-image { width: 125px; height: 150px; } #kcnav-drop-lab .drop-card.priority .ship-image { width: 140px; height: 164px; } #kcnav-drop-lab .drop-content { padding-bottom: 3.5rem; } #kcnav-drop-lab .quick-controls { grid-template-columns: .85fr 1.2fr 1fr; } #kcnav-drop-lab .quick-controls .btn { min-height: 44px; padding-inline: .45rem; } #kcnav-drop-lab .primary-metrics { grid-template-columns: 1fr 1fr; } #kcnav-drop-lab .primary-metrics .metric strong { font-size: 1.05rem; } #kcnav-drop-lab .form-grid, #kcnav-drop-lab .settings-grid, #kcnav-drop-lab .backup-grid { grid-template-columns: 1fr; } #kcnav-drop-lab .target-item { grid-template-columns: minmax(0,1fr) auto auto; gap: .35rem; } #kcnav-drop-lab .target-state span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); } #kcnav-drop-lab .log-row { grid-template-columns: minmax(0,1fr) auto auto; } #kcnav-drop-lab .log-row .log-time { grid-column: 1 / -1; } #kcnav-drop-lab .encounter-message { grid-template-columns: 1fr; } #kcnav-drop-lab .encounter-message .drop-note { grid-column: 1; grid-row: auto; } #kcnav-drop-lab .preferences-panel { position: fixed; left: 1rem; right: 1rem; top: auto; width: auto; } }
+    @media (max-width: 480px) { #kcnav-drop-lab .app { gap: .75rem; } #kcnav-drop-lab .hero-row { grid-template-columns: 1fr; }#kcnav-drop-lab .drop-stage { min-height: 225px; } #kcnav-drop-lab .drop-card { width: min(190px,62vw); min-height: 190px; } #kcnav-drop-lab .drop-card.priority { width: min(210px,68vw); min-height: 210px; } #kcnav-drop-lab .ship-image { width: 125px; height: 150px; } #kcnav-drop-lab .drop-card.priority .ship-image { width: 140px; height: 164px; } #kcnav-drop-lab .drop-content { padding-bottom: 3.5rem; } #kcnav-drop-lab .quick-controls { grid-template-columns: .85fr 1.2fr 1fr; } #kcnav-drop-lab .quick-controls .btn { min-height: 44px; padding-inline: .45rem; } #kcnav-drop-lab .primary-metrics { grid-template-columns: 1fr 1fr; } #kcnav-drop-lab .primary-metrics .metric strong { font-size: 1.05rem; } #kcnav-drop-lab .form-grid, #kcnav-drop-lab .settings-grid, #kcnav-drop-lab .backup-grid { grid-template-columns: 1fr; } #kcnav-drop-lab .target-item { grid-template-columns: minmax(0,1fr) auto auto; gap: .35rem; } #kcnav-drop-lab .target-state span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); } #kcnav-drop-lab .log-row { grid-template-columns: minmax(0,1fr) auto auto; } #kcnav-drop-lab .log-row .log-time { grid-column: 1 / -1; } #kcnav-drop-lab .encounter-message { grid-template-columns: 1fr; } #kcnav-drop-lab .encounter-message .drop-note { grid-column: 1; grid-row: auto; } }
     @media (prefers-reduced-motion: reduce) { #kcnav-drop-lab .drop-card.drawing, #kcnav-drop-lab .drop-card.reveal, #kcnav-drop-lab .drop-stage, #kcnav-drop-lab .drop-stage::before, #kcnav-drop-lab .effect-flash, #kcnav-drop-lab .effect-ring, #kcnav-drop-lab .spark { animation: none !important; } #kcnav-drop-lab .priority-curtain { transition: none; } }
   </style>
 
   <main class="app">
-    <header class="app-header">
-      <h1 class="app-title">KCNav Drop Lab</h1>
-    </header>
-    <section class="card onboarding" id="onboarding" aria-labelledby="onboarding-title" hidden>
-      <h2 class="onboarding-title" id="onboarding-title">初めてですか？</h2>
-      <p>最初から入っているサンプルで試すか、自分のKCNavデータを登録できます。</p>
-      <div class="inline-actions"><button class="btn btn-primary" id="onboarding-dismiss" type="button">サンプルで試す</button><button class="btn" id="onboarding-open-import" type="button">自分のKCNavデータを登録</button></div>
-    </section>
+    <h1 class="sr-only">KCNav Drop Lab</h1>
     <div class="topbar">
       <div class="topbar-row">
         <label class="field" for="profile-select"><span class="sr-only">海域</span><select class="form-select" id="profile-select" aria-label="海域"></select></label>
-        <button class="btn" id="open-import" type="button" title="KCNavデータを登録・更新する">＋登録</button>
-        <details class="preferences"><summary class="btn">表示・音</summary><div class="preferences-panel"><button class="btn sound-toggle" id="theme-toggle" type="button" title="表示テーマを 自動 → ライト → ダーク で切り替える">テーマ 自動</button><button class="btn sound-toggle" id="fast-toggle" type="button" aria-pressed="false" title="ドロップ演出を短縮する">演出 標準</button><button class="btn sound-toggle" id="sound-toggle" type="button" aria-pressed="false">音 OFF</button><label class="field volume-field" for="sound-volume"><span>音量</span><input type="range" id="sound-volume" min="0" max="100" step="5" aria-label="音量"></label></div></details>
       </div>
     </div>
 
@@ -330,6 +309,10 @@
           </div>
         </details>
         </section>
+        <section class="settings-group" aria-labelledby="prefs-heading">
+          <h2 class="settings-group-title" id="prefs-heading">表示と音</h2>
+          <div class="inline-actions"><button class="btn sound-toggle" id="theme-toggle" type="button" title="表示テーマを 自動 → ライト → ダーク で切り替える">テーマ 自動</button><button class="btn sound-toggle" id="fast-toggle" type="button" aria-pressed="false" title="ドロップ演出を短縮する">演出 標準</button><button class="btn sound-toggle" id="sound-toggle" type="button" aria-pressed="false">音 OFF</button><label class="field volume-field" for="sound-volume"><span>音量</span><input type="range" id="sound-volume" min="0" max="100" step="5" aria-label="音量"></label></div>
+        </section>
       </div>
     </details>
     <div class="sr-only" id="app-status" role="status" aria-live="polite" aria-atomic="true"></div>
@@ -353,7 +336,6 @@
       const FAST_KEY = 'kcnav-drop-lab-fast-v1';
       const VOLUME_KEY = 'kcnav-drop-lab-volume-v1';
       const THEME_KEY = 'kcnav-drop-lab-theme-v1';
-      const ONBOARDING_KEY = 'kcnav-drop-lab-onboarding-v1';
       const SHIP_MASTER_URL = 'https://raw.githubusercontent.com/kcwiki/kancolle-data/master/db/ship.json';
       const SHIP_CARD_BASE = 'https://w01y.kancolle-server.com/kcs2/resources/ship/card/';
       const SHIP_ASSET_KEYS = [6657,5699,3371,8909,7719,6229,5449,8561,2987,5501,3127,9319,4365,9811,9927,2423,3439,1865,5925,4409,5509,1517,9695,9255,5325,3691,5519,6949,5607,9539,4133,7795,5465,2659,6381,6875,4019,9195,5645,2887,1213,1815,8671,3015,3147,2991,7977,7045,1619,7909,4451,6573,4545,8251,5983,2849,7249,7449,9477,5963,2711,9019,7375,2201,5631,4893,7653,3719,8819,5839,1853,9843,9119,7023,5681,2345,9873,6349,9315,3795,9737,4633,4173,7549,7171,6147,4723,5039,2723,7815,6201,5999,5339,4431,2911,4435,3611,4423,9517,3243];
@@ -611,7 +593,7 @@
       }
 
       function renderProfileSelect() {
-        $('#profile-select').innerHTML = state.profiles.map(profile => `<option value="${escapeHtml(profile.id)}">${escapeHtml(profile.title)}</option>`).join('');
+        $('#profile-select').innerHTML = state.profiles.map(profile => `<option value="${escapeHtml(profile.id)}">${escapeHtml(profile.title)}</option>`).join('')+'<option value="__add__">＋ 新しい海域を登録…</option>';
         $('#profile-select').value = activeProfile().id;
       }
       function renderProfile() {
@@ -954,7 +936,6 @@
       function exportJSON() { const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'}); const url=URL.createObjectURL(blob); const link=document.createElement('a'); link.href=url; link.download=`kcnav-drop-lab-${new Date().toISOString().slice(0,10)}.json`; link.click(); setTimeout(()=>URL.revokeObjectURL(url),1000); }
       async function importJSON() { const file=$('#import-json-file').files[0]; if(!file)return; const value=JSON.parse(await file.text()); if(!validateState(value))throw new Error('対応するバックアップではありません'); if(!await askConfirmation('現在の全海域と実戦ログを、このバックアップで置き換えます。','復元する'))return; try{localStorage.setItem(BACKUP_KEY,JSON.stringify(state));}catch{} state=normalizeState(value); state.activeId=state.profiles.some(profile=>profile.id===state.activeId)?state.activeId:state.profiles[0].id; sessions={}; saveState(); renderProfile(); announce('バックアップから復元しました'); }
       function escapeHtml(value) { return String(value??'').replace(/[&<>'"]/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char])); }
-      function onboardingSeen() { try { return localStorage.getItem(ONBOARDING_KEY)==='seen'; } catch { return false; } }
       function renderMode() {
         const simulation=uiMode==='simulation';
         $('#simulation-tab').setAttribute('aria-selected',String(simulation)); $('#record-tab').setAttribute('aria-selected',String(!simulation));
@@ -971,14 +952,8 @@
         setImportMode('new'); $('#tools-panel').open=true; $('#import-section').open=true;
         requestAnimationFrame(()=>{$('#import-section').scrollIntoView({behavior:reduceMotion?'auto':'smooth',block:'start'});$('#kcnav-text').focus();});
       }
-      function finishOnboarding(openImport=false) {
-        try { localStorage.setItem(ONBOARDING_KEY,'seen'); } catch {}
-        $('#onboarding').hidden=true;
-        if(openImport) openImportSection();
-      }
-      function renderOnboarding() { $('#onboarding').hidden=onboardingSeen(); }
 
-      $('#profile-select').addEventListener('change',event=>{state.activeId=event.target.value;saveState();renderProfile();});
+      $('#profile-select').addEventListener('change',event=>{ if(event.target.value==='__add__'){renderProfileSelect();openImportSection();return;} state.activeId=event.target.value;saveState();renderProfile();});
       $('#sound-toggle').addEventListener('click',toggleSound);
       $('#fast-toggle').addEventListener('click',toggleFast);
       $('#theme-toggle').addEventListener('click',cycleTheme);
@@ -998,7 +973,6 @@
       $('#single-run').addEventListener('click',()=>run(1)); $('#ten-run').addEventListener('click',()=>run(10)); $('#batch-run').addEventListener('click',()=>{const rounds=readRounds();updateMetrics();if(rounds!==null)run(rounds);}); $('#clear-session').addEventListener('click',clearCurrentSession);
       $('#parse-kcnav').addEventListener('click',()=>{parsedImport=parseKCNav($('#kcnav-text').value);applyParsedMeta();renderParsePreview();}); $('#save-import').addEventListener('click',saveImportedProfile); $('#update-import').addEventListener('click',updateImportedProfile);
       $('#kcnav-text').addEventListener('input',()=>{ clearTimeout(parseTimer); parseTimer=setTimeout(()=>{ if(!$('#kcnav-text').value.trim())return; parsedImport=parseKCNav($('#kcnav-text').value); applyParsedMeta(); renderParsePreview(); },400); });
-      $('#open-import').addEventListener('click',openImportSection);
       $$('#rounds-chips [data-rounds]').forEach(button=>button.addEventListener('click',()=>{$('#rounds').value=button.dataset.rounds;updateMetrics();}));
       $('#drop-stage').addEventListener('click',()=>{ if(isAnimating){skipAnimation();return;} if(!$('#single-run').disabled)run(1); });
       $('#import-new').addEventListener('click',()=>setImportMode('new')); $('#import-update').addEventListener('click',()=>setImportMode('update'));
@@ -1006,9 +980,8 @@
       $('#save-profile-meta').addEventListener('click',saveProfileMeta); $('#refresh-images').addEventListener('click',()=>resolveImagesForProfile(activeProfile(),true));
       $('#clear-logs').addEventListener('click',clearLogs);
       $('#export-json').addEventListener('click',exportJSON); $('#import-json').addEventListener('click',()=>importJSON().catch(error=>{$('#storage-status').textContent=error.message;announce(error.message);}));
-      $('#onboarding-open-import').addEventListener('click',()=>finishOnboarding(true)); $('#onboarding-dismiss').addEventListener('click',()=>finishOnboarding(false));
       $('#confirm-cancel').addEventListener('click',()=>finishConfirmation(false)); $('#confirm-ok').addEventListener('click',()=>finishConfirmation(true)); $('#confirm-dialog').addEventListener('cancel',event=>{event.preventDefault();finishConfirmation(false);});
-      applyTheme(); renderThemeControl(); renderSoundControl(); renderFastControl(); renderMode(); renderImportMode(); renderProfile(); renderOnboarding();
+      applyTheme(); renderThemeControl(); renderSoundControl(); renderFastControl(); renderMode(); renderImportMode(); renderProfile();
     })();
   </script>
 </div>
