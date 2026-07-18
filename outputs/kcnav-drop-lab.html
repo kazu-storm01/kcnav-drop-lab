@@ -753,6 +753,9 @@ html&gt;body{padding:0}&lt;/style&gt;
     #kcnav-drop-lab { color: var(--foreground); }
     #kcnav-drop-lab .app { display: grid; gap: 1rem; max-width: 736px; margin: 0 auto; }
     #kcnav-drop-lab .topbar { display: grid; gap: .35rem; }
+    #kcnav-drop-lab .topbar-row { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: .5rem; align-items: end; }
+    #kcnav-drop-lab .sound-toggle { min-width: 5.4rem; white-space: nowrap; }
+    #kcnav-drop-lab .sound-toggle.is-on { border-color: #88b9d3; background: color-mix(in srgb, #88b9d3 18%, var(--secondary)); }
     #kcnav-drop-lab .top-actions, #kcnav-drop-lab .controls, #kcnav-drop-lab .inline-actions { display: flex; flex-wrap: wrap; gap: .5rem; align-items: end; }
     #kcnav-drop-lab .preset-actions { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; }
     #kcnav-drop-lab .btn-danger { color: #ffd7d2; border: 1px solid #c65b55; background: #6f2724; font-weight: 600; }
@@ -893,7 +896,7 @@ html&gt;body{padding:0}&lt;/style&gt;
   &lt;main class=&quot;app&quot;&gt;
     &lt;h1 class=&quot;sr-only&quot;&gt;ドロップシミュレーター&lt;/h1&gt;
     &lt;div class=&quot;topbar&quot;&gt;
-      &lt;label class=&quot;field&quot; for=&quot;profile-select&quot;&gt;&lt;span class=&quot;sr-only&quot;&gt;海域&lt;/span&gt;&lt;select class=&quot;form-select&quot; id=&quot;profile-select&quot; aria-label=&quot;海域&quot;&gt;&lt;/select&gt;&lt;/label&gt;
+      &lt;div class=&quot;topbar-row&quot;&gt;&lt;label class=&quot;field&quot; for=&quot;profile-select&quot;&gt;&lt;span class=&quot;sr-only&quot;&gt;海域&lt;/span&gt;&lt;select class=&quot;form-select&quot; id=&quot;profile-select&quot; aria-label=&quot;海域&quot;&gt;&lt;/select&gt;&lt;/label&gt;&lt;button class=&quot;btn sound-toggle&quot; id=&quot;sound-toggle&quot; type=&quot;button&quot; aria-pressed=&quot;false&quot;&gt;音 OFF&lt;/button&gt;&lt;/div&gt;
     &lt;/div&gt;
 
     &lt;div class=&quot;workspace&quot;&gt;&lt;section class=&quot;card drop-stage&quot; id=&quot;drop-stage&quot; aria-busy=&quot;false&quot;&gt;&lt;span class=&quot;stage-status&quot; id=&quot;stage-status&quot;&gt;判定待ち&lt;/span&gt;&lt;span class=&quot;radar-sweep&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;&lt;div class=&quot;stage-effects&quot; aria-hidden=&quot;true&quot;&gt;&lt;span class=&quot;effect-flash&quot;&gt;&lt;/span&gt;&lt;span class=&quot;effect-ring&quot;&gt;&lt;/span&gt;&lt;span class=&quot;effect-ring&quot;&gt;&lt;/span&gt;&lt;span class=&quot;effect-ring&quot;&gt;&lt;/span&gt;&lt;span class=&quot;spark&quot;&gt;&lt;/span&gt;&lt;span class=&quot;spark&quot;&gt;&lt;/span&gt;&lt;span class=&quot;spark&quot;&gt;&lt;/span&gt;&lt;span class=&quot;spark&quot;&gt;&lt;/span&gt;&lt;span class=&quot;spark&quot;&gt;&lt;/span&gt;&lt;span class=&quot;spark&quot;&gt;&lt;/span&gt;&lt;span class=&quot;spark&quot;&gt;&lt;/span&gt;&lt;span class=&quot;spark&quot;&gt;&lt;/span&gt;&lt;span class=&quot;spark&quot;&gt;&lt;/span&gt;&lt;/div&gt;&lt;span class=&quot;priority-curtain&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;&lt;div class=&quot;drop-card&quot; id=&quot;drop-card&quot;&gt;&lt;div class=&quot;drop-content&quot; id=&quot;drop-content&quot;&gt;&lt;span class=&quot;drop-label&quot;&gt;DROP&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;encounter-message&quot; id=&quot;encounter-message&quot;&gt;&lt;span class=&quot;drop-label&quot; id=&quot;message-label&quot;&gt;索敵待機&lt;/span&gt;&lt;span class=&quot;drop-name&quot; id=&quot;message-name&quot;&gt;周回を開始&lt;/span&gt;&lt;span class=&quot;drop-note&quot; id=&quot;message-note&quot;&gt;KCNav実測データ&lt;/span&gt;&lt;/div&gt;&lt;/section&gt;&lt;/div&gt;
@@ -1006,6 +1009,7 @@ html&gt;body{padding:0}&lt;/style&gt;
       const $$ = selector =&gt; [...root.querySelectorAll(selector)];
       const STORAGE_KEY = &#x27;kcnav-drop-lab-v1&#x27;;
       const BACKUP_KEY = &#x27;kcnav-drop-lab-before-restore&#x27;;
+      const SOUND_KEY = &#x27;kcnav-drop-lab-sound-v1&#x27;;
       const SHIP_MASTER_URL = &#x27;https://raw.githubusercontent.com/kcwiki/kancolle-data/master/db/ship.json&#x27;;
       const SHIP_CARD_BASE = &#x27;https://w01y.kancolle-server.com/kcs2/resources/ship/card/&#x27;;
       const SHIP_ASSET_KEYS = [6657,5699,3371,8909,7719,6229,5449,8561,2987,5501,3127,9319,4365,9811,9927,2423,3439,1865,5925,4409,5509,1517,9695,9255,5325,3691,5519,6949,5607,9539,4133,7795,5465,2659,6381,6875,4019,9195,5645,2887,1213,1815,8671,3015,3147,2991,7977,7045,1619,7909,4451,6573,4545,8251,5983,2849,7249,7449,9477,5963,2711,9019,7375,2201,5631,4893,7653,3719,8819,5839,1853,9843,9119,7023,5681,2345,9873,6349,9315,3795,9737,4633,4173,7549,7171,6147,4723,5039,2723,7815,6201,5999,5339,4431,2911,4435,3611,4423,9517,3243];
@@ -1067,6 +1071,8 @@ html&gt;body{padding:0}&lt;/style&gt;
       let timers = [];
       let isAnimating = false;
       let confirmResolver = null;
+      let soundEnabled = loadSoundPreference();
+      let audioContext = null;
       const reduceMotion = Boolean(window.matchMedia?.(&#x27;(prefers-reduced-motion: reduce)&#x27;).matches);
 
       function clone(value) { return JSON.parse(JSON.stringify(value)); }
@@ -1086,6 +1092,56 @@ html&gt;body{padding:0}&lt;/style&gt;
       function assetKey(id,type) { const text=`ship_${type}`; const sum=[...text].reduce((value,char)=&gt;value+char.charCodeAt(0),0); return ((17*(id+7)*SHIP_ASSET_KEYS[(sum+id*text.length)%100])%8973)+1000; }
       function cardImageForId(id) { return `${SHIP_CARD_BASE}${String(id).padStart(4,&#x27;0&#x27;)}_${assetKey(id,&#x27;card&#x27;)}.png`; }
       function announce(message) { $(&#x27;#app-status&#x27;).textContent=&#x27;&#x27;; requestAnimationFrame(()=&gt;{$(&#x27;#app-status&#x27;).textContent=message;}); }
+      function loadSoundPreference() { try { return localStorage.getItem(SOUND_KEY)===&#x27;on&#x27;; } catch { return false; } }
+      function saveSoundPreference() { try { localStorage.setItem(SOUND_KEY,soundEnabled?&#x27;on&#x27;:&#x27;off&#x27;); } catch {} }
+      function audioConstructor() { return window.AudioContext || window.webkitAudioContext || null; }
+      function ensureAudio() {
+        if(!soundEnabled)return null;
+        const AudioConstructor=audioConstructor();
+        if(!AudioConstructor)return null;
+        try {
+          if(!audioContext || audioContext.state===&#x27;closed&#x27;)audioContext=new AudioConstructor();
+          if(audioContext.state===&#x27;suspended&#x27;)audioContext.resume().catch(()=&gt;{});
+          return audioContext;
+        } catch { return null; }
+      }
+      function tone(frequency,duration,{delay=0,gain=.018,type=&#x27;sine&#x27;,endFrequency=0,attack=.012}={}) {
+        const context=ensureAudio(); if(!context)return;
+        const start=context.currentTime+delay; const oscillator=context.createOscillator(); const volume=context.createGain();
+        oscillator.type=type; oscillator.frequency.setValueAtTime(Math.max(20,frequency),start);
+        if(endFrequency)oscillator.frequency.exponentialRampToValueAtTime(Math.max(20,endFrequency),start+duration);
+        volume.gain.setValueAtTime(.0001,start); volume.gain.exponentialRampToValueAtTime(Math.max(.0002,gain),start+Math.min(attack,duration/2)); volume.gain.exponentialRampToValueAtTime(.0001,start+duration);
+        oscillator.connect(volume).connect(context.destination); oscillator.start(start); oscillator.stop(start+duration+.025);
+      }
+      function noiseBurst(duration,{delay=0,gain=.009,frequency=1200,type=&#x27;bandpass&#x27;}={}) {
+        const context=ensureAudio(); if(!context)return;
+        const length=Math.max(1,Math.floor(context.sampleRate*duration)); const buffer=context.createBuffer(1,length,context.sampleRate); const data=buffer.getChannelData(0);
+        for(let index=0;index&lt;length;index++){const value=Math.sin((index+1)*12.9898+context.currentTime*78.233)*43758.5453;data[index]=(value-Math.floor(value))*2-1;}
+        const source=context.createBufferSource(); const filter=context.createBiquadFilter(); const volume=context.createGain(); const start=context.currentTime+delay;
+        source.buffer=buffer; filter.type=type; filter.frequency.setValueAtTime(frequency,start); filter.Q.value=.8;
+        volume.gain.setValueAtTime(.0001,start); volume.gain.exponentialRampToValueAtTime(gain,start+.008); volume.gain.exponentialRampToValueAtTime(.0001,start+duration);
+        source.connect(filter).connect(volume).connect(context.destination); source.start(start); source.stop(start+duration+.02);
+      }
+      function playEffect(kind,tier=&#x27;normal&#x27;,compact=false) {
+        if(!soundEnabled)return;
+        if(kind===&#x27;toggle&#x27;){tone(520,.09,{gain:.014,type:&#x27;triangle&#x27;});tone(780,.13,{delay:.055,gain:.012,type:&#x27;sine&#x27;});return;}
+        if(kind===&#x27;scan&#x27;){const base=tier===&#x27;priority&#x27;?150:tier===&#x27;rare&#x27;?470:340;tone(base,.11,{gain:tier===&#x27;priority&#x27;?.014:.009,type:&#x27;triangle&#x27;,endFrequency:base*1.18});noiseBurst(.045,{gain:.0035,frequency:900});return;}
+        if(kind===&#x27;suspense&#x27;){tone(96,.24,{gain:.026,type:&#x27;sine&#x27;,endFrequency:68});tone(142,.13,{delay:.12,gain:.012,type:&#x27;triangle&#x27;,endFrequency:112});return;}
+        if(kind===&#x27;normal&#x27;){noiseBurst(.055,{gain:.006,frequency:1550});tone(430,.07,{gain:.007,type:&#x27;square&#x27;,endFrequency:520});return;}
+        if(kind===&#x27;rare&#x27;){noiseBurst(.11,{gain:.008,frequency:1800});tone(659,.28,{gain:.018,type:&#x27;sine&#x27;});tone(880,.31,{delay:.07,gain:.016,type:&#x27;sine&#x27;});tone(1175,.34,{delay:.14,gain:.012,type:&#x27;triangle&#x27;});return;}
+        if(kind===&#x27;priority&#x27; &amp;&amp; compact){tone(523,.2,{gain:.016,type:&#x27;triangle&#x27;});tone(784,.25,{delay:.045,gain:.014,type:&#x27;sine&#x27;});return;}
+        if(kind===&#x27;priority&#x27;){noiseBurst(.16,{gain:.013,frequency:760,type:&#x27;lowpass&#x27;});tone(110,.28,{gain:.024,type:&#x27;sine&#x27;,endFrequency:82});tone(523,.42,{delay:.025,gain:.019,type:&#x27;triangle&#x27;});tone(659,.46,{delay:.06,gain:.016,type:&#x27;sine&#x27;});tone(784,.5,{delay:.1,gain:.014,type:&#x27;sine&#x27;});tone(1047,.54,{delay:.15,gain:.009,type:&#x27;sine&#x27;});}
+      }
+      function renderSoundControl() {
+        const button=$(&#x27;#sound-toggle&#x27;); const supported=Boolean(audioConstructor());
+        button.disabled=!supported; button.classList.toggle(&#x27;is-on&#x27;,supported &amp;&amp; soundEnabled); button.setAttribute(&#x27;aria-pressed&#x27;,String(supported &amp;&amp; soundEnabled)); button.textContent=supported?(soundEnabled?&#x27;音 ON&#x27;:&#x27;音 OFF&#x27;):&#x27;音 非対応&#x27;;
+      }
+      async function toggleSound() {
+        if(!audioConstructor()){announce(&#x27;このブラウザは効果音に対応していません&#x27;);return;}
+        soundEnabled=!soundEnabled; saveSoundPreference();
+        if(soundEnabled){const context=ensureAudio();if(context?.state===&#x27;suspended&#x27;)await context.resume().catch(()=&gt;{});renderSoundControl();playEffect(&#x27;toggle&#x27;);announce(&#x27;効果音をONにしました&#x27;);}
+        else {if(audioContext?.state===&#x27;running&#x27;)audioContext.suspend().catch(()=&gt;{});renderSoundControl();announce(&#x27;効果音をOFFにしました&#x27;);}
+      }
       function askConfirmation(message,confirmLabel=&#x27;実行&#x27;) {
         const dialog=$(&#x27;#confirm-dialog&#x27;);
         $(&#x27;#confirm-message&#x27;).textContent=message;
@@ -1221,6 +1277,7 @@ html&gt;body{padding:0}&lt;/style&gt;
         $(&#x27;#message-label&#x27;).textContent=&#x27;CONTACT&#x27;;
         $(&#x27;#message-name&#x27;).textContent=&#x27;艦影を確認中&#x27;;
         $(&#x27;#message-note&#x27;).textContent=&#x27;索敵継続&#x27;;
+        playEffect(&#x27;scan&#x27;,tier,compact);
         const scanDelay=reduceMotion?40:tier===&#x27;normal&#x27;?180:tier===&#x27;rare&#x27;?250:220;
         if(tier===&#x27;priority&#x27; &amp;&amp; !compact &amp;&amp; !reduceMotion){
           schedule(()=&gt;{
@@ -1232,6 +1289,7 @@ html&gt;body{padding:0}&lt;/style&gt;
             $(&#x27;#message-label&#x27;).textContent=&#x27;UNKNOWN&#x27;;
             $(&#x27;#message-name&#x27;).textContent=&#x27;強い艦影を確認&#x27;;
             $(&#x27;#message-note&#x27;).textContent=&#x27;照合中&#x27;;
+            playEffect(&#x27;suspense&#x27;);
           },scanDelay);
           schedule(()=&gt;showDrop(row,false),scanDelay+240);
           return;
@@ -1249,6 +1307,7 @@ html&gt;body{padding:0}&lt;/style&gt;
         $(&#x27;#stage-status&#x27;).textContent=tier===&#x27;priority&#x27;?(compact?&#x27;最優先艦・続報&#x27;:&#x27;邂逅成功&#x27;):tier===&#x27;rare&#x27;?&#x27;稀有反応&#x27;:&#x27;戦闘終了&#x27;;
         $(&#x27;#drop-content&#x27;).innerHTML=image?`&lt;img class=&quot;ship-image&quot; src=&quot;${escapeHtml(image)}&quot; alt=&quot;&quot;&gt;`:&#x27;&lt;div class=&quot;ship-placeholder&quot; aria-hidden=&quot;true&quot;&gt;艦&lt;/div&gt;&#x27;;
         $(&#x27;#encounter-message&#x27;).className=`encounter-message ${tier}`; $(&#x27;#message-label&#x27;).textContent=tier===&#x27;priority&#x27;?&#x27;最優先艦&#x27;:label; $(&#x27;#message-name&#x27;).textContent=row.ship; $(&#x27;#message-note&#x27;).textContent=`${formatPercent(row.rate||0)}・${row.rank||&#x27;&#x27;}勝利`;
+        playEffect(tier,tier,compact);
         const dropImage=$(&#x27;#drop-content img&#x27;); if(dropImage) dropImage.addEventListener(&#x27;error&#x27;,()=&gt;{if(state.imageCache?.[row.ship]===image){state.imageCache[row.ship]=null;saveState();renderImageStatus(profile);}dropImage.replaceWith(Object.assign(document.createElement(&#x27;div&#x27;),{className:&#x27;ship-placeholder&#x27;,textContent:&#x27;艦&#x27;}));},{once:true});
         announce(`${row.ship}、${tierLabel(tier)}艦を獲得`);
         schedule(playNextDrop,reduceMotion?120:tier===&#x27;priority&#x27;?(compact?720:1080):tier===&#x27;rare&#x27;?980:330);
@@ -1321,6 +1380,7 @@ html&gt;body{padding:0}&lt;/style&gt;
       function escapeHtml(value) { return String(value??&#x27;&#x27;).replace(/[&amp;&lt;&gt;&#x27;&quot;]/g,char=&gt;({&#x27;&amp;&#x27;:&#x27;&amp;amp;&#x27;,&#x27;&lt;&#x27;:&#x27;&amp;lt;&#x27;,&#x27;&gt;&#x27;:&#x27;&amp;gt;&#x27;,&quot;&#x27;&quot;:&#x27;&amp;#39;&#x27;,&#x27;&quot;&#x27;:&#x27;&amp;quot;&#x27;}[char])); }
 
       $(&#x27;#profile-select&#x27;).addEventListener(&#x27;change&#x27;,event=&gt;{state.activeId=event.target.value;saveState();renderProfile();});
+      $(&#x27;#sound-toggle&#x27;).addEventListener(&#x27;click&#x27;,toggleSound);
       $(&#x27;#duplicate-profile&#x27;).addEventListener(&#x27;click&#x27;,duplicateProfile); $(&#x27;#delete-profile&#x27;).addEventListener(&#x27;click&#x27;,deleteProfile);
       $(&#x27;#rank-select&#x27;).addEventListener(&#x27;change&#x27;,()=&gt;{renderTargets();renderLogControls();renderDropTable();updateMetrics();renderSession();resetStage();});
       $(&#x27;#rounds&#x27;).addEventListener(&#x27;input&#x27;,updateMetrics); $(&#x27;#rounds&#x27;).addEventListener(&#x27;blur&#x27;,()=&gt;{readRounds(true);updateMetrics();}); $(&#x27;#goal-mode&#x27;).addEventListener(&#x27;change&#x27;,updateMetrics);
@@ -1330,7 +1390,7 @@ html&gt;body{padding:0}&lt;/style&gt;
       $(&#x27;#add-log&#x27;).addEventListener(&#x27;click&#x27;,addLog); $(&#x27;#clear-logs&#x27;).addEventListener(&#x27;click&#x27;,clearLogs);
       $(&#x27;#export-json&#x27;).addEventListener(&#x27;click&#x27;,exportJSON); $(&#x27;#import-json&#x27;).addEventListener(&#x27;click&#x27;,()=&gt;importJSON().catch(error=&gt;{$(&#x27;#storage-status&#x27;).textContent=error.message;announce(error.message);}));
       $(&#x27;#confirm-cancel&#x27;).addEventListener(&#x27;click&#x27;,()=&gt;finishConfirmation(false)); $(&#x27;#confirm-ok&#x27;).addEventListener(&#x27;click&#x27;,()=&gt;finishConfirmation(true)); $(&#x27;#confirm-dialog&#x27;).addEventListener(&#x27;cancel&#x27;,event=&gt;{event.preventDefault();finishConfirmation(false);});
-      renderProfile();
+      renderSoundControl(); renderProfile();
     })();
   &lt;/script&gt;
 &lt;/div&gt;

@@ -3,6 +3,9 @@
     #kcnav-drop-lab { color: var(--foreground); }
     #kcnav-drop-lab .app { display: grid; gap: 1rem; max-width: 736px; margin: 0 auto; }
     #kcnav-drop-lab .topbar { display: grid; gap: .35rem; }
+    #kcnav-drop-lab .topbar-row { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: .5rem; align-items: end; }
+    #kcnav-drop-lab .sound-toggle { min-width: 5.4rem; white-space: nowrap; }
+    #kcnav-drop-lab .sound-toggle.is-on { border-color: #88b9d3; background: color-mix(in srgb, #88b9d3 18%, var(--secondary)); }
     #kcnav-drop-lab .top-actions, #kcnav-drop-lab .controls, #kcnav-drop-lab .inline-actions { display: flex; flex-wrap: wrap; gap: .5rem; align-items: end; }
     #kcnav-drop-lab .preset-actions { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; }
     #kcnav-drop-lab .btn-danger { color: #ffd7d2; border: 1px solid #c65b55; background: #6f2724; font-weight: 600; }
@@ -143,7 +146,7 @@
   <main class="app">
     <h1 class="sr-only">ドロップシミュレーター</h1>
     <div class="topbar">
-      <label class="field" for="profile-select"><span class="sr-only">海域</span><select class="form-select" id="profile-select" aria-label="海域"></select></label>
+      <div class="topbar-row"><label class="field" for="profile-select"><span class="sr-only">海域</span><select class="form-select" id="profile-select" aria-label="海域"></select></label><button class="btn sound-toggle" id="sound-toggle" type="button" aria-pressed="false">音 OFF</button></div>
     </div>
 
     <div class="workspace"><section class="card drop-stage" id="drop-stage" aria-busy="false"><span class="stage-status" id="stage-status">判定待ち</span><span class="radar-sweep" aria-hidden="true"></span><div class="stage-effects" aria-hidden="true"><span class="effect-flash"></span><span class="effect-ring"></span><span class="effect-ring"></span><span class="effect-ring"></span><span class="spark"></span><span class="spark"></span><span class="spark"></span><span class="spark"></span><span class="spark"></span><span class="spark"></span><span class="spark"></span><span class="spark"></span><span class="spark"></span></div><span class="priority-curtain" aria-hidden="true"></span><div class="drop-card" id="drop-card"><div class="drop-content" id="drop-content"><span class="drop-label">DROP</span></div></div><div class="encounter-message" id="encounter-message"><span class="drop-label" id="message-label">索敵待機</span><span class="drop-name" id="message-name">周回を開始</span><span class="drop-note" id="message-note">KCNav実測データ</span></div></section></div>
@@ -256,6 +259,7 @@
       const $$ = selector => [...root.querySelectorAll(selector)];
       const STORAGE_KEY = 'kcnav-drop-lab-v1';
       const BACKUP_KEY = 'kcnav-drop-lab-before-restore';
+      const SOUND_KEY = 'kcnav-drop-lab-sound-v1';
       const SHIP_MASTER_URL = 'https://raw.githubusercontent.com/kcwiki/kancolle-data/master/db/ship.json';
       const SHIP_CARD_BASE = 'https://w01y.kancolle-server.com/kcs2/resources/ship/card/';
       const SHIP_ASSET_KEYS = [6657,5699,3371,8909,7719,6229,5449,8561,2987,5501,3127,9319,4365,9811,9927,2423,3439,1865,5925,4409,5509,1517,9695,9255,5325,3691,5519,6949,5607,9539,4133,7795,5465,2659,6381,6875,4019,9195,5645,2887,1213,1815,8671,3015,3147,2991,7977,7045,1619,7909,4451,6573,4545,8251,5983,2849,7249,7449,9477,5963,2711,9019,7375,2201,5631,4893,7653,3719,8819,5839,1853,9843,9119,7023,5681,2345,9873,6349,9315,3795,9737,4633,4173,7549,7171,6147,4723,5039,2723,7815,6201,5999,5339,4431,2911,4435,3611,4423,9517,3243];
@@ -317,6 +321,8 @@
       let timers = [];
       let isAnimating = false;
       let confirmResolver = null;
+      let soundEnabled = loadSoundPreference();
+      let audioContext = null;
       const reduceMotion = Boolean(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches);
 
       function clone(value) { return JSON.parse(JSON.stringify(value)); }
@@ -336,6 +342,56 @@
       function assetKey(id,type) { const text=`ship_${type}`; const sum=[...text].reduce((value,char)=>value+char.charCodeAt(0),0); return ((17*(id+7)*SHIP_ASSET_KEYS[(sum+id*text.length)%100])%8973)+1000; }
       function cardImageForId(id) { return `${SHIP_CARD_BASE}${String(id).padStart(4,'0')}_${assetKey(id,'card')}.png`; }
       function announce(message) { $('#app-status').textContent=''; requestAnimationFrame(()=>{$('#app-status').textContent=message;}); }
+      function loadSoundPreference() { try { return localStorage.getItem(SOUND_KEY)==='on'; } catch { return false; } }
+      function saveSoundPreference() { try { localStorage.setItem(SOUND_KEY,soundEnabled?'on':'off'); } catch {} }
+      function audioConstructor() { return window.AudioContext || window.webkitAudioContext || null; }
+      function ensureAudio() {
+        if(!soundEnabled)return null;
+        const AudioConstructor=audioConstructor();
+        if(!AudioConstructor)return null;
+        try {
+          if(!audioContext || audioContext.state==='closed')audioContext=new AudioConstructor();
+          if(audioContext.state==='suspended')audioContext.resume().catch(()=>{});
+          return audioContext;
+        } catch { return null; }
+      }
+      function tone(frequency,duration,{delay=0,gain=.018,type='sine',endFrequency=0,attack=.012}={}) {
+        const context=ensureAudio(); if(!context)return;
+        const start=context.currentTime+delay; const oscillator=context.createOscillator(); const volume=context.createGain();
+        oscillator.type=type; oscillator.frequency.setValueAtTime(Math.max(20,frequency),start);
+        if(endFrequency)oscillator.frequency.exponentialRampToValueAtTime(Math.max(20,endFrequency),start+duration);
+        volume.gain.setValueAtTime(.0001,start); volume.gain.exponentialRampToValueAtTime(Math.max(.0002,gain),start+Math.min(attack,duration/2)); volume.gain.exponentialRampToValueAtTime(.0001,start+duration);
+        oscillator.connect(volume).connect(context.destination); oscillator.start(start); oscillator.stop(start+duration+.025);
+      }
+      function noiseBurst(duration,{delay=0,gain=.009,frequency=1200,type='bandpass'}={}) {
+        const context=ensureAudio(); if(!context)return;
+        const length=Math.max(1,Math.floor(context.sampleRate*duration)); const buffer=context.createBuffer(1,length,context.sampleRate); const data=buffer.getChannelData(0);
+        for(let index=0;index<length;index++){const value=Math.sin((index+1)*12.9898+context.currentTime*78.233)*43758.5453;data[index]=(value-Math.floor(value))*2-1;}
+        const source=context.createBufferSource(); const filter=context.createBiquadFilter(); const volume=context.createGain(); const start=context.currentTime+delay;
+        source.buffer=buffer; filter.type=type; filter.frequency.setValueAtTime(frequency,start); filter.Q.value=.8;
+        volume.gain.setValueAtTime(.0001,start); volume.gain.exponentialRampToValueAtTime(gain,start+.008); volume.gain.exponentialRampToValueAtTime(.0001,start+duration);
+        source.connect(filter).connect(volume).connect(context.destination); source.start(start); source.stop(start+duration+.02);
+      }
+      function playEffect(kind,tier='normal',compact=false) {
+        if(!soundEnabled)return;
+        if(kind==='toggle'){tone(520,.09,{gain:.014,type:'triangle'});tone(780,.13,{delay:.055,gain:.012,type:'sine'});return;}
+        if(kind==='scan'){const base=tier==='priority'?150:tier==='rare'?470:340;tone(base,.11,{gain:tier==='priority'?.014:.009,type:'triangle',endFrequency:base*1.18});noiseBurst(.045,{gain:.0035,frequency:900});return;}
+        if(kind==='suspense'){tone(96,.24,{gain:.026,type:'sine',endFrequency:68});tone(142,.13,{delay:.12,gain:.012,type:'triangle',endFrequency:112});return;}
+        if(kind==='normal'){noiseBurst(.055,{gain:.006,frequency:1550});tone(430,.07,{gain:.007,type:'square',endFrequency:520});return;}
+        if(kind==='rare'){noiseBurst(.11,{gain:.008,frequency:1800});tone(659,.28,{gain:.018,type:'sine'});tone(880,.31,{delay:.07,gain:.016,type:'sine'});tone(1175,.34,{delay:.14,gain:.012,type:'triangle'});return;}
+        if(kind==='priority' && compact){tone(523,.2,{gain:.016,type:'triangle'});tone(784,.25,{delay:.045,gain:.014,type:'sine'});return;}
+        if(kind==='priority'){noiseBurst(.16,{gain:.013,frequency:760,type:'lowpass'});tone(110,.28,{gain:.024,type:'sine',endFrequency:82});tone(523,.42,{delay:.025,gain:.019,type:'triangle'});tone(659,.46,{delay:.06,gain:.016,type:'sine'});tone(784,.5,{delay:.1,gain:.014,type:'sine'});tone(1047,.54,{delay:.15,gain:.009,type:'sine'});}
+      }
+      function renderSoundControl() {
+        const button=$('#sound-toggle'); const supported=Boolean(audioConstructor());
+        button.disabled=!supported; button.classList.toggle('is-on',supported && soundEnabled); button.setAttribute('aria-pressed',String(supported && soundEnabled)); button.textContent=supported?(soundEnabled?'音 ON':'音 OFF'):'音 非対応';
+      }
+      async function toggleSound() {
+        if(!audioConstructor()){announce('このブラウザは効果音に対応していません');return;}
+        soundEnabled=!soundEnabled; saveSoundPreference();
+        if(soundEnabled){const context=ensureAudio();if(context?.state==='suspended')await context.resume().catch(()=>{});renderSoundControl();playEffect('toggle');announce('効果音をONにしました');}
+        else {if(audioContext?.state==='running')audioContext.suspend().catch(()=>{});renderSoundControl();announce('効果音をOFFにしました');}
+      }
       function askConfirmation(message,confirmLabel='実行') {
         const dialog=$('#confirm-dialog');
         $('#confirm-message').textContent=message;
@@ -471,6 +527,7 @@
         $('#message-label').textContent='CONTACT';
         $('#message-name').textContent='艦影を確認中';
         $('#message-note').textContent='索敵継続';
+        playEffect('scan',tier,compact);
         const scanDelay=reduceMotion?40:tier==='normal'?180:tier==='rare'?250:220;
         if(tier==='priority' && !compact && !reduceMotion){
           schedule(()=>{
@@ -482,6 +539,7 @@
             $('#message-label').textContent='UNKNOWN';
             $('#message-name').textContent='強い艦影を確認';
             $('#message-note').textContent='照合中';
+            playEffect('suspense');
           },scanDelay);
           schedule(()=>showDrop(row,false),scanDelay+240);
           return;
@@ -499,6 +557,7 @@
         $('#stage-status').textContent=tier==='priority'?(compact?'最優先艦・続報':'邂逅成功'):tier==='rare'?'稀有反応':'戦闘終了';
         $('#drop-content').innerHTML=image?`<img class="ship-image" src="${escapeHtml(image)}" alt="">`:'<div class="ship-placeholder" aria-hidden="true">艦</div>';
         $('#encounter-message').className=`encounter-message ${tier}`; $('#message-label').textContent=tier==='priority'?'最優先艦':label; $('#message-name').textContent=row.ship; $('#message-note').textContent=`${formatPercent(row.rate||0)}・${row.rank||''}勝利`;
+        playEffect(tier,tier,compact);
         const dropImage=$('#drop-content img'); if(dropImage) dropImage.addEventListener('error',()=>{if(state.imageCache?.[row.ship]===image){state.imageCache[row.ship]=null;saveState();renderImageStatus(profile);}dropImage.replaceWith(Object.assign(document.createElement('div'),{className:'ship-placeholder',textContent:'艦'}));},{once:true});
         announce(`${row.ship}、${tierLabel(tier)}艦を獲得`);
         schedule(playNextDrop,reduceMotion?120:tier==='priority'?(compact?720:1080):tier==='rare'?980:330);
@@ -571,6 +630,7 @@
       function escapeHtml(value) { return String(value??'').replace(/[&<>'"]/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char])); }
 
       $('#profile-select').addEventListener('change',event=>{state.activeId=event.target.value;saveState();renderProfile();});
+      $('#sound-toggle').addEventListener('click',toggleSound);
       $('#duplicate-profile').addEventListener('click',duplicateProfile); $('#delete-profile').addEventListener('click',deleteProfile);
       $('#rank-select').addEventListener('change',()=>{renderTargets();renderLogControls();renderDropTable();updateMetrics();renderSession();resetStage();});
       $('#rounds').addEventListener('input',updateMetrics); $('#rounds').addEventListener('blur',()=>{readRounds(true);updateMetrics();}); $('#goal-mode').addEventListener('change',updateMetrics);
@@ -580,7 +640,7 @@
       $('#add-log').addEventListener('click',addLog); $('#clear-logs').addEventListener('click',clearLogs);
       $('#export-json').addEventListener('click',exportJSON); $('#import-json').addEventListener('click',()=>importJSON().catch(error=>{$('#storage-status').textContent=error.message;announce(error.message);}));
       $('#confirm-cancel').addEventListener('click',()=>finishConfirmation(false)); $('#confirm-ok').addEventListener('click',()=>finishConfirmation(true)); $('#confirm-dialog').addEventListener('cancel',event=>{event.preventDefault();finishConfirmation(false);});
-      renderProfile();
+      renderSoundControl(); renderProfile();
     })();
   </script>
 </div>

@@ -17,6 +17,19 @@ test('public app starts without seeded battle logs and can simulate one run', as
     app.getByRole('heading', { name: 'ドロップシミュレーター' }),
   ).toBeVisible();
 
+  const soundToggle = app.locator('#sound-toggle');
+  await expect(soundToggle).toHaveAttribute('aria-pressed', 'false');
+  await soundToggle.click();
+  await expect(soundToggle).toHaveAttribute('aria-pressed', 'true');
+  await expect(soundToggle).toHaveText('音 ON');
+  await expect
+    .poll(() =>
+      app.locator('body').evaluate(() =>
+        localStorage.getItem('kcnav-drop-lab-sound-v1'),
+      ),
+    )
+    .toBe('on');
+
   await app.getByText('設定・記録', { exact: true }).click();
   await app.getByText('実戦記録', { exact: true }).click();
   await expect(app.getByText('実戦記録 0件', { exact: true })).toBeVisible();
