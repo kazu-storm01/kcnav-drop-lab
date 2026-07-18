@@ -43,6 +43,9 @@ test('public app starts without seeded battle logs and can simulate one run', as
     .toBe('seen');
   await page.reload();
   await expect(app.locator('#onboarding')).toBeHidden();
+  await expect(app.locator('#hero-statement')).toHaveText(
+    'Indianaほか3隻のどれかが90%出るまで、あと36周。',
+  );
   await app.getByText('表示・音', { exact: true }).click();
   const soundToggle = app.locator('#sound-toggle');
   await expect(soundToggle).toHaveAttribute('aria-pressed', 'false');
@@ -178,6 +181,7 @@ test('public app starts without seeded battle logs and can simulate one run', as
   await expect(app.locator('#luck-summary')).toContainText('Indiana：1/1周');
   await expect(app.locator('#luck-summary')).toContainText('上位3.7%');
   await expect(app.locator('#luck-summary')).toContainText('想定の範囲内');
+  await expect(app.locator('#hero-statement')).toContainText('引きは絶好調');
   await app.getByText('詳しい分析', { exact: true }).click();
   await expect(app.locator('#log-analysis-wrap')).toBeVisible();
   await expect(app.locator('#log-analysis')).toContainText('1/1');
