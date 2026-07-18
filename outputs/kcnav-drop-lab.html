@@ -753,8 +753,15 @@ html&gt;body{padding:0}&lt;/style&gt;
     #kcnav-drop-lab { color: var(--foreground); }
     #kcnav-drop-lab .app { display: grid; gap: 1rem; max-width: 736px; margin: 0 auto; }
     #kcnav-drop-lab .topbar { display: grid; gap: .35rem; }
-    #kcnav-drop-lab .topbar-row { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: .5rem; align-items: end; }
+    #kcnav-drop-lab .topbar-row { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; }
+    #kcnav-drop-lab .topbar-row .field { flex: 1 1 11rem; }
+    #kcnav-drop-lab .volume-field { flex: 0 0 auto; }
+    #kcnav-drop-lab #sound-volume { width: 5.2rem; }
     #kcnav-drop-lab .sound-toggle { min-width: 5.4rem; white-space: nowrap; }
+    #kcnav-drop-lab .record-buttons { display: flex; flex-wrap: wrap; gap: .5rem; }
+    #kcnav-drop-lab .record-buttons .btn { padding: .55rem .95rem; font-size: 1rem; }
+    #kcnav-drop-lab .record-head { display: flex; gap: .6rem; align-items: center; flex-wrap: wrap; }
+    #kcnav-drop-lab .record-feedback { display: flex; gap: .6rem; align-items: center; flex-wrap: wrap; }
     #kcnav-drop-lab .sound-toggle.is-on { border-color: #88b9d3; background: color-mix(in srgb, #88b9d3 18%, var(--secondary)); }
     #kcnav-drop-lab .top-actions, #kcnav-drop-lab .controls, #kcnav-drop-lab .inline-actions { display: flex; flex-wrap: wrap; gap: .5rem; align-items: end; }
     #kcnav-drop-lab .preset-actions { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; }
@@ -890,14 +897,14 @@ html&gt;body{padding:0}&lt;/style&gt;
     @keyframes kdl-ring { 0% { opacity: 0; transform: translate(-50%,-50%) scale(.25); } 24% { opacity: .9; } 100% { opacity: 0; transform: translate(-50%,-50%) scale(4.8); } }
     @keyframes kdl-spark { 0% { opacity: 0; transform: translate(-50%,-50%) rotate(45deg) scale(.2); } 20% { opacity: 1; } 72% { opacity: .8; } 100% { opacity: 0; transform: translate(calc(-50% + var(--tx)),calc(-50% + var(--ty))) rotate(225deg) scale(1.35); } }
     @media (max-width: 650px) { #kcnav-drop-lab .drop-stage { min-height: 330px; } #kcnav-drop-lab .form-grid, #kcnav-drop-lab .settings-grid { grid-template-columns: 1fr 1fr; } }
-    @media (max-width: 480px) { #kcnav-drop-lab .drop-stage { min-height: 310px; } #kcnav-drop-lab .drop-card { width: min(210px,68vw); min-height: 220px; } #kcnav-drop-lab .drop-card.priority { width: min(230px,74vw); min-height: 236px; } #kcnav-drop-lab .ship-image { width: 145px; height: 174px; } #kcnav-drop-lab .drop-card.priority .ship-image { width: 158px; height: 188px; } #kcnav-drop-lab .drop-content { padding-bottom: 3.7rem; } #kcnav-drop-lab .quick-controls { grid-template-columns: 1fr 1fr; } #kcnav-drop-lab #single-run, #kcnav-drop-lab #ten-run { grid-row: 1; } #kcnav-drop-lab .quick-controls .field { grid-column: 1; grid-row: 2; } #kcnav-drop-lab #batch-run { grid-column: 2; grid-row: 2; } #kcnav-drop-lab .form-grid, #kcnav-drop-lab .settings-grid, #kcnav-drop-lab .backup-grid { grid-template-columns: 1fr; } #kcnav-drop-lab .log-row { grid-template-columns: minmax(0,1fr) auto auto; } #kcnav-drop-lab .log-row .log-time { grid-column: 1 / -1; } #kcnav-drop-lab .encounter-message { grid-template-columns: 1fr; } #kcnav-drop-lab .encounter-message .drop-note { grid-column: 1; grid-row: auto; } }
+    @media (max-width: 480px) { #kcnav-drop-lab .drop-stage { min-height: 310px; } #kcnav-drop-lab .drop-card { width: min(210px,68vw); min-height: 220px; } #kcnav-drop-lab .drop-card.priority { width: min(230px,74vw); min-height: 236px; } #kcnav-drop-lab .ship-image { width: 145px; height: 174px; } #kcnav-drop-lab .drop-card.priority .ship-image { width: 158px; height: 188px; } #kcnav-drop-lab .drop-content { padding-bottom: 3.7rem; } #kcnav-drop-lab .quick-controls { grid-template-columns: 1fr 1fr; position: sticky; top: .6rem; z-index: 6; padding: .55rem; border: 1px solid var(--border); background: var(--card); box-shadow: 0 6px 18px color-mix(in srgb, var(--foreground) 18%, transparent); } #kcnav-drop-lab #single-run, #kcnav-drop-lab #ten-run { grid-row: 1; } #kcnav-drop-lab .quick-controls .field { grid-column: 1; grid-row: 2; } #kcnav-drop-lab #batch-run { grid-column: 2; grid-row: 2; } #kcnav-drop-lab .form-grid, #kcnav-drop-lab .settings-grid, #kcnav-drop-lab .backup-grid { grid-template-columns: 1fr; } #kcnav-drop-lab .log-row { grid-template-columns: minmax(0,1fr) auto auto; } #kcnav-drop-lab .log-row .log-time { grid-column: 1 / -1; } #kcnav-drop-lab .encounter-message { grid-template-columns: 1fr; } #kcnav-drop-lab .encounter-message .drop-note { grid-column: 1; grid-row: auto; } }
     @media (prefers-reduced-motion: reduce) { #kcnav-drop-lab .drop-card.drawing, #kcnav-drop-lab .drop-card.reveal, #kcnav-drop-lab .drop-stage, #kcnav-drop-lab .drop-stage::before, #kcnav-drop-lab .effect-flash, #kcnav-drop-lab .effect-ring, #kcnav-drop-lab .spark { animation: none !important; } #kcnav-drop-lab .priority-curtain { transition: none; } }
   &lt;/style&gt;
 
   &lt;main class=&quot;app&quot;&gt;
     &lt;h1 class=&quot;sr-only&quot;&gt;ドロップシミュレーター&lt;/h1&gt;
     &lt;div class=&quot;topbar&quot;&gt;
-      &lt;div class=&quot;topbar-row&quot;&gt;&lt;label class=&quot;field&quot; for=&quot;profile-select&quot;&gt;&lt;span class=&quot;sr-only&quot;&gt;海域&lt;/span&gt;&lt;select class=&quot;form-select&quot; id=&quot;profile-select&quot; aria-label=&quot;海域&quot;&gt;&lt;/select&gt;&lt;/label&gt;&lt;button class=&quot;btn sound-toggle&quot; id=&quot;sound-toggle&quot; type=&quot;button&quot; aria-pressed=&quot;false&quot;&gt;音 OFF&lt;/button&gt;&lt;/div&gt;
+      &lt;div class=&quot;topbar-row&quot;&gt;&lt;label class=&quot;field&quot; for=&quot;profile-select&quot;&gt;&lt;span class=&quot;sr-only&quot;&gt;海域&lt;/span&gt;&lt;select class=&quot;form-select&quot; id=&quot;profile-select&quot; aria-label=&quot;海域&quot;&gt;&lt;/select&gt;&lt;/label&gt;&lt;button class=&quot;btn sound-toggle&quot; id=&quot;fast-toggle&quot; type=&quot;button&quot; aria-pressed=&quot;false&quot; title=&quot;ドロップ演出を短縮する&quot;&gt;演出 標準&lt;/button&gt;&lt;button class=&quot;btn sound-toggle&quot; id=&quot;sound-toggle&quot; type=&quot;button&quot; aria-pressed=&quot;false&quot;&gt;音 OFF&lt;/button&gt;&lt;label class=&quot;field volume-field&quot; for=&quot;sound-volume&quot;&gt;&lt;span class=&quot;sr-only&quot;&gt;音量&lt;/span&gt;&lt;input type=&quot;range&quot; id=&quot;sound-volume&quot; min=&quot;0&quot; max=&quot;100&quot; step=&quot;5&quot; aria-label=&quot;音量&quot;&gt;&lt;/label&gt;&lt;/div&gt;
     &lt;/div&gt;
 
     &lt;div class=&quot;workspace&quot;&gt;&lt;section class=&quot;card drop-stage&quot; id=&quot;drop-stage&quot; aria-busy=&quot;false&quot;&gt;&lt;span class=&quot;stage-status&quot; id=&quot;stage-status&quot;&gt;判定待ち&lt;/span&gt;&lt;span class=&quot;radar-sweep&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;&lt;div class=&quot;stage-effects&quot; aria-hidden=&quot;true&quot;&gt;&lt;span class=&quot;effect-flash&quot;&gt;&lt;/span&gt;&lt;span class=&quot;effect-ring&quot;&gt;&lt;/span&gt;&lt;span class=&quot;effect-ring&quot;&gt;&lt;/span&gt;&lt;span class=&quot;effect-ring&quot;&gt;&lt;/span&gt;&lt;span class=&quot;spark&quot;&gt;&lt;/span&gt;&lt;span class=&quot;spark&quot;&gt;&lt;/span&gt;&lt;span class=&quot;spark&quot;&gt;&lt;/span&gt;&lt;span class=&quot;spark&quot;&gt;&lt;/span&gt;&lt;span class=&quot;spark&quot;&gt;&lt;/span&gt;&lt;span class=&quot;spark&quot;&gt;&lt;/span&gt;&lt;span class=&quot;spark&quot;&gt;&lt;/span&gt;&lt;span class=&quot;spark&quot;&gt;&lt;/span&gt;&lt;span class=&quot;spark&quot;&gt;&lt;/span&gt;&lt;/div&gt;&lt;span class=&quot;priority-curtain&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;&lt;div class=&quot;drop-card&quot; id=&quot;drop-card&quot;&gt;&lt;div class=&quot;drop-content&quot; id=&quot;drop-content&quot;&gt;&lt;span class=&quot;drop-label&quot;&gt;DROP&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;encounter-message&quot; id=&quot;encounter-message&quot;&gt;&lt;span class=&quot;drop-label&quot; id=&quot;message-label&quot;&gt;索敵待機&lt;/span&gt;&lt;span class=&quot;drop-name&quot; id=&quot;message-name&quot;&gt;周回を開始&lt;/span&gt;&lt;span class=&quot;drop-note&quot; id=&quot;message-note&quot;&gt;KCNav実測データ&lt;/span&gt;&lt;/div&gt;&lt;/section&gt;&lt;/div&gt;
@@ -908,6 +915,16 @@ html&gt;body{padding:0}&lt;/style&gt;
       &lt;label class=&quot;field&quot; for=&quot;rounds&quot;&gt;&lt;span class=&quot;sr-only&quot;&gt;指定周回数&lt;/span&gt;&lt;input class=&quot;form-control&quot; id=&quot;rounds&quot; type=&quot;number&quot; min=&quot;1&quot; max=&quot;9999&quot; value=&quot;20&quot; inputmode=&quot;numeric&quot; aria-label=&quot;指定周回数&quot;&gt;&lt;/label&gt;
       &lt;button class=&quot;btn btn-block&quot; id=&quot;batch-run&quot; type=&quot;button&quot;&gt;指定周回&lt;/button&gt;
     &lt;/div&gt;
+
+    &lt;details class=&quot;record-panel&quot; id=&quot;record-panel&quot;&gt;
+      &lt;summary&gt;実戦記録モード（ワンタップ記録）&lt;/summary&gt;
+      &lt;div class=&quot;detail-body&quot;&gt;
+        &lt;div class=&quot;record-head&quot;&gt;&lt;label class=&quot;field&quot; for=&quot;quick-rank&quot;&gt;&lt;span class=&quot;sr-only&quot;&gt;評価&lt;/span&gt;&lt;select class=&quot;form-select&quot; id=&quot;quick-rank&quot; aria-label=&quot;評価&quot;&gt;&lt;option&gt;S&lt;/option&gt;&lt;option&gt;A&lt;/option&gt;&lt;option&gt;B&lt;/option&gt;&lt;/select&gt;&lt;/label&gt;&lt;span class=&quot;muted&quot;&gt;タップした艦を現在時刻で記録します&lt;/span&gt;&lt;/div&gt;
+        &lt;div class=&quot;record-buttons&quot; id=&quot;quick-record-list&quot;&gt;&lt;/div&gt;
+        &lt;div class=&quot;inline-actions&quot;&gt;&lt;label class=&quot;field grow&quot; for=&quot;quick-other&quot;&gt;&lt;span class=&quot;sr-only&quot;&gt;その他の艦&lt;/span&gt;&lt;select class=&quot;form-select&quot; id=&quot;quick-other&quot; aria-label=&quot;その他の艦&quot;&gt;&lt;/select&gt;&lt;/label&gt;&lt;button class=&quot;btn&quot; id=&quot;quick-other-record&quot; type=&quot;button&quot;&gt;記録&lt;/button&gt;&lt;/div&gt;
+        &lt;div class=&quot;record-feedback&quot; id=&quot;record-feedback&quot; hidden&gt;&lt;span class=&quot;muted&quot; id=&quot;last-log-text&quot;&gt;&lt;/span&gt;&lt;button class=&quot;btn btn-ghost&quot; id=&quot;undo-log&quot; type=&quot;button&quot;&gt;直前の記録を取り消す&lt;/button&gt;&lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/details&gt;
 
     &lt;section class=&quot;results&quot; aria-labelledby=&quot;results-heading&quot;&gt;
       &lt;div class=&quot;results-head&quot;&gt;&lt;h2 class=&quot;section-heading&quot; id=&quot;results-heading&quot;&gt;レア成果&lt;/h2&gt;&lt;button class=&quot;btn btn-ghost&quot; id=&quot;clear-session&quot; type=&quot;button&quot; hidden&gt;消去&lt;/button&gt;&lt;/div&gt;
@@ -920,6 +937,7 @@ html&gt;body{padding:0}&lt;/style&gt;
       &lt;div class=&quot;detail-body&quot;&gt;
         &lt;div class=&quot;profile-meta&quot; id=&quot;profile-meta&quot;&gt;&lt;/div&gt;
         &lt;div class=&quot;save-status&quot; id=&quot;storage-status&quot;&gt;この端末に自動保存&lt;/div&gt;
+        &lt;div class=&quot;muted&quot;&gt;ショートカット: Space=1周 ／ 2=10周 ／ 3=指定周回 ／ M=音 ／ F=演出 ／ Esc=演出スキップ。ドロップ画面のタップは待機中=1周・演出中=スキップです。&lt;/div&gt;
         &lt;details&gt;
           &lt;summary&gt;抽選設定と確率&lt;/summary&gt;
           &lt;div class=&quot;detail-body&quot;&gt;
@@ -1021,6 +1039,8 @@ html&gt;body{padding:0}&lt;/style&gt;
       const STORAGE_KEY = &#x27;kcnav-drop-lab-v1&#x27;;
       const BACKUP_KEY = &#x27;kcnav-drop-lab-before-restore&#x27;;
       const SOUND_KEY = &#x27;kcnav-drop-lab-sound-v1&#x27;;
+      const FAST_KEY = &#x27;kcnav-drop-lab-fast-v1&#x27;;
+      const VOLUME_KEY = &#x27;kcnav-drop-lab-volume-v1&#x27;;
       const SHIP_MASTER_URL = &#x27;https://raw.githubusercontent.com/kcwiki/kancolle-data/master/db/ship.json&#x27;;
       const SHIP_CARD_BASE = &#x27;https://w01y.kancolle-server.com/kcs2/resources/ship/card/&#x27;;
       const SHIP_ASSET_KEYS = [6657,5699,3371,8909,7719,6229,5449,8561,2987,5501,3127,9319,4365,9811,9927,2423,3439,1865,5925,4409,5509,1517,9695,9255,5325,3691,5519,6949,5607,9539,4133,7795,5465,2659,6381,6875,4019,9195,5645,2887,1213,1815,8671,3015,3147,2991,7977,7045,1619,7909,4451,6573,4545,8251,5983,2849,7249,7449,9477,5963,2711,9019,7375,2201,5631,4893,7653,3719,8819,5839,1853,9843,9119,7023,5681,2345,9873,6349,9315,3795,9737,4633,4173,7549,7171,6147,4723,5039,2723,7815,6201,5999,5339,4431,2911,4435,3611,4423,9517,3243];
@@ -1083,6 +1103,8 @@ html&gt;body{padding:0}&lt;/style&gt;
       let isAnimating = false;
       let confirmResolver = null;
       let soundEnabled = loadSoundPreference();
+      let fastMode = loadFastPreference();
+      let soundVolume = loadVolumePreference();
       let audioContext = null;
       let audioBus = null;
       const reduceMotion = Boolean(window.matchMedia?.(&#x27;(prefers-reduced-motion: reduce)&#x27;).matches);
@@ -1106,11 +1128,17 @@ html&gt;body{padding:0}&lt;/style&gt;
       function announce(message) { $(&#x27;#app-status&#x27;).textContent=&#x27;&#x27;; requestAnimationFrame(()=&gt;{$(&#x27;#app-status&#x27;).textContent=message;}); }
       function loadSoundPreference() { try { return localStorage.getItem(SOUND_KEY)===&#x27;on&#x27;; } catch { return false; } }
       function saveSoundPreference() { try { localStorage.setItem(SOUND_KEY,soundEnabled?&#x27;on&#x27;:&#x27;off&#x27;); } catch {} }
+      function loadFastPreference() { try { return localStorage.getItem(FAST_KEY)===&#x27;on&#x27;; } catch { return false; } }
+      function saveFastPreference() { try { localStorage.setItem(FAST_KEY,fastMode?&#x27;on&#x27;:&#x27;off&#x27;); } catch {} }
+      function loadVolumePreference() { try { const raw=localStorage.getItem(VOLUME_KEY); const value=Number(raw); return raw!==null &amp;&amp; Number.isFinite(value) ? Math.min(100,Math.max(0,value)) : 60; } catch { return 60; } }
+      function saveVolumePreference() { try { localStorage.setItem(VOLUME_KEY,String(soundVolume)); } catch {} }
+      function volumeGain() { return 2.25*soundVolume/100; }
+      function applyVolume() { if(audioBus)audioBus.master.gain.value=volumeGain(); }
       function audioConstructor() { return window.AudioContext || window.webkitAudioContext || null; }
       function shapedNoise(index,seed=0) { const value=Math.sin((index+1+seed)*12.9898+seed*78.233)*43758.5453; return (value-Math.floor(value))*2-1; }
       function createAudioBus(context) {
         const master=context.createGain(); const compressor=context.createDynamicsCompressor(); const convolver=context.createConvolver(); const wet=context.createGain();
-        master.gain.value=1.35; compressor.threshold.value=-18; compressor.knee.value=14; compressor.ratio.value=5; compressor.attack.value=.004; compressor.release.value=.24; wet.gain.value=.26;
+        master.gain.value=volumeGain(); compressor.threshold.value=-18; compressor.knee.value=14; compressor.ratio.value=5; compressor.attack.value=.004; compressor.release.value=.24; wet.gain.value=.26;
         const impulseLength=Math.floor(context.sampleRate*.82); const impulse=context.createBuffer(2,impulseLength,context.sampleRate);
         for(let channel=0;channel&lt;2;channel++){const data=impulse.getChannelData(channel);for(let index=0;index&lt;impulseLength;index++){const decay=(1-index/impulseLength)**2.4;data[index]=shapedNoise(index,channel*997)*decay;}}
         convolver.buffer=impulse; master.connect(compressor); convolver.connect(wet).connect(compressor); compressor.connect(context.destination);
@@ -1177,6 +1205,15 @@ html&gt;body{padding:0}&lt;/style&gt;
       function renderSoundControl() {
         const button=$(&#x27;#sound-toggle&#x27;); const supported=Boolean(audioConstructor());
         button.disabled=!supported; button.classList.toggle(&#x27;is-on&#x27;,supported &amp;&amp; soundEnabled); button.setAttribute(&#x27;aria-pressed&#x27;,String(supported &amp;&amp; soundEnabled)); button.textContent=supported?(soundEnabled?&#x27;音 ON&#x27;:&#x27;音 OFF&#x27;):&#x27;音 非対応&#x27;;
+        $(&#x27;#sound-volume&#x27;).disabled=!supported; $(&#x27;#sound-volume&#x27;).value=soundVolume;
+      }
+      function renderFastControl() {
+        const button=$(&#x27;#fast-toggle&#x27;);
+        button.classList.toggle(&#x27;is-on&#x27;,fastMode); button.setAttribute(&#x27;aria-pressed&#x27;,String(fastMode)); button.textContent=fastMode?&#x27;演出 短縮&#x27;:&#x27;演出 標準&#x27;;
+      }
+      function toggleFast() {
+        fastMode=!fastMode; saveFastPreference(); renderFastControl();
+        announce(fastMode?&#x27;ドロップ演出を短縮します&#x27;:&#x27;ドロップ演出を標準に戻しました&#x27;);
       }
       async function toggleSound() {
         if(!audioConstructor()){announce(&#x27;このブラウザは効果音に対応していません&#x27;);return;}
@@ -1285,6 +1322,31 @@ html&gt;body{padding:0}&lt;/style&gt;
         $(&#x27;#log-list&#x27;).innerHTML = logs.length ? logs.slice(-50).reverse().map(log=&gt;`&lt;div class=&quot;log-row&quot;&gt;&lt;span class=&quot;log-time muted&quot;&gt;${escapeHtml(log.time)}&lt;/span&gt;&lt;span class=&quot;chip ${tierOf(profile,log.ship)}&quot;&gt;${escapeHtml(log.ship)}&lt;/span&gt;&lt;span&gt;${escapeHtml(log.rank)}&lt;/span&gt;&lt;button class=&quot;btn btn-ghost&quot; type=&quot;button&quot; data-delete-log=&quot;${escapeHtml(log.id)}&quot;&gt;削除&lt;/button&gt;&lt;/div&gt;`).join(&#x27;&#x27;)+(logs.length&gt;50?&#x27;&lt;span class=&quot;muted&quot;&gt;最新50件を表示しています&lt;/span&gt;&#x27;:&#x27;&#x27;) : &#x27;&lt;span class=&quot;empty&quot;&gt;記録はありません&lt;/span&gt;&#x27;;
         $$(&#x27;[data-delete-log]&#x27;).forEach(button=&gt;button.addEventListener(&#x27;click&#x27;,()=&gt;{profile.logs=logs.filter(log=&gt;log.id!==button.dataset.deleteLog);saveState();renderLogs();}));
         renderLogAnalysis(profile,logs);
+        renderQuickRecord(profile);
+      }
+      function renderQuickRecord(profile=activeProfile()) {
+        const ships=unionShips(profile);
+        const hunting=profile.targets.filter(ship=&gt;!profile.obtained.includes(ship));
+        const featured=[...hunting,&#x27;ドロップなし&#x27;];
+        $(&#x27;#quick-record-list&#x27;).innerHTML=ships.length?featured.map(ship=&gt;`&lt;button class=&quot;btn${ship===&#x27;ドロップなし&#x27;?&#x27;&#x27;:&#x27; btn-primary&#x27;}&quot; type=&quot;button&quot; data-quick-record=&quot;${escapeHtml(ship)}&quot;&gt;${escapeHtml(ship)}&lt;/button&gt;`).join(&#x27;&#x27;):&#x27;&lt;span class=&quot;empty&quot;&gt;先にKCNavからドロップ表を登録してください&lt;/span&gt;&#x27;;
+        $$(&#x27;[data-quick-record]&#x27;).forEach(button=&gt;button.addEventListener(&#x27;click&#x27;,()=&gt;recordLog(button.dataset.quickRecord,$(&#x27;#quick-rank&#x27;).value)));
+        const others=ships.filter(ship=&gt;!hunting.includes(ship));
+        $(&#x27;#quick-other&#x27;).innerHTML=others.map(ship=&gt;`&lt;option&gt;${escapeHtml(ship)}&lt;/option&gt;`).join(&#x27;&#x27;);
+        $(&#x27;#quick-other-record&#x27;).disabled=!others.length;
+        const logs=profile.logs||[]; const last=logs[logs.length-1];
+        $(&#x27;#record-feedback&#x27;).hidden=!last;
+        if(last)$(&#x27;#last-log-text&#x27;).textContent=`直近: ${last.ship}（${last.rank}） ${last.time}`;
+      }
+      function recordLog(ship,rank) {
+        if(!ship)return;
+        const profile=activeProfile(); profile.logs=profile.logs||[];
+        profile.logs.push({id:uid(&#x27;log&#x27;),ship,rank,time:new Date().toLocaleString(&#x27;ja-JP&#x27;)});
+        saveState(); renderLogs(); announce(`${ship}、${rank}勝利として記録しました`);
+      }
+      function undoLastLog() {
+        const profile=activeProfile(); const logs=profile.logs||[];
+        const last=logs.pop(); if(!last)return;
+        saveState(); renderLogs(); announce(`${last.ship}の記録を取り消しました`);
       }
       function renderLogAnalysis(profile,logs) {
         const wrap=$(&#x27;#log-analysis-wrap&#x27;);
@@ -1390,8 +1452,9 @@ html&gt;body{padding:0}&lt;/style&gt;
         $(&#x27;#message-name&#x27;).textContent=&#x27;艦影を確認中&#x27;;
         $(&#x27;#message-note&#x27;).textContent=&#x27;索敵継続&#x27;;
         playEffect(&#x27;scan&#x27;,tier,compact);
-        const scanDelay=reduceMotion?40:tier===&#x27;normal&#x27;?180:tier===&#x27;rare&#x27;?250:220;
-        if(tier===&#x27;priority&#x27; &amp;&amp; !compact &amp;&amp; !reduceMotion){
+        const quick=reduceMotion||fastMode;
+        const scanDelay=quick?40:tier===&#x27;normal&#x27;?180:tier===&#x27;rare&#x27;?250:220;
+        if(tier===&#x27;priority&#x27; &amp;&amp; !compact &amp;&amp; !quick){
           schedule(()=&gt;{
             stage.classList.remove(&#x27;scanning&#x27;);
             stage.classList.add(&#x27;priority-suspense&#x27;);
@@ -1422,7 +1485,14 @@ html&gt;body{padding:0}&lt;/style&gt;
         playEffect(tier,tier,compact);
         const dropImage=$(&#x27;#drop-content img&#x27;); if(dropImage) dropImage.addEventListener(&#x27;error&#x27;,()=&gt;{if(navigator.onLine!==false &amp;&amp; state.imageCache?.[row.ship]===image){state.imageCache[row.ship]=null;saveState();renderImageStatus(profile);}dropImage.replaceWith(Object.assign(document.createElement(&#x27;div&#x27;),{className:&#x27;ship-placeholder&#x27;,textContent:&#x27;艦&#x27;}));},{once:true});
         announce(`${row.ship}、${tierLabel(tier)}艦を獲得`);
-        schedule(playNextDrop,reduceMotion?120:tier===&#x27;priority&#x27;?(compact?720:1080):tier===&#x27;rare&#x27;?980:330);
+        schedule(playNextDrop,(reduceMotion||fastMode)?120:tier===&#x27;priority&#x27;?(compact?720:1080):tier===&#x27;rare&#x27;?980:330);
+      }
+      function skipAnimation() {
+        if(!isAnimating || !pendingResults.length)return;
+        clearTimers(); animationQueue=[];
+        const last=pendingResults[pendingResults.length-1];
+        showDrop(last,tierOf(activeProfile(),last.ship)===&#x27;priority&#x27;);
+        clearTimers(); finishRun();
       }
       function finishRun() { clearTimers(); const session=currentSession(); session.push(...pendingResults); const total=pendingResults.length; const priority=pendingResults.filter(row=&gt;tierOf(activeProfile(),row.ship)===&#x27;priority&#x27;).length; const rare=pendingResults.filter(row=&gt;tierOf(activeProfile(),row.ship)===&#x27;rare&#x27;).length; pendingResults=[]; animationQueue=[]; setBusy(false); renderSession(); announce(`${total}周の抽選完了。最優先${priority}隻、レア${rare}隻`); }
       function resetStage() { clearTimers(); pendingResults=[]; animationQueue=[]; setBusy(false); $(&#x27;#drop-stage&#x27;).classList.remove(&#x27;reveal-rare&#x27;,&#x27;reveal-priority&#x27;,&#x27;scanning&#x27;,&#x27;priority-suspense&#x27;,&#x27;compact-priority&#x27;); $(&#x27;#drop-card&#x27;).className=&#x27;drop-card&#x27;; $(&#x27;#stage-status&#x27;).textContent=&#x27;判定待ち&#x27;; $(&#x27;#drop-content&#x27;).innerHTML=&#x27;&lt;span class=&quot;drop-label&quot;&gt;DROP&lt;/span&gt;&#x27;; $(&#x27;#encounter-message&#x27;).className=&#x27;encounter-message&#x27;; $(&#x27;#message-label&#x27;).textContent=&#x27;索敵待機&#x27;; $(&#x27;#message-name&#x27;).textContent=&#x27;周回を開始&#x27;; $(&#x27;#message-note&#x27;).textContent=&#x27;KCNav実測データ&#x27;; }
@@ -1496,7 +1566,7 @@ html&gt;body{padding:0}&lt;/style&gt;
       }
       function duplicateProfile() { const source=activeProfile(); const copy=clone(source); copy.id=uid(&#x27;profile&#x27;); copy.title=`${source.title} コピー`; copy.logs=[]; state.profiles.push(copy); state.activeId=copy.id; saveState(); renderProfile(); announce(`${copy.title}を作成しました`); }
       async function deleteProfile() { const profile=activeProfile(); const last=state.profiles.length===1; const message=last?`最後のプリセット「${profile.title}」を削除します。実戦ログ ${profile.logs?.length||0}件も削除され、未設定プリセットに置き換わります。`:`プリセット「${profile.title}」を削除します。実戦ログ ${profile.logs?.length||0}件も削除されます。`; if(!await askConfirmation(message,&#x27;プリセットを削除&#x27;))return; const index=state.profiles.findIndex(item=&gt;item.id===profile.id); Object.keys(sessions).filter(key=&gt;key.startsWith(`${profile.id}:`)).forEach(key=&gt;delete sessions[key]); if(last){const empty=createEmptyProfile();state.profiles=[empty];state.activeId=empty.id;}else{state.profiles.splice(index,1);state.activeId=state.profiles[Math.max(0,index-1)].id;} saveState();renderProfile();announce(`${profile.title}を削除しました`); }
-      function addLog() { const profile=activeProfile(); const ship=$(&#x27;#log-ship&#x27;).value; const rank=$(&#x27;#log-rank&#x27;).value; profile.logs=profile.logs||[]; profile.logs.push({id:uid(&#x27;log&#x27;),ship,rank,time:new Date().toLocaleString(&#x27;ja-JP&#x27;)}); saveState(); renderLogs(); announce(`${ship}、${rank}勝利として記録しました`); }
+      function addLog() { recordLog($(&#x27;#log-ship&#x27;).value,$(&#x27;#log-rank&#x27;).value); }
       async function clearLogs() { const profile=activeProfile(); const count=profile.logs?.length||0; if(!count)return; if(!await askConfirmation(`海域「${profile.title}」の実戦ログ ${count}件をすべて消去します。`,&#x27;ログを消去&#x27;))return; profile.logs=[]; saveState(); renderLogs(); announce(&#x27;実戦ログを消去しました&#x27;); }
       async function clearCurrentSession() { const session=currentSession(); if(!session.length){announce(&#x27;消去するシミュレーション結果はありません&#x27;);return;} if(!await askConfirmation(`現在のシミュレーション結果 ${session.length}周分を消去します。`,&#x27;結果を消去&#x27;))return; sessions[sessionKey()]=[]; renderSession(); resetStage(); announce(&#x27;現在のシミュレーション結果を消去しました&#x27;); }
       function exportJSON() { const blob=new Blob([JSON.stringify(state,null,2)],{type:&#x27;application/json&#x27;}); const url=URL.createObjectURL(blob); const link=document.createElement(&#x27;a&#x27;); link.href=url; link.download=`kcnav-drop-lab-${new Date().toISOString().slice(0,10)}.json`; link.click(); setTimeout(()=&gt;URL.revokeObjectURL(url),1000); }
@@ -1505,6 +1575,25 @@ html&gt;body{padding:0}&lt;/style&gt;
 
       $(&#x27;#profile-select&#x27;).addEventListener(&#x27;change&#x27;,event=&gt;{state.activeId=event.target.value;saveState();renderProfile();});
       $(&#x27;#sound-toggle&#x27;).addEventListener(&#x27;click&#x27;,toggleSound);
+      $(&#x27;#fast-toggle&#x27;).addEventListener(&#x27;click&#x27;,toggleFast);
+      $(&#x27;#sound-volume&#x27;).addEventListener(&#x27;input&#x27;,event=&gt;{soundVolume=Math.min(100,Math.max(0,Number(event.target.value)||0));applyVolume();});
+      $(&#x27;#sound-volume&#x27;).addEventListener(&#x27;change&#x27;,()=&gt;{saveVolumePreference();playEffect(&#x27;toggle&#x27;);});
+      $(&#x27;#undo-log&#x27;).addEventListener(&#x27;click&#x27;,undoLastLog);
+      $(&#x27;#quick-other-record&#x27;).addEventListener(&#x27;click&#x27;,()=&gt;recordLog($(&#x27;#quick-other&#x27;).value,$(&#x27;#quick-rank&#x27;).value));
+      $(&#x27;#drop-stage&#x27;).addEventListener(&#x27;click&#x27;,()=&gt;{ if(isAnimating)skipAnimation(); else if(!$(&#x27;#single-run&#x27;).disabled)run(1); });
+      document.addEventListener(&#x27;keydown&#x27;,event=&gt;{
+        if(event.altKey||event.ctrlKey||event.metaKey)return;
+        const target=event.target;
+        if(target &amp;&amp; (/^(input|select|textarea|button|summary|a)$/i.test(target.tagName) || target.isContentEditable))return;
+        if($(&#x27;#confirm-dialog&#x27;).open)return;
+        const key=event.key;
+        if(key===&#x27; &#x27;||key===&#x27;1&#x27;){ event.preventDefault(); if(isAnimating)skipAnimation(); else $(&#x27;#single-run&#x27;).click(); }
+        else if(key===&#x27;2&#x27;){ event.preventDefault(); $(&#x27;#ten-run&#x27;).click(); }
+        else if(key===&#x27;3&#x27;){ event.preventDefault(); $(&#x27;#batch-run&#x27;).click(); }
+        else if(key===&#x27;m&#x27;||key===&#x27;M&#x27;){ toggleSound(); }
+        else if(key===&#x27;f&#x27;||key===&#x27;F&#x27;){ toggleFast(); }
+        else if(key===&#x27;Escape&#x27;){ skipAnimation(); }
+      });
       $(&#x27;#duplicate-profile&#x27;).addEventListener(&#x27;click&#x27;,duplicateProfile); $(&#x27;#delete-profile&#x27;).addEventListener(&#x27;click&#x27;,deleteProfile);
       $(&#x27;#rank-select&#x27;).addEventListener(&#x27;change&#x27;,()=&gt;{renderTargets();renderLogControls();renderDropTable();updateMetrics();renderSession();resetStage();});
       $(&#x27;#rounds&#x27;).addEventListener(&#x27;input&#x27;,updateMetrics); $(&#x27;#rounds&#x27;).addEventListener(&#x27;blur&#x27;,()=&gt;{readRounds(true);updateMetrics();}); $(&#x27;#goal-mode&#x27;).addEventListener(&#x27;change&#x27;,updateMetrics);
@@ -1515,7 +1604,7 @@ html&gt;body{padding:0}&lt;/style&gt;
       $(&#x27;#add-log&#x27;).addEventListener(&#x27;click&#x27;,addLog); $(&#x27;#clear-logs&#x27;).addEventListener(&#x27;click&#x27;,clearLogs);
       $(&#x27;#export-json&#x27;).addEventListener(&#x27;click&#x27;,exportJSON); $(&#x27;#import-json&#x27;).addEventListener(&#x27;click&#x27;,()=&gt;importJSON().catch(error=&gt;{$(&#x27;#storage-status&#x27;).textContent=error.message;announce(error.message);}));
       $(&#x27;#confirm-cancel&#x27;).addEventListener(&#x27;click&#x27;,()=&gt;finishConfirmation(false)); $(&#x27;#confirm-ok&#x27;).addEventListener(&#x27;click&#x27;,()=&gt;finishConfirmation(true)); $(&#x27;#confirm-dialog&#x27;).addEventListener(&#x27;cancel&#x27;,event=&gt;{event.preventDefault();finishConfirmation(false);});
-      renderSoundControl(); renderProfile();
+      renderSoundControl(); renderFastControl(); renderProfile();
     })();
   &lt;/script&gt;
 &lt;/div&gt;

@@ -37,6 +37,33 @@ test('public app starts without seeded battle logs and can simulate one run', as
   await soundToggle.click();
   await expect(soundToggle).toHaveAttribute('aria-pressed', 'true');
   await expect(soundToggle).toHaveText('音 ON');
+
+  const fastToggle = app.locator('#fast-toggle');
+  await expect(fastToggle).toHaveText('演出 標準');
+  await fastToggle.click();
+  await expect(fastToggle).toHaveText('演出 短縮');
+  await expect
+    .poll(() =>
+      app.locator('body').evaluate(() =>
+        localStorage.getItem('kcnav-drop-lab-fast-v1'),
+      ),
+    )
+    .toBe('on');
+  await fastToggle.click();
+  await expect(fastToggle).toHaveText('演出 標準');
+
+  await app.locator('#sound-volume').evaluate((input) => {
+    input.value = '80';
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+    input.dispatchEvent(new Event('change', { bubbles: true }));
+  });
+  await expect
+    .poll(() =>
+      app.locator('body').evaluate(() =>
+        localStorage.getItem('kcnav-drop-lab-volume-v1'),
+      ),
+    )
+    .toBe('80');
   await expect
     .poll(() =>
       app.locator('body').evaluate(() =>
@@ -80,8 +107,28 @@ test('public app starts without seeded battle logs and can simulate one run', as
   await expect(app.locator('#log-analysis')).toContainText('上位3.7%');
   await expect(app.locator('#log-analysis')).toContainText('下位97.9%');
 
+  await app
+    .getByText('実戦記録モード（ワンタップ記録）', { exact: true })
+    .click();
+  await expect(app.locator('[data-quick-record="Indiana"]')).toBeVisible();
+  await app.locator('[data-quick-record="ドロップなし"]').click();
+  await expect(app.locator('#last-log-text')).toContainText('ドロップなし');
+  await expect(app.locator('#log-summary')).toContainText('実戦記録 2件');
+  await expect(app.locator('#log-analysis')).toContainText('ドロップなし');
+  await app.locator('#undo-log').click();
+  await expect(app.locator('#log-summary')).toContainText('実戦記録 1件');
+
   await app.getByRole('button', { name: '1周', exact: true }).click();
   await expect(app.getByText(/今回 1周・/)).toBeVisible();
+
+  await app.locator('body').evaluate(() => {
+    if (document.activeElement instanceof HTMLElement)
+      document.activeElement.blur();
+    document.dispatchEvent(
+      new KeyboardEvent('keydown', { key: ' ', bubbles: true }),
+    );
+  });
+  await expect(app.getByText(/今回 2周・/)).toBeVisible();
 
   expect(browserErrors).toEqual([]);
 });
