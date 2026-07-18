@@ -927,6 +927,8 @@ html&gt;body{padding:0}&lt;/style&gt;
               &lt;label class=&quot;field&quot; for=&quot;goal-mode&quot;&gt;&lt;span&gt;目標条件&lt;/span&gt;&lt;select class=&quot;form-select&quot; id=&quot;goal-mode&quot;&gt;&lt;option value=&quot;any&quot;&gt;いずれか1隻&lt;/option&gt;&lt;option value=&quot;all&quot;&gt;すべて1隻以上&lt;/option&gt;&lt;/select&gt;&lt;/label&gt;
               &lt;div class=&quot;metric&quot;&gt;&lt;span class=&quot;muted&quot;&gt;目標達成確率&lt;/span&gt;&lt;strong id=&quot;goal-probability&quot;&gt;—&lt;/strong&gt;&lt;/div&gt;
               &lt;div class=&quot;metric&quot;&gt;&lt;span class=&quot;muted&quot;&gt;期待される目標艦数&lt;/span&gt;&lt;strong id=&quot;expected-targets&quot;&gt;—&lt;/strong&gt;&lt;/div&gt;
+              &lt;div class=&quot;metric&quot;&gt;&lt;span class=&quot;muted&quot;&gt;50%達成の目安&lt;/span&gt;&lt;strong id=&quot;rounds-half&quot;&gt;—&lt;/strong&gt;&lt;/div&gt;
+              &lt;div class=&quot;metric&quot;&gt;&lt;span class=&quot;muted&quot;&gt;90%達成の目安&lt;/span&gt;&lt;strong id=&quot;rounds-ninety&quot;&gt;—&lt;/strong&gt;&lt;/div&gt;
             &lt;/div&gt;
             &lt;div class=&quot;quick-status&quot; id=&quot;quick-status&quot;&gt;&lt;/div&gt;
             &lt;div class=&quot;target-box&quot;&gt;&lt;span&gt;目標艦&lt;/span&gt;&lt;div class=&quot;target-list&quot; id=&quot;target-list&quot;&gt;&lt;/div&gt;&lt;/div&gt;
@@ -947,7 +949,9 @@ html&gt;body{padding:0}&lt;/style&gt;
               &lt;button class=&quot;btn btn-primary&quot; id=&quot;add-log&quot; type=&quot;button&quot;&gt;現在時刻で記録&lt;/button&gt;
               &lt;button class=&quot;btn btn-ghost&quot; id=&quot;clear-logs&quot; type=&quot;button&quot;&gt;実戦ログを全消去&lt;/button&gt;
             &lt;/div&gt;
-            &lt;p class=&quot;muted&quot; id=&quot;log-summary&quot;&gt;&lt;/p&gt;&lt;div class=&quot;log-list&quot; id=&quot;log-list&quot;&gt;&lt;/div&gt;
+            &lt;p class=&quot;muted&quot; id=&quot;log-summary&quot;&gt;&lt;/p&gt;
+            &lt;div class=&quot;table-wrap&quot; id=&quot;log-analysis-wrap&quot; hidden&gt;&lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;艦&lt;/th&gt;&lt;th&gt;評価&lt;/th&gt;&lt;th&gt;実戦&lt;/th&gt;&lt;th&gt;実戦率&lt;/th&gt;&lt;th&gt;KCNav率&lt;/th&gt;&lt;th&gt;傾向&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody id=&quot;log-analysis&quot;&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;span class=&quot;muted&quot;&gt;実戦率は同じ評価の記録数を母数に計算します。&lt;/span&gt;&lt;/div&gt;
+            &lt;div class=&quot;log-list&quot; id=&quot;log-list&quot;&gt;&lt;/div&gt;
           &lt;/div&gt;
         &lt;/details&gt;
 
@@ -1265,20 +1269,53 @@ html&gt;body{padding:0}&lt;/style&gt;
         $(&#x27;#log-summary&#x27;).textContent = `実戦記録 ${logs.length}件　${Object.entries(rankCounts).map(([rank,count])=&gt;`${rank} ${count}`).join(&#x27; / &#x27;)}`;
         $(&#x27;#log-list&#x27;).innerHTML = logs.length ? logs.slice(-50).reverse().map(log=&gt;`&lt;div class=&quot;log-row&quot;&gt;&lt;span class=&quot;log-time muted&quot;&gt;${escapeHtml(log.time)}&lt;/span&gt;&lt;span class=&quot;chip ${tierOf(profile,log.ship)}&quot;&gt;${escapeHtml(log.ship)}&lt;/span&gt;&lt;span&gt;${escapeHtml(log.rank)}&lt;/span&gt;&lt;button class=&quot;btn btn-ghost&quot; type=&quot;button&quot; data-delete-log=&quot;${escapeHtml(log.id)}&quot;&gt;削除&lt;/button&gt;&lt;/div&gt;`).join(&#x27;&#x27;)+(logs.length&gt;50?&#x27;&lt;span class=&quot;muted&quot;&gt;最新50件を表示しています&lt;/span&gt;&#x27;:&#x27;&#x27;) : &#x27;&lt;span class=&quot;empty&quot;&gt;記録はありません&lt;/span&gt;&#x27;;
         $$(&#x27;[data-delete-log]&#x27;).forEach(button=&gt;button.addEventListener(&#x27;click&#x27;,()=&gt;{profile.logs=logs.filter(log=&gt;log.id!==button.dataset.deleteLog);saveState();renderLogs();}));
+        renderLogAnalysis(profile,logs);
+      }
+      function renderLogAnalysis(profile,logs) {
+        const wrap=$(&#x27;#log-analysis-wrap&#x27;);
+        if(!logs.length){wrap.hidden=true;$(&#x27;#log-analysis&#x27;).innerHTML=&#x27;&#x27;;return;}
+        const rankOrder=[&#x27;S&#x27;,&#x27;A&#x27;,&#x27;B&#x27;,&#x27;C&#x27;];
+        const rankTotals={}; logs.forEach(log=&gt;rankTotals[log.rank]=(rankTotals[log.rank]||0)+1);
+        const groups={}; logs.forEach(log=&gt;{(groups[log.rank]??={})[log.ship]=(groups[log.rank][log.ship]||0)+1;});
+        const cells=[];
+        Object.keys(groups).sort((a,b)=&gt;rankOrder.indexOf(a)-rankOrder.indexOf(b)).forEach(rank=&gt;{
+          const total=rankTotals[rank];
+          Object.entries(groups[rank]).sort((a,b)=&gt;b[1]-a[1]||a[0].localeCompare(b[0],&#x27;ja&#x27;)).forEach(([ship,count])=&gt;{
+            const theory=profile.drops.find(row=&gt;row.rank===rank &amp;&amp; row.ship===ship)?.rate;
+            const actual=count/total;
+            const trend=theory===undefined?&#x27;&lt;span class=&quot;muted&quot;&gt;表外&lt;/span&gt;&#x27;:`${actual&gt;=theory?&#x27;上振れ +&#x27;:&#x27;下振れ −&#x27;}${(Math.abs(actual-theory)*100).toFixed(2)}pt`;
+            cells.push(`&lt;tr&gt;&lt;td&gt;${escapeHtml(ship)}&lt;/td&gt;&lt;td&gt;${escapeHtml(rank)}&lt;/td&gt;&lt;td&gt;${count}/${total}&lt;/td&gt;&lt;td&gt;${formatPercent(actual)}&lt;/td&gt;&lt;td&gt;${theory===undefined?&#x27;—&#x27;:formatPercent(theory)}&lt;/td&gt;&lt;td&gt;${trend}&lt;/td&gt;&lt;/tr&gt;`);
+          });
+        });
+        $(&#x27;#log-analysis&#x27;).innerHTML=cells.join(&#x27;&#x27;);
+        wrap.hidden=false;
       }
       function updateMetrics() {
         const profile=activeProfile(); const rows=tableFor(profile,currentRank()); const rounds=readRounds(false); const targets=activeTargets(profile,currentRank()); const probabilities=targets.map(ship=&gt;rows.find(row=&gt;row.ship===ship).rate); const sum=probabilities.reduce((a,b)=&gt;a+b,0); const mode=$(&#x27;#goal-mode&#x27;).value;
+        const tooManyForAll=mode===&#x27;all&#x27; &amp;&amp; targets.length&gt;12;
+        const canEstimate=Boolean(targets.length) &amp;&amp; !tooManyForAll;
+        $(&#x27;#rounds-half&#x27;).textContent=canEstimate?formatRounds(roundsForChance(probabilities,sum,mode,.5)):&#x27;—&#x27;;
+        $(&#x27;#rounds-ninety&#x27;).textContent=canEstimate?formatRounds(roundsForChance(probabilities,sum,mode,.9)):&#x27;—&#x27;;
         $(&#x27;#batch-run&#x27;).disabled=isAnimating || !rows.length || rounds===null;
         if(rounds===null){$(&#x27;#goal-probability&#x27;).textContent=&#x27;周回数を確認&#x27;;$(&#x27;#expected-targets&#x27;).textContent=&#x27;—&#x27;;$(&#x27;#quick-status&#x27;).textContent=&#x27;周回数を1〜9999で入力してください&#x27;;return;}
         let chance=0;
-        const tooManyForAll=mode===&#x27;all&#x27; &amp;&amp; targets.length&gt;12;
-        if(targets.length &amp;&amp; !tooManyForAll) chance = mode===&#x27;any&#x27; ? 1-(1-sum)**rounds : probabilityAll(probabilities,rounds);
+        if(canEstimate) chance = mode===&#x27;any&#x27; ? 1-(1-sum)**rounds : probabilityAll(probabilities,rounds);
         $(&#x27;#goal-probability&#x27;).textContent=!targets.length ? &#x27;目標艦を選択&#x27; : tooManyForAll ? &#x27;すべて条件は12艦まで&#x27; : formatPercent(chance);
         $(&#x27;#expected-targets&#x27;).textContent=targets.length ? `${(rounds*sum).toFixed(2)}隻` : &#x27;—&#x27;;
         const condition=mode===&#x27;any&#x27;?`${targets.length}隻のいずれか`:`${targets.length}隻すべて`;
         $(&#x27;#quick-status&#x27;).textContent=!targets.length?`${currentRank()}勝利・目標艦を設定してください`:tooManyForAll?`${currentRank()}勝利・すべて条件は12艦まで`:`${currentRank()}勝利・${rounds}周で${condition}を入手：${formatPercent(chance)}`;
       }
       function probabilityAll(probabilities,rounds) { let result=0; const size=1&lt;&lt;probabilities.length; for(let mask=0;mask&lt;size;mask++){let excluded=0,bits=0;for(let i=0;i&lt;probabilities.length;i++){if(mask&amp;(1&lt;&lt;i)){excluded+=probabilities[i];bits++;}}result+=(bits%2?-1:1)*(1-excluded)**rounds;}return Math.max(0,Math.min(1,result)); }
+      function roundsForChance(probabilities,sum,mode,target) {
+        if(mode===&#x27;any&#x27;){ if(sum&lt;=0)return null; if(sum&gt;=1)return 1; return Math.ceil(Math.log(1-target)/Math.log(1-sum)); }
+        if(!probabilities.length || probabilities.some(rate=&gt;rate&lt;=0))return null;
+        let high=1;
+        while(probabilityAll(probabilities,high)&lt;target){ high*=2; if(high&gt;99999)return Infinity; }
+        let low=Math.max(1,high/2);
+        while(low&lt;high){ const mid=Math.floor((low+high)/2); if(probabilityAll(probabilities,mid)&gt;=target)high=mid; else low=mid+1; }
+        return low;
+      }
+      function formatRounds(value) { return value===null?&#x27;—&#x27;:Number.isFinite(value)?`${value}周`:&#x27;99999周超&#x27;; }
       function drawOne() {
         const rows=tableFor(activeProfile(),currentRank()); let cursor=0; const wheel=rows.map(row=&gt;({...row,limit:cursor+=row.rate})); const roll=Math.random(); return wheel.find(row=&gt;roll&lt;row.limit) || {ship:&#x27;ドロップなし・その他&#x27;,rate:Math.max(0,1-cursor),rank:currentRank(),count:0,total:rows[0]?.total||0};
       }
